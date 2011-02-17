@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="lib" path="lib/commons-cli-1.1/commons-cli-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.2.1/commons-collections-3.2.1.jar"/>
+	<classpathentry kind="lib" path="lib/rabin-hash-function-2.0/rabin-hash-function-2.0.jar"/>
+	<classpathentry kind="lib" path="lib/uuid-3.0/uuid-3.0.jar"/>
+	<classpathentry kind="output" path="classes"/>
+</classpath>

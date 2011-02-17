@@ -1,0 +1,2 @@
+Syntax error on token "import", invalid Typeimport SimpleDateFormat;
+DateFormat d1 = new DateFormat("mm'/'dd'/'yyyy kk:mm:ss?");

@@ -1,0 +1,225 @@
+PhotoSpread assists in tagging photos with attribute/value pairs. The
+application also allows the constructions of photo sets, based on
+formulas over the tags. The program uses a spreadsheet metaphor. Note
+that the application is not intended to be a replacement for an image
+viewers. 
+
+You can: 
+
+  - Load images from your file system into a PhotoSpread spreadsheet
+    cell.
+  - Attach formulas to cells, analogous to Excel. The formulas express
+    conditions over photo metadata. Qualifying photos appear in the
+    respective cell.
+  - Tag images in one of two ways:
+       * In a Metadata Editor, one image at a time.
+       * By attaching a formula to a cell, and dragging photos into
+         that cell.
+
+We now run through some examples. Locate the photos that come with
+this tutorial to follow along, or just follow the screenshots.
+
+<b>Start the application</b> You will need Java installed on your
+machine. Start the application with the accompanying .bat file.
+<b>The main application windows</b> 
+
+The application consists of two primary windows: the Sheet window, and
+the Workspace window. Additional windows pop up as
+appropriate. Pressing F1 while a window is active shows a brief help
+screen. Cells in the Sheet can contain sets of photos, strings, or
+numbers. Each cell may have a formula associated with it. That
+formula, if present, determines what will become the cell's content.
+
+To expand a column horizontally, drag at the dividing line between two
+column headers. To expand a row, grab the row in column zero, and drag
+down. 
+
+Ignore the Workspace window for now.
+
+<b>Load Photos into cell A1</b>
+
+To load the test photos into cell A1:
+
+- Select A1
+- Right-click -> Load Object Files into this Cell
+- Navigate to the photos and select them all (cnt-a)
+
+Cell A1 will show the first few of the images. (Screen shots
+'loadCell.jpg' and 'photosInA1.jpg'). 
+
+<b>Dragging items between cells</b>
+
+Try dragging some of the photos to different cells. Trash the
+Rhinoceros image by dragging it to the hidden trashcan: the upper left
+most empty cell. You'll know when you found it. When done, drag all
+the photos back in to A1 for the next step.
+
+<b>Tag some images manually</b>
+
+We'll tag each image with its animal species. Enlarge row one by
+dragging down in the '1' cell of the left-most column until you see
+all six animals. Double-click on the ape. The Metadata Editor window
+will pop up. Two fields are filled in, the photo's unique PhotoSpread
+identifier, and the file it came from. These fields are read-only.
+(Screenshot 'metadataEditor.jpg').
+
+Click on the first free left-hand side field, and type 'Species'
+(without the quotes). The term Species is the name of this first
+attribute. The case is significant. Hit the tab key to advance to the
+respective value field. Type 'ape'. By convention you might make
+attribute names upper-case, and the values lower case. But this is
+optional. At this point you cannot have numbers or special characters
+in the attribute names. 
+
+Hit the Save and Stop Edit button to close the window and save this
+entry. Repeat this exercise for all six animals, entering Species on
+the left of the Metadata Editor table, and 'cow' in both of the cow
+photos, and 'leopard', and 'bobcat' for the two cats.
+
+<b>A first formula</b>
+
+We can now select subsets of these photos into other cells. select
+cell B1 by clicking on it. Click on the Formula Editor Strip between
+the Sheet table and the menu bar.
+
+Type: =A1[Species=cow]<enter>
+
+Don't forget the leading '=' sign. This formula references all photos
+whose 'Species' metadata tag has the value 'cow.' These photos will
+now populate B1.
+
+See what happens when you change one of the cow photos'
+metadata. Double-click on, say, the brown-white cow photo, and change
+the Species value from 'cow' to 'guernsey.' The respective photo will
+disappear from B1.
+
+To continue, change the value back to 'cow'.
+
+<b>The Workspace</b>
+
+Sheet cells are not great for showing lots of photos. That is what the
+Workspace window is for. This window popped up when you first started
+the application. Locate it now, and click on cell A1.
+
+The Workspace is where photos are shown enlarged. Each cell owns its
+own Workspace. Selecting a cell fills the Workspace window with that
+cell's contents. Only a handful of a cell's photos shown in the Sheet
+window. The respective Workspace shows all photos. You will note that
+some photos will be squished a bit. Live with it for now.
+
+The Workspace behavior can be manipulated by two sliders. The slider
+along the top edge determines how many columns of images are
+shown. The slider along the left side controls image size. Buttons at
+the bottom allow for navigation, and for zooming individual images.
+Use the buttons at the bottom to page through the images.
+
+Try manipulating the sliders such that all six photos are visible.
+Hint: First reduce the photo size to 50%, then set the number of
+columns to 5. Clicking on a slider to the right side of its control
+knob (the bottom side for the vertical scrollbar) advances the value
+by one unit. Double-clicking on the upper-left resets the Workspace to
+show only one picture.
+
+Select one photo, and click the Zoom button. A Zoomer window will pop
+up to show a larger view. Hitting cnt-= or cnt-minus, or using the
+scroll wheel, will change the image size. If you hold down the shift
+key while changing the size, you the Zoomer window will resize along
+with the image. You can type cnt-w to dismiss a Zoomer window.
+
+<b>Tagging with Formulas</b>
+
+Tagging each image with the Metadata Editor can get tedious. A faster
+way is to attach a formula to an empty cell, and to drag photos from
+the Workspace into that cell. The metadata of each dragged photo will
+conform to satisfy the formula. This is called 'forcing' the dragged
+item. 
+
+Select cell C1 and attach the formula: =A1[Spots=yes]
+
+You will see C1 contain 'Empty Set.' You may wish to widen C1 a bit by
+dragging to the right between the column headers C and D. Now, in the
+Workspace window, select the cow photos, the bobcat, and the leopard
+(control-click on each), and drag the selected images to cell C1. The
+cell will populate with these images. Double-click on some of them to
+verify in the Metadata Editor that the Spot metadata was indeed
+entered automatically. (Screenshot 'threeCellsOccupied.jpg').
+
+<b>More Complex Formulas</b>
+
+In cell D1, attach the formula:
+ 
+=A1[Spots=yes & Species=cow]
+
+To make things more interesting, use any method you like to add Age
+metadata to three of the animals:
+
+- The ape: Age : 10
+- The bobcat: Age : 5
+- The leopard: Age : 7
+- The brown cows: Age : 2
+
+In E1 enter the formula:
+
+=C1[Age > 4]
+
+We expect to see spotted animals older than 4. The brown cows are
+properly missing from E1; they are too young. The 5-year-old bobcat
+and leopard are there. The ape is absent, because it is not
+spotted. But the black-white cows show up! That's wrong. Double-click
+on the cows in E1 and notice in the Metadata Editor that the cows
+don't have an Age entry at all.
+
+PhotoSpread assigns the special value 'null' to medatadata attributes
+that have never been set. And null matches everything. To get what we
+want, correct the E1 formula like this:
+
+=C1[Age != null & Age > 4]
+
+<b>Functions</b>
+
+Right now, PhotoSpread includes the following functions:
+
+union()
+min()
+max()
+avg()
+count()
+
+In A2, add the formula:
+
+=avg(E1.Age)
+
+to get the average age of the bobcat and leopard. The dot notation
+selects the value of the named metadata. In this case, the Age of
+each photo in E1 is extracted (5 and 7), and the average is computed.
+
+You can combine conditions (square brackets) and selection (dots),
+like this:
+
+=A1[Age >= 5 | Spots != yes & Age != null].Age
+  
+This retrieves the ages of the ape (10), the leopard (7), and the
+bobcat (5). Nested parenthesis are not supported at this point, nor
+are functions embedded in conditions.
+
+<b>Saving your Work></b>
+
+Can save in two ways. The entire sheet, with its formulas and other
+current state is saved via: 
+
+   File-->Save Sheet.
+
+The resulting .xml file can later be re-loaded with File-->Load Sheet.
+
+For transfers to Excel, the metadata (not the images) in individual
+cells can be saved to a comma-separated value (csv) file:
+
+Right-click on the background of a cell, and select the appropriate
+entry. Loading a previously saved csv file happens analogously.
+
+<b>Advanced Features></b>
+
+- Tagging with key bindings to replace dragging to a formula by a
+  keystroke. 
+- Various keyboard shortcuts. 
+- Cell sorting

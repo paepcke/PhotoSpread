@@ -1,0 +1,137 @@
+ /*          Grammar for PhotoSpread language 
+
+* - To turn into a parser
+*     o cd ...PhotoSpread/src/photoSpreadParser
+*     o rm *.java
+*     o javacc <this file's name>
+*         This program will generate ExpressionParser.java and three or
+*         four helper Java files.
+*     O re-compile those newly generated files (or have Eclipse do it).
+*
+* - In the production environment you need to use the first
+*    import block below. In the testing environment 
+*    (FormulaLanguageTests Eclipse project) you need to use 
+*    the imports in the second import block below.
+
+
+*/options{  STATIC = false;  FORCE_LA_CHECK = true; // Warn about all look-ahead choice conflicts
+}PARSER_BEGIN(ExpressionParser)package photoSpreadParser;import java.io.StringReader;
+//***** Real imports for deployment
+import photoSpreadParser.photoSpreadExpression.*;import photoSpreadTable.PhotoSpreadCell;import photoSpreadParser.photoSpreadExpression.photoSpreadFunctions.PhotoSpreadFunction;
+import photoSpreadParser.photoSpreadExpression.PhotoSpreadSpecialConstants.PhotoSpreadNullConstant;
+import photoSpreadUtilities.Const;// ***** end Real imports ****/
+/**** Imports within test environment
+import photoSpreadParser.parseTestSkeleton.PhotoSpreadCell;
+import photoSpreadParser.parseTestSkeleton.PhotoSpreadCellRange;
+import photoSpreadParser.parseTestSkeleton.PhotoSpreadCellRangeCondition;
+import photoSpreadParser.parseTestSkeleton.PhotoSpreadCondition;
+import photoSpreadParser.parseTestSkeleton.PhotoSpreadConstantExpression;
+import photoSpreadParser.parseTestSkeleton.PhotoSpreadDoubleConstant;
+import photoSpreadParser.parseTestSkeleton.PhotoSpreadStringConstant;
+import photoSpreadParser.parseTestSkeleton.PhotoSpreadContainerExpression;
+import photoSpreadParser.parseTestSkeleton.PhotoSpreadExpression;
+import photoSpreadParser.parseTestSkeleton.PhotoSpreadFormulaExpression;
+import photoSpreadParser.parseTestSkeleton.PhotoSpreadFunction;
+import photoSpreadParser.parseTestSkeleton.photoSpreadObjects.PhotoSpreadConstant;
+import photoSpreadParser.parseTestSkeleton.PhotoSpreadSimpleCondition;
+import photoSpreadParser.parseTestSkeleton.photoSpreadObjects.PhotoSpreadDoubleObject;
+import photoSpreadParser.parseTestSkeleton.photoSpreadObjects.PhotoSpreadObject;
+import photoSpreadParser.parseTestSkeleton.photoSpreadObjects.PhotoSpreadStringObject;
+//End Imports within test environment */public class ExpressionParser{
+  private static final boolean GET_FROM_START = true;
+
+  private PhotoSpreadCell _cell;
+  private String theStrToParse;
+  // Keep track of whether we have ascertained
+  // that the formula string is a formula (starts
+  // with '=':
+  private boolean isFormula = false;
+  public ExpressionParser(PhotoSpreadCell _cell, String strToParse)  {
+    this(new StringReader(strToParse));    this._cell = _cell;
+    theStrToParse = strToParse;
+  }
+    private String grabAllRest(boolean fromStart) {
+    if (fromStart)
+      return theStrToParse;
+    // Return not the entire input string,
+    // but only what is left unparsed so far:
+    String extraText = "";
+    Token eofToken;
+	while ((eofToken = getNextToken()).kind != EOF) extraText += eofToken.image + " ";
+	return extraText;
+  }
+
+  public static void main(String args []) throws ParseException  {    java.io.StringReader sr = new java.io.StringReader("=A1[hello = jello]");    java.io.Reader r = new java.io.BufferedReader(sr);    ExpressionParser parser = new ExpressionParser(r);    PhotoSpreadExpression expr = parser.Expression();    System.out.println(expr.toString());  }}PARSER_END(ExpressionParser)SKIP :{  " "| "\t"| "\n"| "\r"}TOKEN :{  < SPECIAL_CONST : "_/" > : IN_SPECIAL_CONST
+| < NULL : "null" >| < LBRACE : "{" >| < RBRACE : "}" >| < LBRACKET : "[" >| < RBRACKET : "]" >| < LPARENS : "(" >| < RPARENS : ")" >| < COMMA : "," >| < AND : "&" >| < OR : "|" >| < DOLLAR : "$" >| < NE : "!=" >| < LEQ : "<=" >| < GEQ : ">=" >| < EQ : "=" >| < LT : "<" >| < GT : ">" >| < PERIOD : "." >| < #DOUBLE_QUOTE : "\"" >| < SINGLE_QUOTE : "'" >  // ***** Functions:
+| < UNION : "union" >| < SUM : "sum" >| < MIN : "min" >| < MAX : "max" >| < COUNT : "count" >| < AVG : "avg" >  // *****Constants: Chars and numbers:
+| < NUMBER :    (< DIGIT >)+    (      "." (< DIGIT >)+    )? >
+| < SIGNED_NUMBER : ["+", "-"]< NUMBER > >| < DIGIT : [ "0"-"9" ] >| < DIGITS : (< DIGIT >)+ >| < #CHAR_UPPER : ([ "A"-"Z" ]) >| < #CHAR_LOWER : ([ "a"-"z" ]) >| < #CHAR : ([ "a"-"z", "A"-"Z" ]) >| < CHARS_UPPER : (< CHAR_UPPER >)+ >| < IDENTIFIER :    < VAR_NAME >  | < CHARS > >| < VAR_NAME : < CHAR_LOWER > (< CHARS >)* >| < #CHARS : (< CHAR >)+ >| < #CHAR_ALPHA : ([ "a"-"z", "A"-"Z" ]) >| < #MIXED_CHAR :    (      (        < CHAR_ALPHA >      | < DIGITS >      | [ "(", ")", ".", ";", ":", "!", "|", "?", "/", "@", "%", "#", "$", "-", "_", "+", "'", "^", "<", ">", "=", "{", "}", "[", "]", " ", "\t", "\n", "\r" ]      )*    ) >| < #MIXED_CHARS : (< MIXED_CHAR >)+ >| < #ALPHA_NUMERIC_CHARS :    (      < DIGIT >    | < CHAR_ALPHA >    )* >| < STRING_CONSTANT :    < DOUBLE_QUOTE > (< MIXED_CHARS >)* < DOUBLE_QUOTE >  | < SINGLE_QUOTE > (< MIXED_CHARS >)* < SINGLE_QUOTE >     >}< IN_SPECIAL_CONST >TOKEN :{  < TO_DEFAULT : "/_" > : DEFAULT| < OBJ_COLLECTION : "Objects" >
+}PhotoSpreadExpression Expression() :{  PhotoSpreadExpression e;
+  PhotoSpreadConstant nonFormulaConst;
+  PhotoSpreadConstantExpression expr;
+  Token aToken;
+  String extraText = "";}{try{    (    < EQ > e = FormulaExpression()  )  {
+    // Must not have any left-over tokens after the expression:    extraText = "";    //while ((eofToken = getNextToken()).kind != EOF) extraText += eofToken.image;
+    extraText += grabAllRest(!GET_FROM_START);    if (!extraText.isEmpty()) throw new ParseException("Can't make sense of final formula portion: '"+ extraText+ "'");    return e;  }
+| // The formula editor window text starts with something
+  // other than '='. Check whether the text is a number:  (     aToken = < SIGNED_NUMBER >
+   | aToken = < NUMBER >
+  )
+  {    nonFormulaConst = new PhotoSpreadDoubleConstant(this._cell, aToken.image);
+    // Error if any text comes after the number:
+    extraText = grabAllRest(!GET_FROM_START);
+    if (!extraText.isEmpty()) {      throw new ParseException(
+        "Non-formula text must be a sole number, or text that does not start with a number: '"+
+        extraText + "'");	} else {	  expr = new PhotoSpreadConstantExpression();
+      expr.addConstant(nonFormulaConst);
+      return expr;
+    }
+  }
+|(
+  aToken = < SPECIAL_CONST >
+){
+        expr = SpecialConstant();
+        return expr;
+}
+|   { // Non-formula, nor a number or special object. The whole
+    // entry in the formula editor is a string with no special
+    // meaning (See also comment in catch clause below):
+    nonFormulaConst = new PhotoSpreadStringConstant(this._cell, theStrToParse);    expr = new PhotoSpreadConstantExpression();
+    expr.addConstant(nonFormulaConst);
+    return expr;  }} catch (photoSpreadParser.TokenMgrError ex){
+  	// For some non-formula strings in the formula editor
+  	// even the check for a leading '=' sign throws
+  	// an error. E.g. when the first char is a '!',
+  	// which is part of the grammar. We therefore
+  	// catch all token parsing exceptions. If we
+  	// are in fact parsing a formula (formula string
+  	// starts with '=' then we re-throw the exception.
+  	// Else we accept the entire string and return
+  	// a string constant.
+	if (isFormula)	{	  throw ex;
+	}
+    nonFormulaConst = new PhotoSpreadStringConstant(this._cell, theStrToParse);
+    expr = new PhotoSpreadConstantExpression();
+    expr.addConstant(nonFormulaConst);
+    return expr;
+}}PhotoSpreadFormulaExpression FormulaExpression() :{  PhotoSpreadFormulaExpression fe;  Token selection;  PhotoSpreadCondition condition;
+
+  // At this point we are sure that the
+  // string in the formula editor starts
+  // with '='. 
+  isFormula = true;}{  (    (      (        fe = ContainerExpression()        {}      | fe = FunctionCall()        {}      )      (        < LBRACKET > condition = Condition()        {          fe.addCondition(condition, "NO_BOOLEAN");        }        (          < OR > condition = Condition()          {            fe.addCondition(condition, "OR");          }        |           < AND > condition = Condition()          {            fe.addCondition(condition, "AND");          }        )*        < RBRACKET >      )?      (        < PERIOD > selection = < IDENTIFIER >        {          fe.addSelection(selection.image);        }      )?    )  |    (      fe = Constant()    )  )  {    return fe;  }}PhotoSpreadContainerExpression ContainerExpression() :{  PhotoSpreadContainerExpression ce;  PhotoSpreadCellRange cellRange;}{  cellRange = OldCellRange()  {    ce = new PhotoSpreadContainerExpression(cellRange);    return ce;  }}PhotoSpreadConstantExpression ConstantExpression() :
+// Not used, but I didn't have the heart to delete it. {  PhotoSpreadConstant obj;  PhotoSpreadConstantExpression expr = new PhotoSpreadConstantExpression();}{  (    obj = Constant()    {      expr = new PhotoSpreadConstantExpression();      expr.addConstant(obj);    }    (      < COMMA > obj = Constant()      {        expr = new PhotoSpreadConstantExpression();        expr.addConstant(obj);      }    )*  )?  {    return expr;  }}PhotoSpreadConstant Constant() :{  Token str;  PhotoSpreadConstant obj;}{  (    (      str = < SPECIAL_CONST >      {        obj = SpecialConstant();      }    )  |    (      str = < NUMBER >      {        obj = new PhotoSpreadDoubleConstant(this._cell, str.image);      }    )  |    (      str = < IDENTIFIER >      {	    obj = new PhotoSpreadStringConstant(this._cell, str.image);      }    )  |    (      str = < STRING_CONSTANT >      {        obj = new PhotoSpreadStringConstant(this._cell, str.image);      }    )  )  {    return obj;  }}PhotoSpreadConstant SpecialConstant() :{  Token specConst;  PhotoSpreadConstant obj;}{  (    (
+      specConst = < OBJ_COLLECTION >      {        obj = new PhotoSpreadSpecialConstants.ObjectsCollectionConstant(this._cell);      }    )
+|   (	  specConst = < NULL >
+	)	  {
+	    obj = PhotoSpreadSpecialConstants.PhotoSpreadNullConstant.getInstance();	  }
+
+          /* Example for an additional special constant:
+  | (specConst = <ANOTHER_SPECIAL_CONST>{
+    obj = new PhotoSpreadSpecialConstants.AnotherSpecialConstant(this ._cell);
+  }
+  )
+  */  |    {      throw new ParseException("Unknown special constant: '"+ getToken(0)+ "'");    }  )  {    return obj;  }}PhotoSpreadFunction FunctionCall() :{  PhotoSpreadFunction func;  String functionName;  PhotoSpreadFormulaExpression fe;}{  (    functionName = FunctionName()  )  {    func = PhotoSpreadFunction.getInstance(functionName.toLowerCase(), this._cell);  }  (< LPARENS >)  {}  (    fe = FormulaExpression()  )  {    func.addArgument(fe);  }  (    ","    (      fe = FormulaExpression()    )    {      func.addArgument(fe);    }  )*  < RPARENS >  {    return func;  }}PhotoSpreadCellRange OldCellRange() :{  Token startCol;  boolean startColFixed = false;  Token startRow;  boolean startRowFixed = false;  Token endCol;  boolean endColFixed = false;  Token endRow;  boolean endRowFixed = false;}{  (    (< DOLLAR >    {      startColFixed = true; }    )? startCol = < CHARS_UPPER >    {}    (< DOLLAR >    {      startRowFixed = true; }    )? startRow = < NUMBER >    {}    {}  )  (    ":" (< DOLLAR >    {      endColFixed = true; }    )? endCol = < CHARS_UPPER >    {}    (< DOLLAR >    {      endRowFixed = true; }    )? endRow = < NUMBER >    {}    {      return new PhotoSpreadCellRange(startColFixed, startCol.image, startRowFixed, Integer.parseInt(startRow.image), endColFixed, endCol.image, endRowFixed, Integer.parseInt(endRow.image));    }  )?  {    return new PhotoSpreadCellRange(startColFixed, startCol.image, startRowFixed, Integer.parseInt(startRow.image));  }}PhotoSpreadCondition Condition() :{  PhotoSpreadCondition cond;  Token rhsToken;  Token lhsToken;  Token compOpToken;  String rhs;  String compOp;  String lhs;  PhotoSpreadCellRange cellRange;}{  (rhsToken = < IDENTIFIER >  {    rhs = rhsToken.image; }  ) compOpToken = CompOp()  {    compOp = compOpToken.image;  }  (    LOOKAHEAD(2)    (      cellRange = OldCellRange()      {        cond = new PhotoSpreadCellRangeCondition(rhs, compOp, cellRange);      }    )  |
+    ( lhsToken = < NULL >	  {	    lhs = Const.NULL_VALUE_STRING; cond = new PhotoSpreadSimpleCondition(rhs, compOp, PhotoSpreadNullConstant.getInstance());
+	  }
+	)  |(      lhsToken = < NUMBER >      {        lhs = lhsToken.image; cond = new PhotoSpreadSimpleCondition(rhs, compOp, lhs);      }    )  |    (      lhsToken = < IDENTIFIER >      {        lhs = lhsToken.image; cond = new PhotoSpreadSimpleCondition(rhs, compOp, lhs);      }    )  |    (      lhsToken = < STRING_CONSTANT >      {        lhs = lhsToken.image; cond = new PhotoSpreadSimpleCondition(rhs, compOp, lhs);      }    )  )  {    return cond;  }}Token CompOp() :{  Token comp;}{  (    (comp = < EQ >    {}    )  | (comp = < NE >    {}    )  | (comp = < LEQ >    {}    )  | (comp = < GEQ >    {}    )  | (comp = < LT >    {}    )  | (comp = < GT >    {}    )  )  {    return comp;  }}String FunctionName() :{}{  (< UNION >  {    return "union"; }  )| (< SUM >  {    return "sum"; }  )| (< MIN >  {    return "min"; }  )| (< MAX >  {    return "max"; }  )| (< AVG >  {    return "avg"; }  )| (< COUNT >  {    return "count"; }  )}int MatchedBraces() :{  int nested_count = 0;}{  < LBRACE > [ nested_count = MatchedBraces() ] < RBRACE >  {    return++ nested_count;  }}

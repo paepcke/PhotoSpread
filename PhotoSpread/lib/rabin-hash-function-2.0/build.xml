@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+
+<project basedir="." default="build" name="rabin-hash-function">
+
+   <property name="name" value="${ant.project.name}"/>
+   <property name="version" value="2.0"/>
+   <property name="jar" value="${name}-${version}.jar"/>
+
+   <target name="init">
+      <tstamp/>
+   </target>
+
+   <target depends="init" name="build">
+      <mkdir dir="build"/>
+      <javac source="1.4" deprecation="true" optimize="true" debug="true" destdir="build" srcdir="src/main"/>
+      <jar jarfile="${jar}">
+         <fileset dir="build"/>
+      </jar>
+   </target>
+
+   <target depends="init,build" name="test">
+      <javac deprecation="true" optimize="false" debug="true" destdir="build" srcdir="src/test"/>
+      <junit printsummary="withOutAndErr">
+         <classpath>
+            <pathelement location="build"/>
+         </classpath>
+         <batchtest>
+            <fileset dir="src/test">
+               <include name="**/*TestCase.java"/>
+            </fileset>
+         </batchtest>
+      </junit>
+   </target>
+
+   <target depends="init" name="javadoc">
+      <mkdir dir="docs"/>
+      <javadoc destdir="docs" source="1.4">
+         <packageset dir="src/main">
+            <include name="**"/>
+         </packageset>
+      </javadoc>
+   </target>
+   
+   <target depends="init" name="clean">
+      <delete dir="build"/>
+      <delete file="${jar}"/>
+   </target>
+
+</project>
