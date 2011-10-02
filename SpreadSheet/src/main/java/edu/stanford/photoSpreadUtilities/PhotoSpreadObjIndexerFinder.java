@@ -77,7 +77,6 @@ public class PhotoSpreadObjIndexerFinder implements ObjectIndexerFinder<PhotoSpr
 	 * Methods for ADDing objects to the index
 	 *****************************************************/
 
-	@Override
 	public boolean add(PhotoSpreadComputable obj) throws IllegalArgumentException {
 
 		PhotoSpreadDispatch dispatch = _dispatchTable.get(obj.getClass()); 
@@ -140,7 +139,6 @@ public class PhotoSpreadObjIndexerFinder implements ObjectIndexerFinder<PhotoSpr
 		return false;
 	}
 
-	@Override
 	public boolean addAll(Collection<PhotoSpreadComputable> objs)
 	throws IllegalArgumentException {
 		for (PhotoSpreadComputable item : objs) {
@@ -153,13 +151,11 @@ public class PhotoSpreadObjIndexerFinder implements ObjectIndexerFinder<PhotoSpr
 	 * Methods for REMOVEing objects to the index
 	 *****************************************************/
 
-	@Override
 	public void clear() {
 		_contentIndex.clear();
 		PhotoSpread.trace("Cleared index");
 	}
 
-	@Override
 	public boolean remove(PhotoSpreadComputable obj)
 	throws IllegalArgumentException {
 
@@ -285,7 +281,6 @@ public class PhotoSpreadObjIndexerFinder implements ObjectIndexerFinder<PhotoSpr
 	 * If this index contains a *value* that is the passed-in object,
 	 * then return that object, else return null.
 	 */
-	@Override
 	public PhotoSpreadObject containsValue(PhotoSpreadObject obj) {
 		return _contentIndex.get(obj.valueOf());
 	}

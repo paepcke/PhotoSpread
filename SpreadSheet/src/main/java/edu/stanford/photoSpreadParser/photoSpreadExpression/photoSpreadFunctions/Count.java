@@ -33,7 +33,6 @@ public class Count<A extends PhotoSpreadFormulaExpression> extends
 		return res;
 	}
 
-	@Override
 	public PhotoSpreadDoubleObject valueOf() throws FormulaError {
 		
 		AllArgEvalResults computedArgs;

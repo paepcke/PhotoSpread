@@ -180,7 +180,6 @@ public class ComputableDimension extends Dimension implements Comparable<Dimensi
 	 * @param Dimension or ComputableDimension to compare to 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
-	@Override
 	public int compareTo(Dimension thatDim) {
 		
 		if (this == thatDim) return Const.EQUAL;

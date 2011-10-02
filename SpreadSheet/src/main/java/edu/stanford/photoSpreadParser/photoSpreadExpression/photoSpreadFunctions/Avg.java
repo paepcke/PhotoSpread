@@ -46,7 +46,6 @@ implements PhotoSpreadEvaluatable {
 		return res;
 	}
 
-	@Override
 	public PhotoSpreadDoubleObject valueOf() throws FormulaError {
 
 		Double theSum = 0.0;

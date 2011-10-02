@@ -796,22 +796,18 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 		return allMetadataAttrNames;
 	}
 
-	@Override
 	public PhotoSpreadStringObject find(String str) {
 		return _objects.find(str);
 	}
 
-	@Override
 	public PhotoSpreadObject find(Double dbl) {
 		return _objects.find(dbl);
 	}
 
-	@Override
 	public PhotoSpreadObject find(File obj) {
 		return _objects.find(obj);
 	}
 	
-	@Override
 	public PhotoSpreadObject find(PhotoSpreadTable tbl) {
 		return _objects.find(tbl);
 	}

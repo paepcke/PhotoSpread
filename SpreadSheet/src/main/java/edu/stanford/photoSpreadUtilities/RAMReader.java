@@ -120,7 +120,6 @@ public abstract class RAMReader implements DataInput {
 		return (char) ((firstByte << 8) | (secondByte & 0xff));
 	}
 
-	@Override
 	public short readShort() throws IOException {
 		byte firstByte = getOneByte();
 		byte secondByte = getOneByte();

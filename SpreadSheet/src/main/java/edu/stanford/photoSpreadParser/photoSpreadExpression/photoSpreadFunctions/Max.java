@@ -32,7 +32,6 @@ extends PhotoSpreadFunction implements PhotoSpreadEvaluatable {
 		return res;
 	}
 
-	@Override
 	public PhotoSpreadDoubleObject valueOf() throws FormulaError {
 		
 		AllArgEvalResults computedArgs;

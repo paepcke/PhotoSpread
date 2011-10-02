@@ -252,7 +252,7 @@ public class KeyBindEditor extends JFrame {
 		/* (non-Javadoc)
 		 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 		 */
-		@Override
+
 		public void readExternal(ObjectInput in) throws IOException,
 		ClassNotFoundException {
 
@@ -268,7 +268,7 @@ public class KeyBindEditor extends JFrame {
 		 * Note: ObjectOutput is an interface that is implemented,
 		 * for instance, by ObjectOutputStream.
 		 */
-		@Override
+
 		public void writeExternal(ObjectOutput out) throws IOException {
 			out.writeBytes("<keySpec>" + _keySpec + "</keySpec>");
 			out.writeBytes("\n");
@@ -376,7 +376,6 @@ public class KeyBindEditor extends JFrame {
 		 */		/* (non-Javadoc)
 		 * @see java.io.Externalizable#readExternal(java.io.ObjectInput)
 		 */
-		@Override
 		public void readExternal(ObjectInput in) throws IOException,
 		ClassNotFoundException {
 
@@ -389,7 +388,6 @@ public class KeyBindEditor extends JFrame {
 		/* (non-Javadoc)
 		 * @see java.io.Externalizable#writeExternal(java.io.ObjectOutput)
 		 */
-		@Override
 		public void writeExternal(ObjectOutput out) throws IOException {
 			out.writeBytes("<cellSpec>" + _cellSpec + "</cellSpec>");
 			out.writeBytes("\n");
@@ -1198,7 +1196,6 @@ public class KeyBindEditor extends JFrame {
 			_destCell = destCell;
 		}
 
-		@Override
 		public void actionPerformed(ActionEvent e) {
 
 			PhotoSpreadCell srcCell = _photoSpreadSheet.getWorkspace().getDisplayedCell();

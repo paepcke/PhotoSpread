@@ -202,7 +202,6 @@ public class PhotoSpreadTable extends JTable {
 		/* (non-Javadoc)
 		 * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)
 		 */
-		@Override
 		public void tableChanged(TableModelEvent changeEvent) {
 
 			int affectedCol = changeEvent.getColumn();

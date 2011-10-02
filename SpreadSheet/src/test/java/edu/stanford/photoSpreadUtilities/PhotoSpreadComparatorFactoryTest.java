@@ -13,7 +13,6 @@ import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadObjects.PhotoSpreadStringObject;
 import edu.stanford.photoSpreadTable.PhotoSpreadCell;
 import edu.stanford.photoSpreadTable.PhotoSpreadTableModel;
-import edu.stanford.photoSpreadUtilities.*;
 import edu.stanford.photoSpreadUtilities.PhotoSpreadComparatorFactory.MetadataComparator;
 import edu.stanford.photoSpreadUtilities.PhotoSpreadComparatorFactory.UUIDComparator;
 

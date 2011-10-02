@@ -226,17 +226,14 @@ public class PhotoSpreadContextMenu extends JPopupMenu {
 
 		}
 
-		@Override
 		public void popupMenuCanceled(PopupMenuEvent e) {
 
 		}
 
-		@Override
 		public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
 			AllSortKeysMenuItemMouseDragListener.setCouldBeDirty(true);
 		}
 
-		@Override
 		public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
 
 		}

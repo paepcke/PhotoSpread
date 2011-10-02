@@ -244,7 +244,6 @@ public class PredictableEquiSizedGridLayout implements LayoutManager2 {
 	 * 
 	 * @see java.awt.LayoutManager#layoutContainer(java.awt.Container)
 	 */
-	@Override
 	public void layoutContainer(Container surroundingContainer) {
 
 		if (_lockLayoutAction)
@@ -563,7 +562,6 @@ public class PredictableEquiSizedGridLayout implements LayoutManager2 {
 	 * 
 	 * @see java.awt.LayoutManager2#getLayoutAlignmentX(java.awt.Container)
 	 */
-	@Override
 	public float getLayoutAlignmentX(Container arg0) {
 		// Horizontal alignment:
 		switch (_hAlignment) {
@@ -594,7 +592,6 @@ public class PredictableEquiSizedGridLayout implements LayoutManager2 {
 	 * 
 	 * @see java.awt.LayoutManager2#getLayoutAlignmentY(java.awt.Container)
 	 */
-	@Override
 	public float getLayoutAlignmentY(Container arg0) {
 		// Vertical alignment:
 		switch (_vAlignment) {
@@ -624,7 +621,6 @@ public class PredictableEquiSizedGridLayout implements LayoutManager2 {
 	 * 
 	 * @see java.awt.LayoutManager2#maximumLayoutSize(java.awt.Container)
 	 */
-	@Override
 	public Dimension maximumLayoutSize(Container target) {
 		return laidOutSize(target, SizeType.MAX_SIZE);
 	}
@@ -634,7 +630,6 @@ public class PredictableEquiSizedGridLayout implements LayoutManager2 {
 	 * 
 	 * @see java.awt.LayoutManager#minimumLayoutSize(java.awt.Container)
 	 */
-	@Override
 	public Dimension minimumLayoutSize(Container target) {
 		return laidOutSize(target, SizeType.MIN_SIZE);
 	}
@@ -644,7 +639,6 @@ public class PredictableEquiSizedGridLayout implements LayoutManager2 {
 	 * 
 	 * @see java.awt.LayoutManager#preferredLayoutSize(java.awt.Container)
 	 */
-	@Override
 	public Dimension preferredLayoutSize(Container target) {
 		return laidOutSize(target, SizeType.PREFERRED_SIZE);
 	}
@@ -654,7 +648,6 @@ public class PredictableEquiSizedGridLayout implements LayoutManager2 {
 	 * 
 	 * @see java.awt.LayoutManager2#invalidateLayout(java.awt.Container)
 	 */
-	@Override
 	public void invalidateLayout(Container target) {
 		_isValid = false;
 	}
@@ -664,7 +657,6 @@ public class PredictableEquiSizedGridLayout implements LayoutManager2 {
 	 * 
 	 * @see java.awt.LayoutManager#removeLayoutComponent(java.awt.Component)
 	 */
-	@Override
 	public void removeLayoutComponent(Component arg0) {
 
 	}
@@ -675,7 +667,6 @@ public class PredictableEquiSizedGridLayout implements LayoutManager2 {
 	 * @see java.awt.LayoutManager2#addLayoutComponent(java.awt.Component,
 	 * java.lang.Object)
 	 */
-	@Override
 	public void addLayoutComponent(Component arg0, Object arg1) {
 
 	}
@@ -686,7 +677,6 @@ public class PredictableEquiSizedGridLayout implements LayoutManager2 {
 	 * @see java.awt.LayoutManager#addLayoutComponent(java.lang.String,
 	 * java.awt.Component)
 	 */
-	@Override
 	public void addLayoutComponent(String arg0, Component arg1) {
 
 	}

@@ -50,14 +50,12 @@ public class PhotoSpreadConditionTest extends TestCase {
 			return null;
 		}
 
-		@Override
 		public TreeSetRandomSubsetIterable<PhotoSpreadObject> evaluate(
 				PhotoSpreadCell cell) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
-		@Override
 		public PhotoSpreadNormalizedExpression normalize(PhotoSpreadCell cell) {
 			throw new RuntimeException("Normalize not implemented for PhotoSpreadCondition");
 		}

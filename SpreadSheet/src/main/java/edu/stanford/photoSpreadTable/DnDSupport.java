@@ -729,19 +729,16 @@ public class DnDSupport {
 		/* (non-Javadoc)
 		 * @see java.awt.datatransfer.Transferable#getTransferData(java.awt.datatransfer.DataFlavor)
 		 */
-		@Override
 		public Object getTransferData(DataFlavor flavor)
 				throws UnsupportedFlavorException, IOException {
 			return null;
 		}
 
-		@Override
 		public DataFlavor[] getTransferDataFlavors() {
 			DataFlavor res[] = {};
 			return res;
 		}
 
-		@Override
 		public boolean isDataFlavorSupported(DataFlavor flavor) {
 			return false;
 		}
@@ -789,7 +786,6 @@ public class DnDSupport {
 		/* (non-Javadoc)
 		 * @see java.awt.datatransfer.Transferable#getTransferData(java.awt.datatransfer.DataFlavor)
 		 */
-		@Override
 		public Object getTransferData(DataFlavor flavor)
 				throws UnsupportedFlavorException, IOException {
 			if (_sourceCell != null)
@@ -802,7 +798,6 @@ public class DnDSupport {
 		/* (non-Javadoc)
 		 * @see java.awt.datatransfer.Transferable#getTransferDataFlavors()
 		 */
-		@Override
 		public DataFlavor[] getTransferDataFlavors() {
 			if (_sourceCell != null)
 				return _sourceCell.getTransferDataFlavors();
@@ -813,7 +808,6 @@ public class DnDSupport {
 		/* (non-Javadoc)
 		 * @see java.awt.datatransfer.Transferable#isDataFlavorSupported(java.awt.datatransfer.DataFlavor)
 		 */
-		@Override
 		public boolean isDataFlavorSupported(DataFlavor flavor) {
 			if (_sourceCell != null)
 				return _sourceCell.isDataFlavorSupported(flavor);
@@ -841,7 +835,6 @@ public class DnDSupport {
 	
 	static class DragGestureRecognizerTable implements DragGestureListener {
 	
-		@Override
 		public void dragGestureRecognized(DragGestureEvent dragGestureEvent) {
 			
 			// Point cursorLoc = dragGestureEvent.getDragOrigin();
@@ -879,7 +872,6 @@ public class DnDSupport {
 		/* (non-Javadoc)
 		 * @see java.awt.datatransfer.Transferable#getTransferData(java.awt.datatransfer.DataFlavor)
 		 */
-		@Override
 		public Object getTransferData(DataFlavor flavor)
 				throws UnsupportedFlavorException, IOException {
 			if (_sourceCell != null)
@@ -892,7 +884,6 @@ public class DnDSupport {
 		/* (non-Javadoc)
 		 * @see java.awt.datatransfer.Transferable#getTransferDataFlavors()
 		 */
-		@Override
 		public DataFlavor[] getTransferDataFlavors() {
 			if (_sourceCell != null)
 				return _sourceCell.getTransferDataFlavors();
@@ -903,7 +894,6 @@ public class DnDSupport {
 		/* (non-Javadoc)
 		 * @see java.awt.datatransfer.Transferable#isDataFlavorSupported(java.awt.datatransfer.DataFlavor)
 		 */
-		@Override
 		public boolean isDataFlavorSupported(DataFlavor flavor) {
 			if (_sourceCell != null)
 				return _sourceCell.isDataFlavorSupported(flavor);
@@ -929,7 +919,6 @@ public class DnDSupport {
 	 */
 	static class DragGestureRecognizerWorkspace implements DragGestureListener {
 	
-		@Override
 		public void dragGestureRecognized(DragGestureEvent dragGestureEvent) {
 			
 			_sourceCell = ((DraggableLabel) dragGestureEvent.getComponent()).getCell();
@@ -978,7 +967,6 @@ public class DnDSupport {
 	
 	static class DragGestureRecognizerLabel implements DragGestureListener {
 	
-		@Override
 		public void dragGestureRecognized(DragGestureEvent dragGestureEvent) {
 			
 			_sourceCell = ((DraggableLabel) dragGestureEvent.getComponent()).getCell();

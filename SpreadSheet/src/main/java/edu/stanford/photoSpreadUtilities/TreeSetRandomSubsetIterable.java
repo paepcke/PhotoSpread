@@ -341,7 +341,6 @@ extends TreeSet<E> implements Iterable<E> {
 		 * @return 
 		 * @see java.util.Iterator#next()
 		 */
-		@Override
 		public E next()  {
 
 			if (hasNext()) {
@@ -360,7 +359,6 @@ extends TreeSet<E> implements Iterable<E> {
 		/* (non-Javadoc)
 		 * @see java.util.Iterator#remove()
 		 */
-		@Override
 		public void remove() {
 			throw new UnsupportedOperationException("Remove is not implemented for this iterator.");
 

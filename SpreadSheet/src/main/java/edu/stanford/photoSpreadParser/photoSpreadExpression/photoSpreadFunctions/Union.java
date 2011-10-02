@@ -30,7 +30,6 @@ implements PhotoSpreadEvaluatable {
         super(_functionName);
     }
     
-	@Override
 	public TreeSetRandomSubsetIterable<PhotoSpreadObject> valueOf() 
 	throws FormulaError {
 		

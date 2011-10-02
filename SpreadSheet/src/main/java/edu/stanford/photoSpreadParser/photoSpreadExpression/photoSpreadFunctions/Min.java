@@ -31,7 +31,6 @@ public class Min<A extends PhotoSpreadFormulaExpression> extends
 		return res;
 	}
 
-	@Override
 	public PhotoSpreadDoubleObject valueOf() throws FormulaError {
 		
 		AllArgEvalResults computedArgs;

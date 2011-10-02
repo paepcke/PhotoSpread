@@ -122,7 +122,6 @@ implements TableCellEditor, TableCellRenderer {
      *
 	 * @see javax.swing.table.TableCellEditor#getTableCellEditorComponent(javax.swing.JTable, java.lang.Object, boolean, int, int)
 	 */
-	@Override
 	public Component getTableCellEditorComponent(
 			JTable table, 
 			Object initialValueForEditorToShow,
@@ -206,7 +205,6 @@ implements TableCellEditor, TableCellRenderer {
 	/* (non-Javadoc)
 	 * @see javax.swing.CellEditor#getCellEditorValue()
 	 */
-	@Override
 	public Object getCellEditorValue() {
 		return _currentEditedCell;
 	}

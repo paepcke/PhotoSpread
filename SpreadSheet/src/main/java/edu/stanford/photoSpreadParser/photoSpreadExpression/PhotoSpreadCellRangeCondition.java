@@ -60,14 +60,12 @@ public class PhotoSpreadCellRangeCondition extends PhotoSpreadCondition {
         _compOp.forceObject(object, _lhs, _rhs.evaluate(object.getCell()));
     }
 
-	@Override
 	public TreeSetRandomSubsetIterable<PhotoSpreadObject> evaluate(
 			PhotoSpreadCell cell) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public PhotoSpreadNormalizedExpression normalize(PhotoSpreadCell cell) {
 		throw new RuntimeException("Normalize not implemented for PhotoSpreadCellRange");
 	}

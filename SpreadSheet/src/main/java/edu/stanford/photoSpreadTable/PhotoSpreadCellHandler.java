@@ -123,7 +123,6 @@ implements CellEditor, CellEditorListener {
 	 * 
 	 * @see javax.swing.CellEditor#stopCellEditing()
 	 */
-	@Override
 	public boolean stopCellEditing() {
 		_isDirty = true;
 		fireEditingStopped();
@@ -147,7 +146,6 @@ implements CellEditor, CellEditorListener {
 	 *
 	 * @see javax.swing.CellEditor#cancelCellEditing()
 	 */
-	@Override
 	public void cancelCellEditing() {
 		_isDirty = true;
 		fireEditingCanceled();
@@ -156,7 +154,6 @@ implements CellEditor, CellEditorListener {
 	/* (non-Javadoc)
 	 * @see javax.swing.CellEditor#getCellEditorValue()
 	 */
-	@Override
 	public Object getCellEditorValue() {
 		return _myCell;
 	}
@@ -164,7 +161,6 @@ implements CellEditor, CellEditorListener {
 	/* (non-Javadoc)
 	 * @see javax.swing.CellEditor#isCellEditable(java.util.EventObject)
 	 */
-	@Override
 	public boolean isCellEditable(EventObject anEvent) {
 		// Always return true here. This same method was
 		// called earlier in the table model. It ensured
@@ -176,7 +172,6 @@ implements CellEditor, CellEditorListener {
 	/* (non-Javadoc)
 	 * @see javax.swing.CellEditor#addCellEditorListener(javax.swing.event.CellEditorListener)
 	 */
-	@Override
 	public void addCellEditorListener(CellEditorListener changeEventListener) {
 		_eventListeners.add(CellEditorListener.class, changeEventListener);
 	}
@@ -185,7 +180,6 @@ implements CellEditor, CellEditorListener {
 	/* (non-Javadoc)
 	 * @see javax.swing.CellEditor#removeCellEditorListener(javax.swing.event.CellEditorListener)
 	 */
-	@Override
 	public void removeCellEditorListener(CellEditorListener changeEventListener) {
 		_eventListeners.remove(CellEditorListener.class, changeEventListener);
 	}
@@ -193,7 +187,6 @@ implements CellEditor, CellEditorListener {
 	/* (non-Javadoc)
 	 * @see javax.swing.CellEditor#shouldSelectCell(java.util.EventObject)
 	 */
-	@Override
 	public boolean shouldSelectCell(EventObject anEvent) {
 		return true;
 	}

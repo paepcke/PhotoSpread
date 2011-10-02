@@ -61,12 +61,10 @@ public class PhotoSpreadSimpleCondition extends PhotoSpreadCondition {
         _compOp.forceObject(object, _lhs, _rhs);
     }
 
-	@Override
 	public TreeSetRandomSubsetIterable<PhotoSpreadObject> evaluate(PhotoSpreadCell cell) {
 		throw new RuntimeException("Evaluate not implemented for PhotoSpreadSimpleCondition");
 	}
 
-	@Override
 	public PhotoSpreadNormalizedExpression normalize(PhotoSpreadCell cell) {
 		throw new RuntimeException("Normalize not implemented for PhotoSpreadSimpleCondition");
 	}
