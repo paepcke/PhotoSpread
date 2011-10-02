@@ -1,0 +1,707 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<table>
+<row>
+<cell>
+<cellFormula>(Objects)</cellFormula>
+<objects>
+</objects>
+</cell>
+<cell>
+<cellFormula>(Objects)</cellFormula>
+<objects>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\airplaneInteriorWithEvacueesFacing.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0d0-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+<tags>
+<tag>
+<attribute>Color</attribute>
+<value>yellow</value>
+</tag>
+</tags>
+<tags>
+<tag>
+<attribute>Species</attribute>
+<value>passenger plane</value>
+</tag>
+</tags>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\airportTarmacHelicoptersWomanGreenShirt.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0d1-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+<tags>
+<tag>
+<attribute>Color</attribute>
+<value>yellow</value>
+</tag>
+</tags>
+<tags>
+<tag>
+<attribute>Species</attribute>
+<value>helicopter</value>
+</tag>
+</tags>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\asianWomanCaucasianBoy.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0d2-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\boyCrying.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0d3-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\childFriskedPinkShirtWhitePantsGlasses.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0d4-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\childInArmsOfYellow-ShirtAdult.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0d5-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\columbusAirforceBaseThreePeople.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0d6-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\conventionCenterNewOrleansSecurityCheck.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0d7-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\conventionCenterTwoGirls.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0d8-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\conventionCenterTwoWomen.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0d9-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\crowdOneFaceClear.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0da-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\distantManSunglasses.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0db-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\evacueesOnAirTransportLyingDown.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0dc-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\familyOnStoop.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0dd-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\fiveRefugeesDistant.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0de-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\girlFromBackPokodotDressBlackHairBiloxiMississippi.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0df-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\girlWithWhite-BlueShirtPearlBraids.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0e0-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\groupBoardingPlane.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0e1-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\groupOfRefugeesNewOrleans.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0e2-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\johnson39Years.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0e3-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\lacklandAFBTexasTwoPeople.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0e4-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\manAndWheelchairOverRailroadTrack.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0e5-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\manAndWoman.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0e6-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\manOnChairWantingToStay.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0e7-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\manOnStretcher.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0e8-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\manOnStretcherGrayBeardStubble.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0e9-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\manPinkShirtGirlBluePantsAndShirt.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0ea-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\marchAFBCaliforniaWomanOnFloor.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0eb-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\motherChildWhitePerscription.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0ec-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansAirport.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0ed-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansAirportDisembarkingHelicopterMan.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0ee-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansAirportGroupOfArrivals.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0ef-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansAirportOldCouple.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0f0-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansAirportOldWomanjpg.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0f1-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansAirportTallManLimping.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0f2-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansAirportWomanRedShirt.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0f3-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansChalmetteRecoveryCenterLineOfPeople.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0f4-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansConventionCenterManHelicopter.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0f5-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansInAirplaneManWithGlasses.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0f6-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansInHelicopterMan.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0f7-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansInHousecoatNotLeaviing.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0f8-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansJohnson39YearsAlive.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0f9-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansManInWindow.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0fa-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansTwoGirls.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0fb-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\newOrleansYoungMan.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0fc-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\oldManAndDaughter9thWard.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0fd-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\oldWomanBeingCarried.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0fe-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\oldWomanLoadedIntoBus.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf0ff-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\oldWomanWantingToStayBalcony.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf100-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\peopleInWater.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf101-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\peopleSleepingAtNewOrleansAirport.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf102-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\personInWaterPepsiTrashBag.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf103-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\queueForGoodsMostlyFromBackGulfordMiss.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf104-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\queueOfRefugees.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf105-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\sixFacesVisibleAtHoustonRedCrossCenter.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf106-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\smallGroupOfPeopleOnBridge.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf107-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\threeFacesAtNewOrleansAirport.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf108-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\transportToNewOrleansAirportOnBaggageCart.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf109-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\twoFacesOneElderlyRedDressRedShoes.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf10a-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\twoMenOnBoatNewOrleans.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf10b-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\twoMenOneWomanOnRailroadTracks.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf10c-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\twoMenTrumpetBirdcage.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf10d-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\underTentsAndFreewaySomeFaces.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf10e-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\washDCOldManVeteran.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf10f-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\whiteCoupleWIthDogInBackpack.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf110-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\womanAndDogInBoat.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf111-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\womanInBoat.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf112-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\womanInWheelchair.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf113-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\womanInWheelChairOutOfNewOrleans.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf114-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\womanOnAirplaneBendingFoward.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf115-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\womanOnBoatWithStrawHat.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf116-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\womanOntoAmbulance.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf117-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\womanRefusesToLeaveInMorningGown.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf118-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\womanUSFlagHeadScarfNewOrleans.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf119-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\womanWheelchairArNewOrleansAirport.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf11a-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\womanWithHope-Tattoo.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf11b-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\youngManAndChildAtAirport.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf11c-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+<object objectType="photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>E:\users\paepcke\dldev\src\PhotoSpreadTesting\TestCases\Photos\youngWomanBoardingNavyShip.jpg</objectConstructorArgument>
+<objectConstructorArgument>b88bf11d-8054-11dd-bea2-005056c00008</objectConstructorArgument>
+</objectConstructorArguments>
+</object>
+</objects>
+</cell>
+<cell>
+<cellFormula>=B1[Color = yellow]</cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+</row>
+<row>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+</row>
+<row>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+</row>
+<row>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+</row>
+<row>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+</row>
+<row>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+</row>
+<row>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+</row>
+<row>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+<cell>
+<cellFormula></cellFormula>
+</cell>
+</row>
+</table>

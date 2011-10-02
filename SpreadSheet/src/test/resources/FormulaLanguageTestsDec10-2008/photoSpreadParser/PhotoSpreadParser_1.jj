@@ -1,0 +1,277 @@
+/*
+ * Copyright Â© 2002 Sun Microsystems, Inc., 4150 Network Circle, Santa Clara,
+ * California 95054, U.S.A. All rights reserved.  Sun Microsystems, Inc. has
+ * intellectual property rights relating to technology embodied in the product
+ * that is described in this document. In particular, and without limitation,
+ * these intellectual property rights may include one or more of the U.S.
+ * patents listed at http://www.sun.com/patents and one or more additional
+ * patents or pending patent applications in the U.S. and in other countries.
+ * U.S. Government Rights - Commercial software. Government users are subject
+ * to the Sun Microsystems, Inc. standard license agreement and applicable
+ * provisions of the FAR and its supplements.  Use is subject to license terms.
+ * Sun,  Sun Microsystems,  the Sun logo and  Java are trademarks or registered
+ * trademarks of Sun Microsystems, Inc. in the U.S. and other countries.  This
+ * product is covered and controlled by U.S. Export Control laws and may be
+ * subject to the export or import laws in other countries.  Nuclear, missile,
+ * chemical biological weapons or nuclear maritime end uses or end users,
+ * whether direct or indirect, are strictly prohibited.  Export or reexport
+ * to countries subject to U.S. embargo or to entities identified on U.S.
+ * export exclusion lists, including, but not limited to, the denied persons
+ * and specially designated nationals lists is strictly prohibited.
+ */
+
+
+
+PARSER_BEGIN(ExpressionParser)
+
+package photoSpreadParser;
+
+import photoSpreadParser.photoSpreadExpression.*;
+import java.util.ArrayList;
+public class ExpressionParser {
+  
+
+
+  public static void main(String args[]) throws ParseException {
+    java.io.StringReader sr = new java.io.StringReader( "=union(A1)" ); 
+    java.io.Reader r = new java.io.BufferedReader( sr ); 
+    ExpressionParser parser = new ExpressionParser(r);
+    parser.Expression();
+  }
+
+}
+
+PARSER_END(ExpressionParser)
+
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+}
+
+TOKEN :
+{
+  <LBRACE: "{">
+| <RBRACE: "}">
+| <LPARENS: "(">
+| <RPARENS: ")">
+| <EQ:"=">
+| <LT:"<">
+| <GT:">">
+| <NE:"!=">
+| <LEQ:"<=">
+| <GEQ:">=">
+| <UNION:"union">
+| <COLNAME:<UPPER_CHARS>>
+| <ROWID:<DIGITS>>
+| < NUMBER : <DIGITS> | <DIGITS> "." <DIGITS> | <DIGITS> "." | "." <DIGITS> > 
+| < DIGITS : (["0"-"9"])+ >
+| < CHARS : ((["a"-"z"]|["A"-"Z"])+)>
+| < LOWER_CHARS : (["a"-"z"])+ >
+| < UPPER_CHARS : (["A"-"Z"])+ >
+| < CELLCOLUMN : <UPPER_CHARS> >
+| <CELLRANGE: <UPPER_CHARS><DIGITS> | <UPPER_CHARS><DIGITS>":"<UPPER_CHARS><DIGITS>  >
+| <CONDITION:<LOWER_CHARS><COMP_OP><LOWER_CHARS>>
+| <COMP_OP:<EQ>|<LT>|<GT>|<NE>|<LEQ>|<GEQ>>
+}
+
+PhotoSpreadExpression Expression() :
+{ PhotoSpreadExpression e; }
+{
+
+  (e=FormulaExpression())
+  { 
+    System.out.println("expression");
+    System.out.println("This function is named " + e.getExpression()); 
+    return e;
+  }
+
+  | e=ConstantExpression()  
+  
+  { 
+    System.out.println("expression");
+    System.out.println("This function is named " + e.getExpression()); 
+    return e;
+  }
+}
+
+PhotoSpreadFormulaExpression FormulaExpression() :
+{PhotoSpreadFunction function;}
+{
+    
+    <EQ>function=Function()  
+
+    {
+        System.out.println("Functtion");
+        return new PhotoSpreadFormulaExpression("hello", function);
+    }
+
+}
+
+
+PhotoSpreadConstantExpression ConstantExpression() :
+{Token ce;}
+{
+    ce= <UNION>
+    {
+        System.out.println("Constant expression " + ce.image);
+        return new PhotoSpreadConstantExpression(ce.image);
+    }
+
+}
+
+
+
+
+PhotoSpreadFunction Function() :
+{PhotoSpreadFunction func; String functionName; ArrayList arguments; PhotoSpreadFormulaComponent fc;}
+{
+    (functionName=FunctionName()) 
+    {
+        func = PhotoSpreadFunction.getInstance(functionName.toLowerCase());
+        
+    }    
+    <LPARENS>fc=FormulaComponent()
+    {
+        func.addArgument(fc);
+    }
+    (","fc=FormulaComponent()
+    {
+        func.addArgument(fc);
+    }
+    )*
+    <RPARENS>
+    {
+        return func;
+    }
+
+}
+
+PhotoSpreadFormulaComponent FormulaComponent() :
+{PhotoSpreadFormulaComponent fc;}
+{
+    
+    
+    fc = Function()
+    {return fc;}
+
+    |
+
+    
+
+    fc = CellRange()
+    {return fc;}
+
+   
+    |
+
+    fc = Condition()
+    {return fc;}
+   
+
+    
+
+}
+
+PhotoSpreadCellRange OldCellRange():
+{Token startCol; Token startRow; Token endCol; Token endRow;PhotoSpreadCellRange cr;}
+
+{
+    
+    startCol=<CELLCOLUMN>startRow=<DIGITS>
+    {    
+        return new PhotoSpreadCellRange(startCol.image, Integer.parseInt(startRow.image));
+    }
+    (":"endCol=<CELLCOLUMN>
+    {}
+    endRow=<DIGITS>
+    {}
+    {
+        return new PhotoSpreadCellRange(startCol.image, Integer.parseInt(startRow.image), endCol.image, Integer.parseInt(endRow.image));
+    }
+    )?
+    {
+       return new PhotoSpreadCellRange(startCol.image, Integer.parseInt(startRow.image)); 
+    }
+  
+}
+
+
+PhotoSpreadCellRange CellRange():
+{Token cellRange; Token startCol; Token startRow; Token endCol; Token endRow;PhotoSpreadCellRange cr;}
+
+{
+    
+    
+
+
+    cellRange=<CELLRANGE>
+    {
+        return new PhotoSpreadCellRange(cellRange.image);
+    }
+   
+    
+  
+}
+
+PhotoSpreadCondition Condition():
+{Token rhsToken; Token lhsToken; Token compOpToken; String rhs; String compOp; String lhs;}
+
+{
+    rhsToken = <LOWER_CHARS>
+    {
+        rhs = rhsToken.image;
+    }
+    compOpToken = <COMP_OP>
+    {
+        compOp = compOpToken.image;
+    }
+    lhsToken = <LOWER_CHARS>
+    {
+        lhs = lhsToken.image;
+    }
+    {
+        return new PhotoSpreadCondition(rhs,  compOp, lhs);
+    }
+}
+
+PhotoSpreadCondition FullCondition():
+{Token rhsToken; Token lhsToken; Token compOpToken; String rhs; String compOp; String lhs;}
+
+{
+    rhsToken = <CHARS>
+    {
+        rhs = rhsToken.image;
+    }
+    compOpToken = <COMP_OP>
+    {
+        compOp = compOpToken.image;
+    }
+    lhsToken = <CHARS>
+    {
+        lhs = lhsToken.image;
+    }
+    {
+        return new PhotoSpreadCondition(rhs,  compOp, lhs);
+    }
+}
+
+
+String FunctionName():
+{}
+{   <UNION>
+    {
+        return "Union";
+    }
+}
+
+
+
+int MatchedBraces() :
+{ int nested_count=0; }
+{
+  <LBRACE> [ nested_count=MatchedBraces() ] <RBRACE>
+  { return ++nested_count; }
+}

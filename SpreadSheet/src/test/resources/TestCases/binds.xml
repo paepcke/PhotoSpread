@@ -1,0 +1,6 @@
+<bindings>
+  <dndBindingSpec>
+    <keySpec>control  M</keySpec>
+    <cellSpec>C1</cellSpec>
+  </dndBindingSpec>
+</bindings>

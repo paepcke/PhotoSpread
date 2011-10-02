@@ -1,0 +1,1 @@
+Please refer to the javadoc for RabinHashFunction32 for usage information; see the file docs/index.html.

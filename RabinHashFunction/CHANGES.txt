@@ -1,0 +1,22 @@
+2.0 (June 15 2004)
+Rewrite from scratch for better code clarity and documentation; API is not backwards compatible
+Support for 64 bit hash functions
+Now provides implementation of java.security.MessageDigestSpi for 32 and 64-bit hash functions
+New and better JUnit tests
+Better documentation
+Hash functions objects implement Serializable and Cloneable now
+Hash functions implement common methods like hashCode(), equals(), toString()
+Removed some aspects of API and implementation deemed not useful
+ Constructors are now public; classes no longer maintain a Map of their own instances
+ No more internal private shared "buffer" for hash computations
+Implementation is still thread-safe but now requires no synchronization
+
+1.1 (November 18 2001)
+Added support for JDK 1.4 ByteBuffer and IntBuffer
+Added support for hashing arrays of chars
+Slight performance improvements
+Revamped API for better memory efficiency
+Added RabinHashFunctionTest class
+
+1.0 (May 2 2001)
+Initial release
