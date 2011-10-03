@@ -4,17 +4,14 @@
  */
 package edu.stanford.photoSpreadLoaders;
 
-import edu.stanford.inputOutput.CsvReader;
-import edu.stanford.inputOutput.ExifReader;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
+import edu.stanford.inputOutput.CsvReader;
 import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpread.PhotoSpreadException.BadUUIDStringError;
 import edu.stanford.photoSpreadObjects.PhotoSpreadImage;

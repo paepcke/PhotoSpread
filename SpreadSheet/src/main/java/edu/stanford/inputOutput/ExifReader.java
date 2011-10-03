@@ -3,6 +3,8 @@ package edu.stanford.inputOutput;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import org.apache.sanselan.ImageReadException;
@@ -22,6 +24,8 @@ import org.apache.sanselan.formats.tiff.constants.TiffConstants;
  * 
  * Additional read capabilities:
  * - Reads date/time field in the format 
+ * 
+ * Oct 3, 2011: Added method metadataArrayToHashmap(). 
  */
 public class ExifReader {
 
@@ -112,6 +116,25 @@ public class ExifReader {
 			result.add(timePair);
 		}
 		return result;
+	}
+	
+	/**
+	 * Turn an ArrayList<ArrayList<String>> into a HashMap<String,String>.
+	 * The read methods above return metadata as nested ArrayLists, which
+	 * is messy. But other classes rely on this return format at this point.
+	 * Therefore this convenience method.
+	 * @param arr An ArrayList<ArrayList<String>>, as returned by methods that read 
+	 * PhotoSpread metadata.
+	 * @return A HashMap<String> that contains all the key/value pairs.
+	 */
+	public static HashMap<String,String> metadataArrayToHashmap(ArrayList<ArrayList<String>> arr) {
+		HashMap<String,String> res = new HashMap<String,String>();
+		Iterator<ArrayList<String>> keyValueArrayIterator = arr.iterator();
+		while (keyValueArrayIterator.hasNext()) {
+			ArrayList<String> oneKeyValPairArr = keyValueArrayIterator.next();
+			res.put(oneKeyValPairArr.get(0), oneKeyValPairArr.get(1));
+		}
+		return res;
 	}
 	
 	/**

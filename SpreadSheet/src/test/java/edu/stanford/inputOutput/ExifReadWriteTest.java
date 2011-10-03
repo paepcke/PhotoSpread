@@ -1,298 +1,177 @@
 package edu.stanford.inputOutput;
 
-// TODO: turn this into a junit test.
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import org.apache.sanselan.ImageReadException;
-import org.apache.sanselan.Sanselan;
-import org.apache.sanselan.common.IImageMetadata;
-import org.apache.sanselan.formats.jpeg.JpegImageMetadata;
-import org.apache.sanselan.formats.tiff.TiffField;
-import org.apache.sanselan.formats.tiff.TiffImageMetadata;
-import org.apache.sanselan.formats.tiff.constants.TagInfo;
-import org.apache.sanselan.formats.tiff.constants.TiffConstants;
+import junit.framework.TestCase;
 
-//import acm.program.ConsoleProgram;
+import org.apache.commons.io.FileUtils;
 
+/**
+ * jUnit test for reading and writing Exif to jpg images.
+ * 
+ * @author paepcke
+ *
+ */
+public class ExifReadWriteTest extends TestCase {
 
+	static String currDir = System.getProperty("user.dir");
 
-public class ExifReadWriteTest {
+	// Test image that's always present in the test branch's
+	// resources subtree:
+	static String exifEmptyMetadataImgFileName;	
+	static File exifEmptyMetadataImgFile;
+	
+	// We'll keep copying the above test image
+	// whenever we need a fresh image to test on:
+	static String exifTempMetadataImgFileName;
+	static File exifTempMetadataImgFile = null;
+	
+	// Test image that contains camera Exif entries:
+	static String imgWithCameraExifFileName;
+	static File imgWithCameraExifFile = null;
+	
+	// For results returned by ExifReader():
+	static ArrayList< ArrayList<String> > arrayRes = null;
+	
+	protected void setUp() throws Exception {
+		super.setUp();
 
-	private static final long serialVersionUID = 1L;
-	private static final byte RECONYX_SEPARATOR = (byte) 0x0d; // 0x0d
-	private static final byte BUCKEYE_SEPARATOR = (byte) 0x0a; // 0x0a
-	private static final byte RECONYX_KEYVAL = (byte) 0x3a; // 0x3a, ':'
-	private static final byte BUCKEYE_KEYVAL = (byte) 0x3d; // 0x3d, '='
+		// All test images are in the resources/TestCases/Photos
+		// subtree below the code root:
+		exifEmptyMetadataImgFileName = InputOutput.normalizePath(currDir + 
+				"/src/test/resources/TestCases/Photos/ambulance.jpg");
+		exifEmptyMetadataImgFile = new File(exifEmptyMetadataImgFileName);
+		
+		exifTempMetadataImgFileName = InputOutput.normalizePath(currDir + 
+				"/src/test/resources/TestCases/Photos/ambulanceTemp.jpg");
+		
+		imgWithCameraExifFileName = InputOutput.normalizePath(currDir + 
+				"/src/test/resources/TestCases/Photos/imgWithCameraExif.jpg");
+		imgWithCameraExifFile = new File(imgWithCameraExifFileName);		
+	}
+	
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		// Remove the temporary test image without complaint
+		// about the File instance still being null, or the
+		// file not being there. Just do our best:
+		FileUtils.deleteQuietly(exifTempMetadataImgFile);
+	}
+	
+	public final void testReadEmptyMetadata() {
+		arrayRes = ExifReader.readMetaDataSet(exifEmptyMetadataImgFileName);
+		assertTrue("Reading from virgin image: expecting empty metadata", 
+					arrayRes.isEmpty());
+	}
+	
+	public final void testWriteReadOneKey() throws IOException {
 
-	/* Public Methods */
+		// Build [["key1", "value1"]]:
+		ArrayList< ArrayList<String> > oneKeyMetadataArray = 
+			new ArrayList<ArrayList<String>> ();
+		
+		ArrayList<String> singleKeyArray =
+			new ArrayList<String>();
+		singleKeyArray.add("key1");
+		singleKeyArray.add("value1");
+		
+		oneKeyMetadataArray.add(singleKeyArray);
+		
+		// Get a fresh copy of the no-metadata reference file:
+		createNoMetadataImgFile();
+		
+		// Write the metadata:
+		ExifWriter.write(exifTempMetadataImgFileName, oneKeyMetadataArray);
+		
+		// ... and read it back:
+		arrayRes = ExifReader.readMetaDataSet(exifTempMetadataImgFileName);
+		
+		// ArrayLists test equality be checking all the individual elements:
+		assertEquals("Read back single-key metadata written from array.",
+			oneKeyMetadataArray,
+			arrayRes);
+	}
+	
+	public final void testWriteReadKeysFromHashtable() throws IOException {
+		
+		// Build the hashmap that holds the metadata to write:
+		HashMap<String, String> keyValuePairHashMap = new HashMap<String, String>();
+		keyValuePairHashMap.put("key2", "value2");
+		keyValuePairHashMap.put("key3", "value3");
+		
+		// Get a fresh copy of the no-metadata reference file:
+		createNoMetadataImgFile();
+		
+		ExifWriter.write(exifTempMetadataImgFileName, keyValuePairHashMap);
+		
+		arrayRes = ExifReader.readMetaDataSet(exifTempMetadataImgFileName);
+		
+		// Turn the result nested ArrayList into a HashMap
+		// on the fly, and compare with the HashMap we put in.
+		// HashMaps know how to compare for equality:
+		assertEquals("Read back metadata written from a HashMap.",
+			keyValuePairHashMap,
+			ExifReader.metadataArrayToHashmap(arrayRes));
+	}
+	
+	public final void testWriteReadKeysFromMetadataIndexer() {
+		// TODO: write test case for exif writing from MetadataIndexer.
+	}
+	
+	public final void testReadExifDateTime() {
+		// Build HashMap of expected result, using our test image:
+		HashMap<String,String> hashMapRes = new HashMap<String,String>();
+		hashMapRes.put("Date", "2003:03:18");
+		hashMapRes.put("Time", "07:52:20");
+		
+		// Expecting: [Date, 2003:03:18], [Time, 07:52:20]]
+		arrayRes = ExifReader.readExifTimeDate(imgWithCameraExifFileName);
 
-	/* 
-	 * Method: init() 
-	 */
+		assertEquals("Reading exif data and time.",
+					 hashMapRes,
+					 ExifReader.metadataArrayToHashmap(arrayRes));
+	}
+	
+	public final void testClearPhotoSpreadMetadata () throws IOException {
+
+		// Build the hashmap that holds the metadata to write:
+		HashMap<String, String> keyValuePairHashMap = new HashMap<String, String>();
+		keyValuePairHashMap.put("key4", "value4");
+		keyValuePairHashMap.put("key5", "value5");
+		
+		// Get a fresh copy of the no-metadata reference file:
+		createNoMetadataImgFile();
+		
+		// Make sure we have metadata to clear:
+		ExifWriter.write(exifTempMetadataImgFileName, keyValuePairHashMap);
+		
+		// Read back what we wrote:
+		arrayRes = ExifReader.readMetaDataSet(exifTempMetadataImgFileName);
+		
+		assertEquals("Read back metadata in preparation of clearing it.",
+			keyValuePairHashMap,
+			ExifReader.metadataArrayToHashmap(arrayRes));
+		
+		// Now clear, re-read, and ensure that metadata
+		// is now empty:
+		ExifWriter.clearPhotoSpreadMetadata(exifTempMetadataImgFileName);
+		arrayRes = ExifReader.readMetaDataSet(exifTempMetadataImgFileName);
+		
+		assertTrue("Metadata after clearing.", arrayRes.isEmpty());
+	}
+
+	
+	// --------------------   Private Methods --------------------
+	
+	
 	/**
-	 * This method has the responsibility for initializing the 
-	 * interactors in the application, and taking care of any other 
-	 * initialization that needs to be performed.
+	 * Copy our clean test file to a temporary file:
+	 * @throws IOException
 	 */
-	public void init() {
-
-	}
-
-	/* 
-	 * Method: run() 
-	 */
-	/**
-	 * This method dislays the initial start-up message.
-	 */
-	public void run() {
-		while (true) {
-			System.out.System.out.println("Please enter the filename (no path needed, RETURN to break): ");
-			String fileName = System.in.readLine();
-			if (fileName.equals("")) break;
-			//int numBytes = readInt("Please enter the number of characters you wish to read: ");
-			File testImageFile = getFile(fileName);
-			
-			//ExifWriter.clearDataField(testImageFile.getAbsolutePath(), TiffConstants.EXIF_TAG_USER_COMMENT);
-			
-			ArrayList< ArrayList<String> > metadata = JfifReader.readMetaDataSet(testImageFile);
-			if (!(metadata.isEmpty())) {
-				for (int i = 0; i < metadata.size(); i++) {
-					ArrayList<String> keyPair = metadata.get(i);
-					println(keyPair.get(0) + ", " + keyPair.get(1));
-				}
-			}
-			
-			
-			
-			/*
-			String key = "";
-			String value = "";
-			byte[] bData = JfifReader.getCommentMetadata(testImageFile);
-			//String sMetadata = new String(bData);
-			int i = 0;
-			while (true) {
-				byte b = bData[i];
-				println(b);
-				if (b == 0x09) break;
-				i++;
-				if (i == bData.length) break;
-			}
-			*/
-		
-			/*
-			String metadata = ExifReader.readMetadataToString(testImageFile, TiffConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
-			println(metadata);
-			
-			println("");
-			*/
-			
-			/*
-			int length = 0;
-			int sPos = 0;
-			String key = "";
-			String value = "";
-			byte[] bData = JfifReader.getCommentMetadata(testImageFile);
-			for (int i = 0; i < bData.length; i++) {
-				byte b = bData[i];
-				if (b == RECONYX_SEPARATOR || b == BUCKEYE_SEPARATOR || b == RECONYX_KEYVAL || b == BUCKEYE_KEYVAL) {
-					if (b == RECONYX_SEPARATOR || b == BUCKEYE_SEPARATOR) {
-						println(b + " Separator");
-						value = makeWord(bData, sPos, length);
-						println("Value: " + value);
-					}
-					if (b == RECONYX_KEYVAL || b == BUCKEYE_KEYVAL) {
-						println(b + " Key/Value Pair");
-						key = makeWord(bData, sPos, length);
-						println("Key: " + key);
-					}
-					println("Length: " + length);
-					println("Starting position: " + sPos);
-					length = 0;
-					sPos = i + 1;
-				} else {
-					println(b);
-					length++;
-				}
-			}
-			println("Length: " + length);
-			*/
-			
-			/*
-			ArrayList<String> metadataArray = ExifReader.readMetaDataKeyValue(testImageFile);
-			println(metadataArray.toString());
-			
-		
-			println("BEFORE update");
-			readMetaData(testImageFile);
-			
-			String filePath = getFilePath(fileName);
-			test(filePath);
-
-			println("\nAFTER update");
-			readMetaData(testImageFile);
-			*/
-		}
-		println("The program has terminated");
-	}
-
-	private File getFile(String fileName){
-		if (fileName.equals("")) return null;
-		String filePath = "src/img/test/" + fileName + ".jpg";
-		File result = null;
-		result = new File(filePath);
-		return result;			
-	}
-	
-	private String getFilePath(String fileName) {
-		if (fileName.equals("")) return null;
-		String filePath = "src/img/test/" + fileName + ".jpg";
-		return filePath;
-	}
-	
-	@SuppressWarnings("unused")
-	private void test(File testImageFile) {
-		ArrayList< ArrayList<String> > tags = new ArrayList< ArrayList<String> >();
-		String key = "";
-		String value = "";
-		
-		while (true) {
-			ArrayList<String> entry = new ArrayList<String>();
-			key = readLine("Please enter the key: ");
-			if (key.equals("")) break;
-			value = readLine("Please enter the value: ");
-			if (value.equals("")) break;
-			entry.add(key);
-			entry.add(value);
-			tags.add(entry);
-		}
-		
-		ExifWriter.write(testImageFile, tags);
-	}
-	
-	private void test(String filePath) {
-		ArrayList< ArrayList<String> > tags = new ArrayList< ArrayList<String> >();
-		String key = "";
-		String value = "";
-		
-		/*
-		while (true) {
-			ArrayList<String> entry = new ArrayList<String>();
-			key = readLine("Please enter the key: ");
-			if (key.equals("")) break;
-			value = readLine("Please enter the value: ");
-			if (value.equals("")) break;
-			entry.add(key);
-			entry.add(value);
-			tags.add(entry);
-		}
-		
-		ExifWriter.write(filePath, tags);
-		*/
-		
-		key = readLine("Please enter the text to be written: ");
-		ExifWriter.write(filePath, key);
-	}
-
-	/**
-	 * Read metadata from image file and display it. 
-	 * @param file
-	 */
-	@SuppressWarnings("rawtypes")
-	private void readMetaData(File file) {
-		IImageMetadata metadata = null;
-		try {
-			metadata = Sanselan.getMetadata(file);
-		} catch (ImageReadException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		if (metadata instanceof JpegImageMetadata) {
-			JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
-			println("\nFile: " + file.getPath());
-			printTagValue(jpegMetadata,
-					TiffConstants.TIFF_TAG_XRESOLUTION);
-			printTagValue(jpegMetadata,
-					TiffConstants.TIFF_TAG_DATE_TIME);
-			printTagValue(jpegMetadata,
-					TiffConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
-			printTagValue(jpegMetadata,
-					TiffConstants.EXIF_TAG_CREATE_DATE);
-			printTagValue(jpegMetadata,
-					TiffConstants.EXIF_TAG_ISO);
-			printTagValue(jpegMetadata,
-					TiffConstants.EXIF_TAG_SHUTTER_SPEED_VALUE);
-			printTagValue(jpegMetadata,
-					TiffConstants.EXIF_TAG_APERTURE_VALUE);
-			printTagValue(jpegMetadata,
-					TiffConstants.EXIF_TAG_BRIGHTNESS_VALUE);
-
-			// simple interface to GPS data
-			TiffImageMetadata exifMetadata = jpegMetadata.getExif();
-			if (exifMetadata != null) {
-				try {
-					TiffImageMetadata.GPSInfo gpsInfo = exifMetadata.getGPS();
-					if (null != gpsInfo) {
-						double longitude = gpsInfo.getLongitudeAsDegreesEast();
-						double latitude = gpsInfo.getLatitudeAsDegreesNorth();
-						println("    " +
-								"GPS Description: " + gpsInfo);
-						println("    " +
-								"GPS Longitude (Degrees East): " +
-								longitude);
-						println("    " +
-								"GPS Latitude (Degrees North): " +
-								latitude);
-					}
-				} catch (ImageReadException e) {
-					e.printStackTrace();
-				}
-			}
-
-			println("EXIF items -");
-			ArrayList items = jpegMetadata.getItems();
-			for (int i = 0; i < items.size(); i++) {
-				Object item = items.get(i);
-				println("    " + "item: " +
-						item);
-			}
-			println();
-		}
-	}
-
-	private void printTagValue(JpegImageMetadata jpegMetadata, TagInfo tagInfo) {
-		TiffField field = jpegMetadata.findEXIFValue(tagInfo);
-		if (field == null) {
-			println(tagInfo.name + ": " +
-			"Not Found.");
-		} else {
-			println(tagInfo.name + ": " +
-					field.getValueDescription());
-		}
-	}
-	
-	private static String makeWord (byte[] bArray, int sPos, int length) {
-		byte[] bWord = new byte[length];
-		for (int i = sPos; i < sPos + length; i++) {
-			bWord[i-sPos] = bArray[i];
-		}
-		String word = new String(bWord);
-		return word;
-	}
-	
-	private static void addWord (ArrayList< ArrayList<String> > metadata, String key, String value) {
-		ArrayList<String> keyPair = new ArrayList<String>();
-		keyPair.add(key);
-		keyPair.add(value);
-		metadata.add(keyPair);
-	}
-	
-	public static void main(String[] args) {
-		ExifReadWriteTest test = new ExifReadWriteTest();
-		test.run();
+	private final void createNoMetadataImgFile() throws IOException {
+		FileUtils.copyFile(exifEmptyMetadataImgFile, new File(exifTempMetadataImgFileName));
 	}
 }

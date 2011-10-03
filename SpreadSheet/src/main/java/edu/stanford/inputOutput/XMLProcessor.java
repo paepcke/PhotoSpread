@@ -16,6 +16,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.apache.xerces.parsers.DOMParser;
+
 import edu.stanford.photoSpread.PhotoSpreadException;
 import edu.stanford.photoSpread.PhotoSpreadException.BadSheetFileContent;
 import edu.stanford.photoSpread.PhotoSpreadException.BadUUIDStringError;
@@ -26,7 +28,7 @@ import edu.stanford.photoSpreadTable.PhotoSpreadCell;
 import edu.stanford.photoSpreadTable.PhotoSpreadTableModel;
 import edu.stanford.photoSpreadUtilities.Const;
 
-import com.sun.org.apache.xerces.internal.parsers.DOMParser;
+//import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 
 /**
  * 

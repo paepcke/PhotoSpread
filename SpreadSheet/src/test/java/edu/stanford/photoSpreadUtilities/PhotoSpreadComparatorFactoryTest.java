@@ -3,6 +3,8 @@
  */
 package edu.stanford.photoSpreadUtilities;
 
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
@@ -57,7 +59,8 @@ public class PhotoSpreadComparatorFactoryTest extends TestCase {
 			psStrObj5 = new PhotoSpreadStringObject(new PhotoSpreadCell(new PhotoSpreadTableModel(), 0, 4), "Obj5");
 			psStrObj6 = new PhotoSpreadStringObject(new PhotoSpreadCell(new PhotoSpreadTableModel(), 0, 5), "Obj6");
 		} catch (Exception e) {
-			
+			System.out.println(e);
+			printClasspath();
 		}
 					
 		objsUUIDTree = new TreeSetRandomSubsetIterable<PhotoSpreadObject>(compUUID);
@@ -171,6 +174,16 @@ public class PhotoSpreadComparatorFactoryTest extends TestCase {
 				"Neither obj has field. Should default to comparing UUIDs", 
 				Const.SMALLER,  // Obj3 < Obj4, making obj3 appear earlier in a sort. (Obj3 created ealier) 
 				compMetadata.compare(psStrObj3, psStrObj4));
+	}
+	
+	private void printClasspath() {
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+        
+        URL[] urls = ((URLClassLoader)cl).getURLs();
+ 
+        for(URL url: urls){
+        	System.out.println(url.getFile());
+        }
 	}
 }
 

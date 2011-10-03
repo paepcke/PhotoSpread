@@ -46,8 +46,8 @@ public class ExifWriter {
 
     /**
      * Writes the string "text" to the UserComment field of the file 
-     * "file". Assumes that text has already been already formatted 
-     * to fit program specifications.
+     * "file". Assumes that text been already formatted to fit program specifications
+     * (key \t value):
      * @param file
      * @param text
      */
@@ -120,7 +120,7 @@ public class ExifWriter {
     /**
      * Writes the string "text" to the UserComment field of the file 
      * specified by "filePath". Assumes that text has already been 
-     * already formatted to fit program specifications.
+     * formatted to fit program specifications.
      * @param filePath
      * @param text
      */
@@ -135,7 +135,7 @@ public class ExifWriter {
      * UserComment field of the file "file". Reformats the 
      * tags to fit a string of the format
      * 
-     * [key:value]
+     * [key \t value]
      * 
      * separated by lines.
      * @param file
@@ -152,7 +152,7 @@ public class ExifWriter {
      * UserComment field of the file specified by "filePath". 
      * Reformats the tags to fit a string of the format
      * 
-     * [key:value]
+     * [key \t value]   (Andreas: was [key:value]
      * 
      * separated by lines.
      * @param file
@@ -167,15 +167,15 @@ public class ExifWriter {
     }
     
     /**
-     * Writes the string derived by the HashMap "tags" to the 
+     * Writes the string derived by the ArrayList "tags" to the 
      * UserComment field of the file "file". Reformats the 
-     * tags to fit a string of the format
+     * tags to fit a string of the format.
      * 
      * [key \t value]
      * 
      * separated by lines.
-     * @param file
-     * @param tags
+     * @param file Image file object
+     * @param tags [[key1,value1], [key2,value2], ... ]
      */
     public static void write (File file, ArrayList< ArrayList<String> > tags) {
     	String text = "";
@@ -184,15 +184,15 @@ public class ExifWriter {
     }
     
     /**
-     * Writes the string derived by the HashMap "tags" to the 
+     * Writes the string derived by the ArrayList "tags" to the 
      * UserComment field of the file specified by "filePath". 
      * Reformats the tags to fit a string of the format
      * 
      * [key \t value]
      * 
      * separated by lines.
-     * @param file
-     * @param tags
+     * @param file Image file path
+     * @param tags [[key1,value1], [key2,value2], ... ]
      */
     public static void write (String filePath, ArrayList< ArrayList<String> > tags) {
     	String text = "";
@@ -228,6 +228,10 @@ public class ExifWriter {
     		valueMap = objectMap.get(psFileObject);
     		write (filePath, valueMap);
     	}
+    }
+    
+    public static void clearPhotoSpreadMetadata(String filePath) {
+    	clearDataField(filePath, TiffConstants.EXIF_TAG_USER_COMMENT);
     }
     
     public static void clearDataField (String filePath, TagInfo tagLocation) {

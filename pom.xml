@@ -14,4 +14,9 @@
     <module>SpreadSheet</module>
     <module>RabinHashFunction</module>
   </modules>
+  <scm>
+  	<url>https://github.com/paepcke/PhotoSpread/</url>
+  	<developerConnection>scm:git:[fetch=]https://paepcke@github.com/paepcke/PhotoSpread.git[push=]scm:git:ssh://git@github.com:paepcke/PhotoSpread.git</developerConnection>
+  	<connection>scm:git:https://paepcke@github.com/paepcke/PhotoSpread.git</connection>
+  </scm>
 </project>

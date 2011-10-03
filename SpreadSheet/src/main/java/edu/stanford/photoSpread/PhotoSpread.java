@@ -3,12 +3,9 @@
  */
 package edu.stanford.photoSpread;
 
-import edu.stanford.inputOutput.InputOutput;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.ComponentEvent;
 import java.beans.PropertyVetoException;
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,13 +31,13 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import edu.stanford.inputOutput.InputOutput;
 import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
 import edu.stanford.photoSpread.PhotoSpreadException.IllegalPreferenceException;
 import edu.stanford.photoSpread.PhotoSpreadException.IllegalPreferenceValueException;
 import edu.stanford.photoSpread.PhotoSpreadException.NotImplementedException;
 import edu.stanford.photoSpreadObjects.PhotoSpreadTableObject;
 import edu.stanford.photoSpreadObjects.photoSpreadComponents.Workspace;
-import edu.stanford.photoSpreadTable.PhotoSpreadTable;
 import edu.stanford.photoSpreadTable.PhotoSpreadTableMenu;
 import edu.stanford.photoSpreadUtilities.Misc;
 import edu.stanford.photoSpreadUtilities.PhotoSpreadProperties;
