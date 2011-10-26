@@ -27,9 +27,9 @@ public class TreeSetRandomSubsetIterableTest extends TestCase {
 	PhotoSpreadDoubleObject _double9Obj;
 	PhotoSpreadDoubleObject _double11Obj;
 	
-	String _unixFileName = "/usr/local/bin/foo.txt";
-	String _winFileName  = "C:\\Program Files\\FooApp\\bin\\happyHour.exe";
-	String _imgFileName  = "dc00000002.jpg";
+	String _unixFileName = "src/test/resources/TestCases/treeSetRandomSubsetIterableTestUnix.txt";
+	String _winFileName  = "src\\test\\resources\\TestCases\\treeSetRandomSubsetIterableTestWin.txt";
+	String _imgFileName  = "src/test/resources/TestCases/Photos/ambulance.jpg";
 	PhotoSpreadTextFile _unixTextFilePSObj;
 	PhotoSpreadTextFile _winTextFilePSObj;
 	PhotoSpreadImage _imgFilePSObj;

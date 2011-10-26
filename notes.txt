@@ -1,3 +1,8 @@
+To do:
+
+PhotoSpreadCellEditor-->createCellHandler()
+
+
 The only significant differences between:
   dldev/src/PhotoSpread/trunk/PhotoSpread/src/ and 
   dldev/EclipseWorkspaces/PhotoSpread/SpreadSheet/src/main/java/edu/stanford/

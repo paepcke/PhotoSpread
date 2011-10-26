@@ -57,11 +57,11 @@ public class PhotoSpreadObjIndexerFinder implements ObjectIndexerFinder<PhotoSpr
 		public DispatchHashMap () {
 
 			try {
-				put(Class.forName("photoSpreadObjects.PhotoSpreadStringObject"), PhotoSpreadDispatch.STRING);
-				put(Class.forName("photoSpreadObjects.PhotoSpreadDoubleObject"), PhotoSpreadDispatch.DOUBLE);
-				put(Class.forName("photoSpreadObjects.PhotoSpreadTextFile"), PhotoSpreadDispatch.FILE);
-				put(Class.forName("photoSpreadObjects.PhotoSpreadImage"), PhotoSpreadDispatch.FILE);
-				put(Class.forName("photoSpreadObjects.PhotoSpreadTableObject"), PhotoSpreadDispatch.TABLE);
+				put(Class.forName("edu.stanford.photoSpreadObjects.PhotoSpreadStringObject"), PhotoSpreadDispatch.STRING);
+				put(Class.forName("edu.stanford.photoSpreadObjects.PhotoSpreadDoubleObject"), PhotoSpreadDispatch.DOUBLE);
+				put(Class.forName("edu.stanford.photoSpreadObjects.PhotoSpreadTextFile"), PhotoSpreadDispatch.FILE);
+				put(Class.forName("edu.stanford.photoSpreadObjects.PhotoSpreadImage"), PhotoSpreadDispatch.FILE);
+				put(Class.forName("edu.stanford.photoSpreadObjects.PhotoSpreadTableObject"), PhotoSpreadDispatch.TABLE);
 			} catch (ClassNotFoundException e) {
 				// Use a runtime exception here, because class-not-found
 				// will be obvious at debug time. This way we don't

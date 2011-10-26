@@ -82,18 +82,19 @@ public class DnDSupport {
 			Const.dndGhostBorderShadowColor);
 
 	protected static OsmoticOverlayTracker _dndCellInfoPanel = 
-		new OsmoticOverlayTracker(PhotoSpread.getCurrentSheetWindow());
+		new OsmoticOverlayTracker(edu.stanford.photoSpread.PhotoSpread.getCurrentSheetWindow());
 
-	public static final String mimeAndClassInfo = DataFlavor.javaJVMLocalObjectMimeType + ";class=photoSpreadTable.PhotoSpreadCell";
+	public static final String mimeAndClassInfo = DataFlavor.javaJVMLocalObjectMimeType + 
+												  ";class=edu.stanford.photoSpreadTable.PhotoSpreadCell";
 	public static PhotoSpreadCellFlavor photoSpreadCellFlavor;
 	
 	// Make an instance of our new DataFlavor:
 	static{
 		try{
-			photoSpreadCellFlavor = new PhotoSpreadCellFlavor(mimeAndClassInfo);
+			photoSpreadCellFlavor = new edu.stanford.photoSpreadTable.DnDSupport.PhotoSpreadCellFlavor(mimeAndClassInfo);
 		}
 		catch(ClassNotFoundException e){
-			System.out.println("Class not found:PhotoSpread.PhotoSpreadCell");
+			System.out.println("Class not found:PhotoSpreadCellFlavor in DnDSupport.java");
 		}
 	}
 	public static DataFlavor[] supportedImportExportFlavorsForTable = {

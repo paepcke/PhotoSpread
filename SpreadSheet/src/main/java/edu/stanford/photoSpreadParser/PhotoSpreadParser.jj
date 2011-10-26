@@ -72,7 +72,7 @@ import edu.stanford.photoSpreadParser.parseTestSkeleton.photoSpreadObjects.Photo
   Token aToken;
   String extraText = "";}{try{    (    < EQ > e = FormulaExpression()  )  {
     // Must not have any left-over tokens after the expression:    extraText = "";    //while ((eofToken = getNextToken()).kind != EOF) extraText += eofToken.image;
-    extraText += grabAllRest(!GET_FROM_START);    if (!extraText.isEmpty()) throw new ParseException("Can't make sense of final formula portion: '"+ extraText+ "'");    return e;  }
+    extraText += grabAllRest(!GET_FROM_START);    if (!extraText.isEmpty()) throw new ParseException("Can't make sense of final formula portion (possible hint: remember that all functions are all lower case): '"+ extraText+ "'");    return e;  }
 | // The formula editor window text starts with something
   // other than '='. Check whether the text is a number:  (     aToken = < SIGNED_NUMBER >
    | aToken = < NUMBER >

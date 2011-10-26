@@ -20,8 +20,6 @@ import java.util.ArrayList;
  */
 public class JfifReader {
 
-	private static final long serialVersionUID = 1L;
-	
 	/**
 	 * Private Unicode Constants
 	 */

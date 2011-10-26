@@ -96,9 +96,9 @@ public class PhotoSpreadConditionTest extends TestCase {
 		assertEquals("Left lower case, right Upper case", true, _condLeftLowerCase.satisfiesCondition(
                  new edu.stanford.photoSpreadObjects.PhotoSpreadStringObject(_cell_flower, "Flower")));
 //new PhotoSpreadStringObject(_cell_flower, "Flower")));		
-		assertEquals("Left Upper case, right Upper case", true, _condLeftLowerCase.satisfiesCondition(
+		assertEquals("Left Upper case, right Upper case", true, _condLeftUpperCase.satisfiesCondition(
                  new edu.stanford.photoSpreadObjects.PhotoSpreadStringObject(_cell_Animal, "Animal")));	      //new PhotoSpreadStringObject(_cell_Animal, "Animal")));						      
-		assertEquals("Left Upper case, right lower case", true, _condLeftLowerCase.satisfiesCondition(
+		assertEquals("Left Upper case, right lower case", true, _condLeftUpperCase.satisfiesCondition(
                  new edu.stanford.photoSpreadObjects.PhotoSpreadStringObject(_cell_Animal, "animal")));	      //new PhotoSpreadStringObject(_cell_flower, "animal")));
 
 	}

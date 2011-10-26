@@ -19,4 +19,14 @@
   	<developerConnection>scm:git:[fetch=]https://paepcke@github.com/paepcke/PhotoSpread.git[push=]scm:git:ssh://git@github.com:paepcke/PhotoSpread.git</developerConnection>
   	<connection>scm:git:https://paepcke@github.com/paepcke/PhotoSpread.git</connection>
   </scm>
+  <build>
+	<plugins>
+  	  <plugin>
+		<artifactId>maven-surefire-plugin</artifactId>
+		<configuration>
+			<forkMode>never</forkMode>
+		</configuration>
+  	  </plugin>
+  	</plugins>
+  </build>  
 </project>

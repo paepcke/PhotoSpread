@@ -9,7 +9,8 @@ import edu.stanford.photoSpreadUtilities.PhotoSpreadObjIndexerFinder;
 import edu.stanford.photoSpreadUtilities.TreeSetRandomSubsetIterable;
 
 public class PhotoSpreadDoubleConstant extends PhotoSpreadConstant 
-implements FunctionResultable {
+implements FunctionResultable,
+		   Comparable<PhotoSpreadDoubleConstant> {
 	
 	
 	Double _number = 0.0;
@@ -59,5 +60,9 @@ implements FunctionResultable {
 
 	public Double toDouble() {
 		return _number;
+	}
+
+	public int compareTo(PhotoSpreadDoubleConstant psDoubleConst) {
+		return valueOf().compareTo(psDoubleConst.valueOf());
 	}
 }

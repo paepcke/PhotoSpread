@@ -13,6 +13,7 @@ import junit.framework.TestCase;
 import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadObjects.PhotoSpreadStringObject;
+import edu.stanford.photoSpreadParser.photoSpreadExpression.PhotoSpreadDoubleConstant;
 import edu.stanford.photoSpreadTable.PhotoSpreadCell;
 import edu.stanford.photoSpreadTable.PhotoSpreadTableModel;
 import edu.stanford.photoSpreadUtilities.PhotoSpreadComparatorFactory.MetadataComparator;
@@ -30,6 +31,10 @@ public class PhotoSpreadComparatorFactoryTest extends TestCase {
 	PhotoSpreadStringObject psStrObj4;
 	PhotoSpreadStringObject psStrObj5;
 	PhotoSpreadStringObject psStrObj6;
+	
+	PhotoSpreadDoubleConstant psDouble1_value1;
+	PhotoSpreadDoubleConstant psDouble2_value1;
+	PhotoSpreadDoubleConstant psDouble3_value2;
 	
 	UUIDComparator compUUID = 
 		(UUIDComparator) PhotoSpreadComparatorFactory.createPSUUIDComparator();
@@ -58,6 +63,10 @@ public class PhotoSpreadComparatorFactoryTest extends TestCase {
 			psStrObj4 = new PhotoSpreadStringObject(new PhotoSpreadCell(new PhotoSpreadTableModel(), 0, 3), "Obj4");
 			psStrObj5 = new PhotoSpreadStringObject(new PhotoSpreadCell(new PhotoSpreadTableModel(), 0, 4), "Obj5");
 			psStrObj6 = new PhotoSpreadStringObject(new PhotoSpreadCell(new PhotoSpreadTableModel(), 0, 5), "Obj6");
+			
+			psDouble1_value1 = new PhotoSpreadDoubleConstant(new PhotoSpreadCell(new PhotoSpreadTableModel(), 0, 6), 1.0);
+			psDouble2_value1 = new PhotoSpreadDoubleConstant(new PhotoSpreadCell(new PhotoSpreadTableModel(), 0, 7), 1.0);
+			psDouble3_value2 = new PhotoSpreadDoubleConstant(new PhotoSpreadCell(new PhotoSpreadTableModel(), 0, 8), 2.0);
 		} catch (Exception e) {
 			System.out.println(e);
 			printClasspath();
@@ -116,7 +125,7 @@ public class PhotoSpreadComparatorFactoryTest extends TestCase {
 		psStrObj2.setMetaData("DOB", "1975-01-30");
 		
 		// Different case for key and value; else same:
-		psStrObj3.setMetaData("name", "eric");
+		psStrObj3.setMetaData("Name", "eric");
 		psStrObj3.setMetaData("Age", "25");
 		psStrObj3.setMetaData("DOB", "1975-01-30");
 
@@ -175,6 +184,16 @@ public class PhotoSpreadComparatorFactoryTest extends TestCase {
 				Const.SMALLER,  // Obj3 < Obj4, making obj3 appear earlier in a sort. (Obj3 created ealier) 
 				compMetadata.compare(psStrObj3, psStrObj4));
 	}
+	
+	public void testComparePrimitiveTypes() {
+		
+		// Doubles:
+		assertTrue("PS doubles equal.", psDouble1_value1.compareTo(psDouble2_value1) == 0);
+		assertTrue("PS doubles first less than second.", psDouble1_value1.compareTo(psDouble3_value2) < 0);
+		assertTrue("PS doubles first greater than second.", psDouble3_value2.compareTo(psDouble1_value1) > 0);
+	}
+	
+	
 	
 	private void printClasspath() {
         ClassLoader cl = ClassLoader.getSystemClassLoader();

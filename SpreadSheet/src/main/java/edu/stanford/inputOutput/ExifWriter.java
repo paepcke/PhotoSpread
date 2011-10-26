@@ -38,8 +38,6 @@ import edu.stanford.photoSpreadUtilities.MetadataIndexer;
  */
 public class ExifWriter {
 
-	private static final long serialVersionUID = 1L;
-	
 	/****************************************************
 	 * Public Methods
 	 *****************************************************/

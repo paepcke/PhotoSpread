@@ -6,7 +6,8 @@ import edu.stanford.photoSpreadTable.PhotoSpreadCell;
 import edu.stanford.photoSpreadUtilities.PhotoSpreadObjIndexerFinder;
 import edu.stanford.photoSpreadUtilities.TreeSetRandomSubsetIterable;
 
-public class PhotoSpreadStringConstant extends PhotoSpreadConstant {
+public class PhotoSpreadStringConstant extends PhotoSpreadConstant
+	implements Comparable<PhotoSpreadStringConstant> {
 	
 	String _str = "";
 	
@@ -34,5 +35,9 @@ public class PhotoSpreadStringConstant extends PhotoSpreadConstant {
 	@Override
 	public String valueOf () {
 		return _str;
+	}
+
+	public int compareTo(PhotoSpreadStringConstant psStrConst) {
+		return _str.compareTo(psStrConst.valueOf());
 	}
 }

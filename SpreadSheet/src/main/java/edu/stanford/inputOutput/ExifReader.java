@@ -29,8 +29,6 @@ import org.apache.sanselan.formats.tiff.constants.TiffConstants;
  */
 public class ExifReader {
 
-	private static final long serialVersionUID = 1L;
-	
 	/****************************************************
 	 * Public Methods
 	 *****************************************************/

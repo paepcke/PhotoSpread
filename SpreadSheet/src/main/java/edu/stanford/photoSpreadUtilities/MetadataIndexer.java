@@ -60,8 +60,6 @@ import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 
 public class MetadataIndexer {
 
-	private static final long serialVersionUID = 1L;
-
 	ArrayList<String> _keysToIndex = new ArrayList<String>();
 	ValueMap _valueMap = new ValueMap();
 

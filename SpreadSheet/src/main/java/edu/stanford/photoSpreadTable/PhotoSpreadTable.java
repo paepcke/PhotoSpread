@@ -338,6 +338,20 @@ public class PhotoSpreadTable extends JTable {
 		return new CellCoordinates (getRowUnderCursor(), getColumnUnderCursor());
 	}
 
+	/* (non-Javadoc)
+	 * @see javax.swing.JTable#getRowCount()
+	 */
+	public int getRowCount() {
+		return _tableModel.getRowCount();
+	}
+
+	/* (non-Javadoc)
+	 * @see javax.swing.JTable#getColumnCount()
+	 */
+	public int getColumnCount() {
+		return _tableModel.getColumnCount();
+	}
+	
 	/**
 	 * Find the number of the column under the current cursor position.
 	 * @return This table's column under the cursor, or -1 if cursor is not 

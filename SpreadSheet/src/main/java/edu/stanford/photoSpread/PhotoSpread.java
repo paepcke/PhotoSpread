@@ -80,7 +80,7 @@ import edu.stanford.photoSpreadUtilities.PhotoSpreadProperties;
 public class PhotoSpread {
 
 	// NOTE: Change this for new versions:
-	public static String version = "V7Alpha4";
+	public static String version = "0.8";
 	
 	public static enum DebugLevel {
 		DEBUG, NO_DEBUG
@@ -92,6 +92,9 @@ public class PhotoSpread {
 	private static Workspace _currentWorkspace = null;
 	private static Component _defaultGlassPane = null; 
 
+	private static CommandLine parsedOptions;
+
+	
 	// List of all legal, but currently unimplemented
 	// attribute names:
 
@@ -174,7 +177,7 @@ public class PhotoSpread {
 
 	public static String propertySeparator = "=";
 
-	public static String prefsFileExtension = "cnf";
+	public static String prefsFileExtension = "properties";
 
 	// Default and user preferences. Specify enough entries that 
 	// no rehashing is required. I experienced a bug with Properties
@@ -186,9 +189,9 @@ public class PhotoSpread {
 	public static  PhotoSpreadProperties<String, String> photoSpreadPrefs = 
 		new PhotoSpreadProperties<String, String>(photoSpreadDefaults, 100);
 
-	private static String photoSpreadPrefsDir = "_photoSpread" + 
+	private static String photoSpreadPrefsDir = ".photoSpread" + 
 	System.getProperty("file.separator");
-	private static String photoSpreadPrefsFileName = "photoSpreadPrefs." + prefsFileExtension;
+	private static String photoSpreadPrefsFileName = "photoSpread." + prefsFileExtension;
 	private static String prefsFilePath;
 
 	/****************************************************
@@ -296,7 +299,6 @@ public class PhotoSpread {
 
 
 		final boolean noArg = false;
-		CommandLine parsedOptions;
 
 		// Generate an 'Options' instance and 
 		// add specifications for each acceptable option.
@@ -309,6 +311,21 @@ public class PhotoSpread {
 		// and you have to use it for options that may occur more than
 		// once. But not for single-letter options...
 
+		cmdLineOptions.addOption(OptionBuilder
+				.withLongOpt("sheetNumCols")
+				.withDescription("Number of columns in the PhotoSpread sheet.")
+				.hasArgs(1)
+				.create()); // create option w/ these above parameters
+		
+		cmdLineOptions.addOption(OptionBuilder
+				.withLongOpt("sheetNumRows")
+				.withDescription("Number of rows in the PhotoSpread sheet.")
+				.hasArgs(1)
+				.create()); // create option w/ these above parameters
+		
+		// The following cmd line options are commented out, 
+		// b/c they are not that useful:
+		/*
 		cmdLineOptions.addOption(OptionBuilder
 				.withLongOpt("workspaceSize")
 				.withDescription("Initial size of workspace in pixels \"W H\".")
@@ -332,8 +349,8 @@ public class PhotoSpread {
 				.withDescription("Colon-separated paths to PhotoSpread resources (such as photos).")
 				.hasArgs(1) // 
 				.create()); // create option w/ these above parameters
-
-
+		*/
+		
 		// Automatically generate a help string from the Options instance:
 		HelpFormatter formatter = new HelpFormatter();
 
@@ -341,7 +358,6 @@ public class PhotoSpread {
 		try {
 			// Parse the commandline options:
 			parsedOptions = parser.parse(cmdLineOptions, args);
-
 		} catch (ParseException e) {
 			// Bad command line option syntax:
 			throw new PhotoSpreadException.IllegalArgumentException("Command line options parsing failed. Reason: " + e.getMessage());
@@ -353,12 +369,6 @@ public class PhotoSpread {
 		if (parsedOptions.hasOption("help"))  {
 			formatter.printHelp("PhotoSpread.jar", cmdLineOptions);
 			return false;
-		}
-
-		if (parsedOptions.hasOption("resourcePaths")) {
-			// TODO: resolve paths here
-			// Get colon-separated list of resource path
-			// String[] rps = parsedOptions.getOptionValues("r");
 		}
 
 		// Go through each option object and pull out
@@ -522,7 +532,7 @@ public class PhotoSpread {
 		// Was command line arg included to set the preferences file?
 		prefsFilePath = System.getProperty(prefsFileKey);
 		if (prefsFilePath == null) {
-			// If not: If $HOME available: prefs file is like $HOME/.photoSpread/photoSpreadPrefs.cnf
+			// If not: If $HOME available: prefs file is like $HOME/.photoSpread/photoSpread.properties
 			if (System.getenv("HOME") != null) {
 				prefsFilePath = System.getenv("HOME") + 
 				System.getProperty("file.separator") +
@@ -558,7 +568,26 @@ public class PhotoSpread {
 				}
 			} // end if
 		}
-
+		// Overwrite the options in the config file with any that
+		// were passed in via commandline:
+		
+		try {
+			if (parsedOptions.hasOption(sheetNumRowsKey)) {
+				photoSpreadPrefs.put(sheetNumRowsKey, parsedOptions.getOptionValue(sheetNumRowsKey));
+			} 
+		} catch (Exception e) {}
+		
+		try {
+			if (parsedOptions.hasOption(sheetNumColsKey)) {
+				photoSpreadPrefs.put(sheetNumColsKey, parsedOptions.getOptionValue(sheetNumColsKey));
+		}
+		} catch (Exception e) {}
+		
+		// Number of columns on the command line or in the pref file
+		// are short by one, because the use Col0 for row numbers.
+		int colsWanted = photoSpreadPrefs.getInt(sheetNumColsKey);
+		photoSpreadPrefs.put(sheetNumColsKey, ""+(colsWanted + 1));
+		
 		// Check validity of the options that we can check and exit:
 		validatePreferences();
 	}
@@ -642,8 +671,13 @@ public class PhotoSpread {
 			int numCols = photoSpreadPrefs.getInt(sheetNumColsKey);
 			int numRows = photoSpreadPrefs.getInt(sheetNumRowsKey);
 
-
-			if ((minColWidth * numCols) > sheetDim.width) {
+			int sheetPixelWidth = minColWidth * numCols; 
+			if (sheetPixelWidth > sheetDim.width) {
+				// Adjust the sheet width dimension if it is smaller
+				// than required for the number of columns:
+				sheetDim.width = sheetPixelWidth;
+				/*
+				 // The above discrepancy used to be an error: 
 					new StartupErrorPanel(
 						"Preference value error: " +
 						sheetColWidthMinKey +
@@ -658,9 +692,17 @@ public class PhotoSpread {
 						"."
 				);
 				System.exit(-1);
+				*/
 			}
 
-			if ((minRowHeight * numRows) > sheetDim.height) {
+			int sheetPixelHeight = minRowHeight * numRows;  
+			if (sheetPixelHeight > sheetDim.height) {
+				// Adjust the sheet height dimension if is is smaller
+				// than required for the number of rows:
+				sheetDim.height = sheetPixelHeight;
+			}				
+				/*
+	             // The above discrepancy used to be an error:
 				new StartupErrorPanel(
 						"Preference value error: " +
 						sheetRowHeightMinKey +
@@ -678,6 +720,8 @@ public class PhotoSpread {
 				);
 				System.exit(-1);
 			}
+			*/
+
 		} catch (NumberFormatException e) {
 			// already checked validity
 		}
@@ -701,8 +745,7 @@ public class PhotoSpread {
 
 			public void run() {
 
-				// TODO ****************    Disabled Command Line Arg Checking for JProbe ************
-				/*       		try {
+				try {
         			if (!processCommandLineArgs(args))
         				System.exit(-1);
         		} catch (IllegalArgumentException e) {
@@ -713,7 +756,6 @@ public class PhotoSpread {
         			// e.printStackTrace();
         			System.exit(0);
         		}
-				 */        		// End ****************    Disabled Command Line Arg Checking for JProbe ************
 				
 				// Set up properties file:
 				try {
@@ -748,13 +790,6 @@ public class PhotoSpread {
 				}
 
 				PhotoSpreadTableObject tableObject = new PhotoSpreadTableObject((JFrame) app);
-				
-				
-				
-			
-				
-				
-				
 				
 				JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 				PhotoSpreadTableMenu mainMenuBar = new PhotoSpreadTableMenu(tableObject);
