@@ -51,10 +51,14 @@ import edu.stanford.photoSpreadUtilities.PhotoSpreadProperties;
  * from command line options. The preferences file
  * is by default expected in:
  * 
- * 		1. The command line as prefsFile=<filePath>
- * 		2. $HOME/_photoSpread/photoSpreadPrefs.cnf
+ * 		1. $HOME/.photoSpread/photoSpread.properties
+ * 		2 (disabled). The command line as prefsFile=<filePath>
  * 
- * It's OK if no file is found. Defaults take over
+ * It's OK if no file is found. Defaults take over.
+ * File syntax: o <key> = <value>
+ *              o One key/value pair per line
+ *              o '#' makes a comment.
+ *              o For legal properties see enum legalPreferenceAttrNames below. 
  * 
  * To add a new preference to the system:
  * 
@@ -93,7 +97,8 @@ public class PhotoSpread {
 	private static Component _defaultGlassPane = null; 
 
 	private static CommandLine parsedOptions;
-
+	private final static int WIN_BORDER_HEIGHT = 80;  // Height of the outermost window frame.
+		                                       // TODO: should get that from window itself.
 	
 	// List of all legal, but currently unimplemented
 	// attribute names:
@@ -253,10 +258,12 @@ public class PhotoSpread {
 		photoSpreadDefaults.setProperty(dragGhostSizeKey, "50 50");
 		photoSpreadDefaults.setProperty(sheetRowHeightMinKey, "60");
 		photoSpreadDefaults.setProperty(sheetColWidthMinKey, "80");
-		photoSpreadDefaults.setProperty(sheetObjsInCellKey, "10");
+		photoSpreadDefaults.setProperty(sheetObjsInCellKey, "10"); // Number of objects to put into cell visibly
 		photoSpreadDefaults.setProperty(sheetCellObjsWidthKey, "50");
-		photoSpreadDefaults.setProperty(sheetNumColsKey, "10");
-		photoSpreadDefaults.setProperty(sheetNumRowsKey, "10"); // TODO: eshieh change number of rows, columns.
+		photoSpreadDefaults.setProperty(sheetNumColsKey, "9");  // Note: one col will be added to this number
+																//       to account for col0 being used for row numbers.
+																//       Thus this is the user-accessible # of cols.
+		photoSpreadDefaults.setProperty(sheetNumRowsKey, "10"); //
 		photoSpreadDefaults.setProperty(workspaceNumColsKey, "1");
 		photoSpreadDefaults.setProperty(workspaceHGapKey, "2");
 		photoSpreadDefaults.setProperty(workspaceVGapKey, "2");
@@ -587,6 +594,28 @@ public class PhotoSpread {
 		// are short by one, because the use Col0 for row numbers.
 		int colsWanted = photoSpreadPrefs.getInt(sheetNumColsKey);
 		photoSpreadPrefs.put(sheetNumColsKey, ""+(colsWanted + 1));
+
+		// Adjust height of window such that it is no higher than 
+		// the space taken by the rows. The window may be less high,
+		// in which case a scroll bar will be added:
+		
+		int winHeightAllRows = photoSpreadPrefs.getInt(sheetRowHeightMinKey) *
+							   photoSpreadPrefs.getInt(sheetNumRowsKey);
+		// Add WIN_BORDER_HEIGHT plus the formula editor height:
+		Dimension formulaEditorDim = photoSpreadPrefs.getDimension(formulaEditorStripSizeKey);
+		int formulaEditorStripHeight = (int) formulaEditorDim.getHeight();
+		winHeightAllRows += formulaEditorStripHeight + WIN_BORDER_HEIGHT; 
+		
+		// What's the specified window dim (as per any user input from
+		// command line or config file):
+		Dimension specifiedSheetWinDim = photoSpreadPrefs.getDimension(sheetSizeKey);
+		if (specifiedSheetWinDim.getHeight() > (int) winHeightAllRows) {
+			//specifiedSheetWinDim.setHeight(winHeightAllRows);
+			Dimension newSheetDim = new Dimension((int) specifiedSheetWinDim.getWidth(),
+													 winHeightAllRows);
+			String newSheetDimStr = ""+((int)newSheetDim.getWidth()) + " "+((int)newSheetDim.getHeight());
+			photoSpreadPrefs.put(sheetSizeKey,newSheetDimStr);
+		}
 		
 		// Check validity of the options that we can check and exit:
 		validatePreferences();
@@ -795,11 +824,11 @@ public class PhotoSpread {
 				PhotoSpreadTableMenu mainMenuBar = new PhotoSpreadTableMenu(tableObject);
 				app.setJMenuBar(mainMenuBar);
 												
-				// Don't know what this size controls:
+				// Don't know what this size controls, but it's needed.
+				// Else sheet window comes up empty:
 				try {
 					// Don't know what this size controls:
 					app.add(tableObject.getObjectComponent(200, 200));
-
 				} catch (NumberFormatException e) {
 					new StartupErrorPanel(e.getMessage());
 					// e.printStackTrace();
