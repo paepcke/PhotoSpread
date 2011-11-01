@@ -376,12 +376,12 @@ FunctionResultable, PhotoSpreadComputable {
 
 		StringBuffer xml = new StringBuffer();
 		xml.append(objectToXMLTag(this.getClass().getName())); 
-		xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECT_CONSTRUCTOR_ARGUMENTS_ELEMENT, true));
+		xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECT_CONSTRUCTOR_ARGUMENTS_ELEMENT, PhotoSpreadHelpers.TagType.startTag));
 		xml.append(constructorArgsToXML());
 
-		xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECT_CONSTRUCTOR_ARGUMENTS_ELEMENT, false));
+		xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECT_CONSTRUCTOR_ARGUMENTS_ELEMENT, PhotoSpreadHelpers.TagType.endTag));
 		xml.append(metaDataToXML());
-		xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECT_ELEMENT, false));
+		xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECT_ELEMENT, PhotoSpreadHelpers.TagType.endTag));
 		return xml.toString();
 
 
@@ -399,12 +399,12 @@ FunctionResultable, PhotoSpreadComputable {
 		try{
 
 			out.write(objectToXMLTag(this.getClass().getName())); 
-			out.write(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECT_CONSTRUCTOR_ARGUMENTS_ELEMENT, true));
+			out.write(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECT_CONSTRUCTOR_ARGUMENTS_ELEMENT, PhotoSpreadHelpers.TagType.startTag));
 			out.write(constructorArgsToXML());
 
-			out.write(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECT_CONSTRUCTOR_ARGUMENTS_ELEMENT, false));
+			out.write(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECT_CONSTRUCTOR_ARGUMENTS_ELEMENT, PhotoSpreadHelpers.TagType.endTag));
 			out.write(metaDataToXML());
-			out.write(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECT_ELEMENT, false));
+			out.write(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECT_ELEMENT, PhotoSpreadHelpers.TagType.endTag));
 
 		}
 		catch(java.io.IOException e){
@@ -416,22 +416,34 @@ FunctionResultable, PhotoSpreadComputable {
 
 	protected String metaDataToXML(){
 		StringBuffer xml = new StringBuffer();
+		
 		Iterator<Entry<String, String>> it = _metadata.entrySet().iterator();
+		if (it.hasNext()) {
+			// Tags element that contains all the tags for this object:
+			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.TAGS_ELEMENT, PhotoSpreadHelpers.TagType.startTag));
+		}
 		while(it.hasNext()){
 			Entry<String, String> entry = it.next(); 
-			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.TAGS_ELEMENT, true));
-			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.TAG_ELEMENT, true));
+			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.TAG_ELEMENT, PhotoSpreadHelpers.TagType.startTag));
 			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.TAG_ATTRIBUTE_ELEMENT, entry.getKey()));
 			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.TAG_VALUE_ELEMENT, entry.getValue()));
-			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.TAG_ELEMENT, false));
-			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.TAGS_ELEMENT, false));
+			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.TAG_ELEMENT, PhotoSpreadHelpers.TagType.endTag));
 		}
+		xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.TAGS_ELEMENT, PhotoSpreadHelpers.TagType.endTag));
 
 		return xml.toString();
 	}
 
+	/**
+	 * Generate XML entry for an object. This element has an XML attribute
+	 * that specifies the PhotoSpread type of the object
+	 * @param objectType
+	 * @return
+	 */
 	protected String objectToXMLTag(String objectType){
-		return PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECT_ELEMENT +  " " + XMLProcessor.OBJECT_TYPE_ELEMENT + "=" + "\"" + objectType + "\"", true);   
+		return PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECT_ELEMENT +  " " + 
+												XMLProcessor.OBJECT_TYPE_ELEMENT + "=" + "\"" + objectType + "\"", 
+												PhotoSpreadHelpers.TagType.startTag);   
 	}
 
 

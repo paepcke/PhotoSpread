@@ -837,12 +837,16 @@ public final class Misc {
 	
 	/**
 	 * Use for error message dialog boxes that just call for clicking OK.
+	 * If current debug level is set to AUTOMATIC_TESTING (see PhotoSpread.java),
+	 * then no message is popped up.
 	 * @param msg Message to display in the dialog box
 	 * @param frameToShowIn Frame in which the dialog box is to be placed. If null, 
 	 * then a new frame is created.
 	 */
 
 	public static void showErrorMsg(String msg, Component frameToShowIn) {
+		if (PhotoSpread.getDebutLevel() == PhotoSpread.DebugLevel.AUTOMATIC_TESTING)
+			return;
 		JOptionPane.showMessageDialog(
 				frameToShowIn,
 				msg,
@@ -954,12 +958,17 @@ public final class Misc {
 	
 	/**
 	 * Shows a purely informational message with an OK button.
+	 * If current debug level is set to AUTOMATIC_TESTING (see PhotoSpread.java),
+	 * then no message is popped up.
+	 * 
 	 * @param msg The message to show the user.
 	 * @param frameToShowIn The frame within which to show the 
 	 * message dialog. Null causes display in center of screen.
 	 */
 	
 	public static void showInfoMsg (String msg, Component frameToShowIn) {
+		if (PhotoSpread.getDebutLevel() == PhotoSpread.DebugLevel.AUTOMATIC_TESTING)
+			return;
 		JOptionPane.showMessageDialog(
 				frameToShowIn, 
 				msg, 

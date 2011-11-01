@@ -86,8 +86,12 @@ public class PhotoSpread {
 	// NOTE: Change this for new versions:
 	public static String version = "0.8";
 	
+	// The AUTOMATIC_TESTING debug level will suppress
+	// all popup messages for users. Those would required
+	// clicking the OK button, which we don't want when
+	// doing unit testing.
 	public static enum DebugLevel {
-		DEBUG, NO_DEBUG
+		DEBUG, NO_DEBUG, AUTOMATIC_TESTING
 	}
 	public static DebugLevel currDebugLevel = DebugLevel.NO_DEBUG;
 
@@ -319,44 +323,20 @@ public class PhotoSpread {
 		// once. But not for single-letter options...
 
 		cmdLineOptions.addOption(OptionBuilder
+				.withArgName("numCols")
 				.withLongOpt("sheetNumCols")
 				.withDescription("Number of columns in the PhotoSpread sheet.")
+				.withType(Integer.class)
 				.hasArgs(1)
-				.create()); // create option w/ these above parameters
+				.create("c")); // create option w/ these above parameters
 		
 		cmdLineOptions.addOption(OptionBuilder
+				.withArgName("numRows")
 				.withLongOpt("sheetNumRows")
 				.withDescription("Number of rows in the PhotoSpread sheet.")
+				.withType(Integer.class)
 				.hasArgs(1)
-				.create()); // create option w/ these above parameters
-		
-		// The following cmd line options are commented out, 
-		// b/c they are not that useful:
-		/*
-		cmdLineOptions.addOption(OptionBuilder
-				.withLongOpt("workspaceSize")
-				.withDescription("Initial size of workspace in pixels \"W H\".")
-				.hasArgs(2)
-				.create()); // create option w/ these above parameters
-
-		cmdLineOptions.addOption(OptionBuilder
-				.withLongOpt("editorSize")
-				.withDescription("Initial size of editor in pixels: \"W H\".")
-				.hasArgs(2)
-				.create()); // create option w/ these above parameters
-
-		cmdLineOptions.addOption(OptionBuilder
-				.withLongOpt("metaDataEditorSize")
-				.withDescription("Initial size in pixels of editor window for individual objects (e.g. photos).")
-				.hasArgs(2) // 
-				.create()); // create option w/ these above parameters
-
-		cmdLineOptions.addOption(OptionBuilder
-				.withLongOpt("resourcePaths")
-				.withDescription("Colon-separated paths to PhotoSpread resources (such as photos).")
-				.hasArgs(1) // 
-				.create()); // create option w/ these above parameters
-		*/
+				.create("r")); // create option w/ these above parameters
 		
 		// Automatically generate a help string from the Options instance:
 		HelpFormatter formatter = new HelpFormatter();
@@ -442,6 +422,15 @@ public class PhotoSpread {
 		try {
 			switch (legalPreferenceAttrNames.valueOf(attrName)) {
 
+			case sheetNumCols:
+			case sheetNumRows:
+				if (Integer.parseInt(attrValue) < 1) {
+					throw new IllegalPreferenceValueException("Preference '" + 
+							attrName +
+					"' requires a positive integer.");
+				}
+				break;
+			
 			// Legal, but unimplemented PhotoSpread preferences:
 
 			case workspaceObjHeight:
@@ -468,8 +457,6 @@ public class PhotoSpread {
 				// Preferences that require one integer:
 			case sheetRowHeightMin:
 			case sheetColWidthMin:
-			case sheetNumRows:
-			case sheetNumCols:
 			case sheetObjsInCell:
 			case sheetCellObjsWidth:
 			case workspaceNumCols:
@@ -593,7 +580,7 @@ public class PhotoSpread {
 		// Number of columns on the command line or in the pref file
 		// are short by one, because the use Col0 for row numbers.
 		int colsWanted = photoSpreadPrefs.getInt(sheetNumColsKey);
-		photoSpreadPrefs.put(sheetNumColsKey, ""+(colsWanted + 1));
+		//photoSpreadPrefs.put(sheetNumColsKey, ""+(colsWanted + 1));
 
 		// Adjust height of window such that it is no higher than 
 		// the space taken by the rows. The window may be less high,
@@ -756,6 +743,14 @@ public class PhotoSpread {
 		}
 	}
 	
+	public static DebugLevel getDebutLevel() {
+		return PhotoSpread.currDebugLevel;
+	}
+	
+	public static void setDebutLevel(DebugLevel level) {
+		PhotoSpread.currDebugLevel = level;
+	}
+	
 	public static void trace (String msg) {
 		if (PhotoSpread.currDebugLevel == DebugLevel.DEBUG)
 			System.out.println(msg);
@@ -768,7 +763,7 @@ public class PhotoSpread {
 	public static void restoreGlassPane () {
 		_currentSheetWindow.setGlassPane(_defaultGlassPane);
 	}
-
+	
 	public static void main (final String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 

@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='ISO-8859-1'?>
+<table numRows="4" numCols="3">
+<col colNum="1">
+<cell colNum="1" rowNum="0">
+<cellFormula>_/Objects/_</cellFormula>
+<objects>
+<object objectType="edu.stanford.photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>-4971708435189753829</objectConstructorArgument>
+<objectConstructorArgument>C:\Users\paepcke\dldev\EclipseWorkspaces\PhotoSpread\SpreadSheet\src\test\resources\TestCases\Photos\crowdOneFaceClear.jpg</objectConstructorArgument>
+</objectConstructorArguments>
+<tags>
+<tag>
+<attribute>@ID</attribute>
+<value>-4971708435189753829</value>
+</tag>
+<tag>
+<attribute>@filename</attribute>
+<value>C:\Users\paepcke\dldev\EclipseWorkspaces\PhotoSpread\SpreadSheet\src\test\resources\TestCases\Photos\crowdOneFaceClear.jpg</value>
+</tag>
+</tags>
+</object>
+<object objectType="edu.stanford.photoSpreadObjects.PhotoSpreadImage">
+<objectConstructorArguments>
+<objectConstructorArgument>-1854442517828450558</objectConstructorArgument>
+<objectConstructorArgument>C:\Users\paepcke\dldev\EclipseWorkspaces\PhotoSpread\SpreadSheet\src\test\resources\TestCases\Photos\conventionCenterTwoWomen.jpg</objectConstructorArgument>
+</objectConstructorArguments>
+<tags>
+<tag>
+<attribute>@ID</attribute>
+<value>-1854442517828450558</value>
+</tag>
+<tag>
+<attribute>@filename</attribute>
+<value>C:\Users\paepcke\dldev\EclipseWorkspaces\PhotoSpread\SpreadSheet\src\test\resources\TestCases\Photos\conventionCenterTwoWomen.jpg</value>
+</tag>
+</tags>
+</object>
+</objects>
+</cell>
+<cell colNum="1" rowNum="1">
+<cellFormula>=A1[Species=foo]</cellFormula>
+</cell>
+<cell colNum="1" rowNum="2">
+</cell>
+<cell colNum="1" rowNum="3">
+</cell>
+</col>
+<col colNum="2">
+<cell colNum="2" rowNum="0">
+<cellFormula>=A1</cellFormula>
+</cell>
+<cell colNum="2" rowNum="1">
+<cellFormula>Testing</cellFormula>
+</cell>
+<cell colNum="2" rowNum="2">
+</cell>
+<cell colNum="2" rowNum="3">
+</cell>
+</col>
+<col colNum="3">
+<cell colNum="3" rowNum="0">
+</cell>
+<cell colNum="3" rowNum="1">
+</cell>
+<cell colNum="3" rowNum="2">
+</cell>
+<cell colNum="3" rowNum="3">
+</cell>
+</col>
+</table>

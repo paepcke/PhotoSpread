@@ -16,12 +16,13 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.TreeSet;
 
 import javax.swing.JOptionPane;
 
 import edu.stanford.inputOutput.XMLProcessor;
+import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpread.PhotoSpreadException;
 import edu.stanford.photoSpread.PhotoSpreadException.BadUUIDStringError;
 import edu.stanford.photoSpread.PhotoSpreadException.FormulaError;
@@ -50,6 +51,9 @@ import edu.stanford.photoSpreadUtilities.TreeSetRandomSubsetIterable;
 public class PhotoSpreadCell 
 implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 
+
+	static private String COLNUM_ATTRIBUTE_NAME = "colNum";
+	static private String ROWNUM_ATTRIBUTE_NAME = "rowNum";
 	public static String FILEPATH = "@filename";
 	public static String OBJECT_ID = "@ID";
 
@@ -254,6 +258,10 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 		return _formula;
 	}
 	
+	public Boolean isItemCollection() {
+		return _formula.equals(Const.OBJECTS_COLLECTION_INTERNAL_TOKEN);
+	}
+	
 	public Comparator<PhotoSpreadObject> getComparator() {
 		return _currentComparator;
 	}
@@ -290,6 +298,18 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 	 * 			all callers to set these to true.
 	 */
 	public void setFormula(String value, Boolean reEvaluateCell, Boolean reDrawTable){
+		
+		// If this cell contains a collection of loaded
+		// objects, refuse to enter the purely informational
+		// "(Item Collection)" as a formula. Unless the formula
+		// is being set to the empty string, which happens when
+		// the user runs clearCell() from the context menu:
+		
+		if (getFormula().equals(Const.OBJECTS_COLLECTION_INTERNAL_TOKEN) && !value.equals("")) {
+			Misc.showInfoMsg("This cell contains a collection of items that was not computed. Please right-click->Clear Cell before changing the cell formula.",
+					PhotoSpread.getCurrentSheetWindow());
+			return;
+		}
 		
 		String savedFormula = _formula;
 		ArrayList<PhotoSpreadCell> savedDependencyParents = new ArrayList<PhotoSpreadCell>();
@@ -542,7 +562,9 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 		_dependents.clear();
 		_references.clear();
 		_normalizedExpression = null;
+		clearObjects();
 		setFormula("", evaluate, redraw);
+		_tableModel.fireTableCellUpdated(_row, _col);
 	}
 	
 	public void clearObjects(){
@@ -687,20 +709,25 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 		
 		StringBuffer xml = new StringBuffer();
 		
-		xml.append("<" + XMLProcessor.CELL_ELEMENT + ">" + System.getProperty("line.separator"));
+		xml.append("<" + XMLProcessor.CELL_ELEMENT + " " +
+				   COLNUM_ATTRIBUTE_NAME + "=\"" + getColumn() + "\"" + " " + 
+				   ROWNUM_ATTRIBUTE_NAME + "=\"" + getRow() + "\"" +
+				   ">" + System.getProperty("line.separator"));
 		
-		xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.CELL_FORMULA_ELEMENT, _formula));
+		if (!_formula.isEmpty())
+			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.CELL_FORMULA_ELEMENT, _formula));
 		
 		if(this._formula.equals(Const.OBJECTS_COLLECTION_INTERNAL_TOKEN)){
 			
-			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECTS_ELEMENT, true));
+			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECTS_ELEMENT, PhotoSpreadHelpers.TagType.startTag));
 			Iterator<PhotoSpreadObject> it = _objects.iterator();
 			
 			while(it.hasNext()){
+				// Marshall one object within this cell:
 				xml.append(it.next().toXML());
 			}
 			
-			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECTS_ELEMENT, false));
+			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.OBJECTS_ELEMENT, PhotoSpreadHelpers.TagType.endTag));
 		}
 		
 		xml.append("</" + XMLProcessor.CELL_ELEMENT + ">" + System.getProperty("line.separator"));

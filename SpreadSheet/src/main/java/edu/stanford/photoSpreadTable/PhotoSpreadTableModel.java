@@ -12,8 +12,10 @@ import java.util.Iterator;
 
 import javax.swing.table.AbstractTableModel;
 
+import edu.stanford.inputOutput.XMLProcessor;
 import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpread.PhotoSpreadException;
+import edu.stanford.photoSpread.PhotoSpreadException.FormulaError;
 import edu.stanford.photoSpread.PhotoSpreadException.FormulaSyntaxError;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadObjects.PhotoSpreadStringObject;
@@ -33,7 +35,8 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 	public static final int minDroppableRow = 0;
 
 	static private String TABLE_ELEMENT_NAME = "table";
-	static private String ROW_ELEMENT_NAME = "row";
+	static private String COL_ELEMENT_NAME = "col";
+	static private String COLNUM_ATTRIBUTE_NAME = "colNum";
 	private ArrayList<String> columnNames;
 
 	private Object _clipboard = null;
@@ -48,33 +51,33 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 	int numCols = 0;
 
 	public PhotoSpreadTableModel() {
+		this(PhotoSpread.photoSpreadPrefs.getInt(PhotoSpread.sheetNumRowsKey),
+			 PhotoSpread.photoSpreadPrefs.getInt(PhotoSpread.sheetNumColsKey));
+	}
+	
+	public PhotoSpreadTableModel(int theNumRows, int theNumCols) {
+		
+		numRows = theNumRows;
+		numCols = theNumCols + 1;
 		columnNames = new ArrayList<String>();
 		columnNames.add("");
 
 		_stringReader = new java.io.StringReader( "" );
 		_reader = new java.io.BufferedReader( _stringReader );
 		// _parser = new ExpressionParser(_reader);
-		initializeData();
+		initializeData(numRows, numCols);
 		//loadTestData();
 	}
 
-	private void initializeData(){
-
-		numRows = PhotoSpread.photoSpreadPrefs.getInt(PhotoSpread.sheetNumRowsKey);
-		numCols = PhotoSpread.photoSpreadPrefs.getInt(PhotoSpread.sheetNumColsKey);
+	private void initializeData(int numRows, int numCols){
 
 		data = new ArrayList<ArrayList<PhotoSpreadCell>>();
 		for(int col = 0; col < numCols; col++){
 			columnNames.add(getColumnAsString(col+1));
 			data.add(new ArrayList<PhotoSpreadCell>());
-			//?????????????!!!!!!!!!!!!!
-			//PhotoSpreadCell cell = new PhotoSpreadCell(this, col, 0, "");
 			PhotoSpreadCell cell = new PhotoSpreadCell(this, 0, col, "");
-			//******cell.addObject(new PhotoSpreadStringObject(cell, ""+ (col+1)));
 			data.get(col).add(cell);
 			for(int row = 0; row < numRows; row++){
-				//?????????????!!!!!!!!!!!!!!!!!!!
-				//data.get(col).add(new PhotoSpreadCell(this, col, row+1, ""));
 				data.get(col).add(new PhotoSpreadCell(this, row+1, col, ""));
 			}
 		}
@@ -95,6 +98,18 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 				this.getCell(row, col).clear(Const.DONT_EVAL, Const.DONT_REDRAW);
 			}
 		}
+		// Now that everything is cleared, eval each cell, just
+		// to make *sure* that everything is initialized:
+		for(int row = 0; row < this.getRowCount(); row++){
+			for(int col = 1; col < this.getColumnCount(); col++){
+				try {
+					this.getCell(row, col).evaluate(Const.DONT_REDRAW);
+				} catch (FormulaError e) {
+					// Should be an empty table, and should there not throw an error!
+					e.printStackTrace();
+				}
+			}
+		}
 		fireTableDataChanged();
 	}
 
@@ -108,8 +123,8 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 		PhotoSpreadCellHandler cellHandler;
 
 		if (doEval)
-			for(int row = 0; row < data.size(); row++){
-				for(int col = 1; col < data.get(row).size(); col++){
+			for(int row = 0; row < getRowCount(); row++){
+				for(int col = 1; col < getColumnCount(); col++){
 					try {
 						data.get(row).get(col).evaluate(Const.DONT_REDRAW);
 					} catch (Exception e) {
@@ -119,8 +134,8 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 				}
 			}
 
-		for(int row = 0; row < data.size(); row++){
-			for(int col = 1; col < data.get(row).size(); col++){
+		for(int row = 0; row < getRowCount(); row++){
+			for(int col = 1; col < getColumnCount(); col++){
 				cellHandler = _table.getCellEditorFor(row, col);
 				try {
 					cellHandler.redraw();
@@ -145,16 +160,24 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 
 		StringBuffer xml = new StringBuffer();
 
-		xml.append("<" + TABLE_ELEMENT_NAME + ">" + System.getProperty("line.separator"));
+		// Build <table numRows="..." numCols="...">
+		// The '-1' subtracts the 0th column, which holds the
+		// row numbers:
+		xml.append("<" + TABLE_ELEMENT_NAME +
+					" " + XMLProcessor.NUM_ROWS_ELEMENT + "=\"" + getRowCount() + "\"" +
+					" " + XMLProcessor.NUM_COLS_ELEMENT + "=\"" + (getColumnCount() -1) + "\"" +
+					">" + System.getProperty("line.separator"));
 		//xml.append(PhotoSpreadHelpers.getXMLElement(NUM_ROWS_ELEMENT_NAME, this.getRowCount()));
 		//xml.append(PhotoSpreadHelpers.getXMLElement(NUM_COLS_ELEMENT_NAME, this.getColumnCount()));
 
-		for(int i = 0; i < data.size(); i++){
-			xml.append("<" + ROW_ELEMENT_NAME + ">" + System.getProperty("line.separator"));
-			for(int j = 1; j < data.get(i).size(); j++){
-				xml.append(data.get(i).get(j).toXML());
+		for(int colNum = 1; colNum < this.getColumnCount(); colNum++){
+			xml.append("<" + COL_ELEMENT_NAME + " " + 
+							 COLNUM_ATTRIBUTE_NAME + "=\"" + colNum + "\"" + ">" + System.getProperty("line.separator"));
+			for(int rowNum = 0; rowNum < this.getRowCount(); rowNum++){
+				// Marshall one cell:
+				xml.append(data.get(colNum).get(rowNum).toXML());
 			}
-			xml.append("</" + ROW_ELEMENT_NAME + ">" + System.getProperty("line.separator"));
+			xml.append("</" + COL_ELEMENT_NAME + ">" + System.getProperty("line.separator"));
 		}
 
 		xml.append("</" + TABLE_ELEMENT_NAME + ">" + System.getProperty("line.separator"));
@@ -208,8 +231,8 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 	}
 	public int getRowCount() {
 		return numRows;
-		//return data.size();
 	}
+	
 	public String getColumnName(int col) {
 		return columnNames.get(col);
 	}
@@ -224,9 +247,7 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 	 */
 	public Object getValueAt(int row, int col) {
 		try {
-			//?????????????????????
 			return data.get(col).get(row);
-			//return data.get(row).get(col);
 		} catch (IndexOutOfBoundsException e) {
 		return null;
 		}
@@ -245,8 +266,6 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 	 * @return Cell object at row/col. 
 	 */
 	public PhotoSpreadCell getCell(int rowIndex, int colIndex){
-		//?????????????????????????????????????
-		//return data.get(rowIndex).get(colIndex);	
 		return data.get(colIndex).get(rowIndex);	
 	}
 
@@ -261,8 +280,6 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 
 	public PhotoSpreadCell getCellMixedOrigin(int colIndex, int rowIndex){
 		//System.out.println("getting cell at " + colIndex + " " + rowIndex);
-		//?????????????????????????????????????????
-		//return data.get(rowIndex-1).get(colIndex);
 		return data.get(colIndex).get(rowIndex-1);
 	}
 
@@ -289,8 +306,6 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 	 * data can change.
 	 */
 	public void setValueAt(Object value, int row, int col) {
-		//???????????????????????????????
-		//data.get(row).set(col, (PhotoSpreadCell) value);
 		data.get(col).set(row, (PhotoSpreadCell) value);
 		//****triggerCellUpdate(row, col);
 	}

@@ -6,6 +6,7 @@
 package edu.stanford.photoSpreadTable;
 
 
+import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -15,6 +16,7 @@ import javax.swing.JMenuItem;
 
 import edu.stanford.inputOutput.InputOutput;
 import edu.stanford.photoSpread.PhotoSpread;
+import edu.stanford.photoSpread.PhotoSpreadException;
 import edu.stanford.photoSpreadObjects.PhotoSpreadTableObject;
 import edu.stanford.photoSpreadObjects.photoSpreadComponents.KeyBindEditor;
 import edu.stanford.photoSpreadUtilities.Const;
@@ -30,7 +32,7 @@ public class PhotoSpreadTableMenu extends JMenuBar{
 
 	String[ ] fileItems = new String[ ] {  "Exit" };
 
-	char[ ] fileShortcuts = { 'N','O','S','X' };
+	char[ ] fileShortcuts = { 'N','O','S', 'C', 'X' };
 
 	private static PhotoSpreadTableObject _tableObject;
 
@@ -69,16 +71,32 @@ public class PhotoSpreadTableMenu extends JMenuBar{
 
 		addMenuItem(fileMenu, "Open Sheet", 'O', new ActionListener(){
 			public void actionPerformed(ActionEvent event) {
-				PhotoSpreadTableMenu.getTableObject().clear();  	   
-				InputOutput.loadTable(PhotoSpreadTableMenu.this, 
-						      PhotoSpreadTableMenu.getTableModel());
+				Boolean clearTableOK = PhotoSpreadTableMenu.getTableObject().clear();
+				if (clearTableOK) {
+					InputOutput.loadTable(PhotoSpreadTableMenu.this, 
+							PhotoSpreadTableMenu.getTableModel());
+				} else {
+					Misc.showInfoMsg("Open sheet canceled. Sheet loading only possible if OK to clear current table.");
+				}
 			}
 		});
 
 		addMenuItem(fileMenu, "Save Sheet As", 'S', new ActionListener(){
 			public void actionPerformed(ActionEvent event) {
-				InputOutput.saveTable(PhotoSpreadTableMenu.this, 
-						      PhotoSpreadTableMenu.getTableModel());
+				try {
+					InputOutput.saveTable(PhotoSpreadTableMenu.this, 
+							      PhotoSpreadTableMenu.getTableModel());
+				} catch (HeadlessException e) {
+					Misc.showErrorMsg(e.getMessage());
+				} catch (PhotoSpreadException e) {
+					Misc.showErrorMsg(e.getMessage());
+				}
+			}
+		});
+
+		addMenuItem(fileMenu, "Clear Sheet", 'C', new ActionListener(){
+			public void actionPerformed(ActionEvent event) {
+				PhotoSpreadTableMenu.getTableObject().clear();  	   
 			}
 		});
 

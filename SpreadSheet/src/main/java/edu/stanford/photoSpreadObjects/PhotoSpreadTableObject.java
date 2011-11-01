@@ -156,7 +156,13 @@ public class PhotoSpreadTableObject extends PhotoSpreadObject {
 		return _table.getPhotoSpreadModel();
 	}
 
-	public void clear(){
+	/**
+	 * Confirm with user that they do want to clear the
+	 * whole table. 
+	 * @return Return true if user chose to go through with the clear, and the clear
+	 * was therefore executed. Return false if user canceled.
+	 */
+	public Boolean clear(){
 		if (JOptionPane.showConfirmDialog(_table,
 											"Clear whole table? (No files will be affected)",
 											"Confirm",  // Title
@@ -165,7 +171,9 @@ public class PhotoSpreadTableObject extends PhotoSpreadObject {
 			_table.getFormulaEditor().setText("");
 			_table.getWorkspace().reset(Const.DO_REDRAW);
 			_table.getWorkspace().pack();
+			return true;
 		}
+		return false;
 	}
 	
 	@SuppressWarnings("unchecked")

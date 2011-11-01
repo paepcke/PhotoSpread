@@ -10,6 +10,11 @@ package edu.stanford.photoSpreadUtilities;
  * @author skandel
  */
 public class PhotoSpreadHelpers {
+	
+	public static enum TagType {
+		startTag,
+		endTag
+	}
     
     
     static public String getXMLElement(String elementName, String elementValue){
@@ -27,13 +32,15 @@ public class PhotoSpreadHelpers {
      
      }
     
-     static public String getXMLElement(String elementName, Boolean startTag){
+     static public String getXMLElement(String elementName, TagType startOrEndTag){
         StringBuffer xml = new StringBuffer();
-        if(startTag){
+        switch (startOrEndTag) {
+        case startTag:
             xml.append("<" + elementName + ">" + System.getProperty("line.separator") );
-        }
-        else{
-             xml.append("</" + elementName + ">" + System.getProperty("line.separator") );
+            break;
+        case endTag:
+        	xml.append("</" + elementName + ">" + System.getProperty("line.separator") );
+        	break;
         }
         return xml.toString();
      

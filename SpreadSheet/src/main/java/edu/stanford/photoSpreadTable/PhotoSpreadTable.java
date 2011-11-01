@@ -284,6 +284,20 @@ public class PhotoSpreadTable extends JTable {
 		return _workspace;
 	}
 	
+	/**
+	 * Replace the entire table model with a virgin new one.
+	 * WARNING: BROKEN!
+	 * 
+	 * @return Return the new table model.
+	 */
+/*	public PhotoSpreadTableModel newTableModel() {
+		_tableModel = new PhotoSpreadTableModel();
+		_tableModel.setTable(this);
+		// Ask to be notified of changes in the model:
+		_tableModel.addTableModelListener(new PhotoSpreadTableModelListener(this));
+		return _tableModel;
+	}
+*/	
 	public PhotoSpreadTableModel getTableModel() {
 		return _tableModel;
 	}
@@ -526,6 +540,15 @@ public class PhotoSpreadTable extends JTable {
 	 */
 	public void fireTableCellUpdated(int row, int col) {
 		_tableModel.fireTableCellUpdated(row, col);
+	}
+	
+	/**
+	 * Force recalculation and subsequent visual refresh
+	 * of the entire table.
+	 */
+	public void recalcRedrawTable() {
+		_tableModel.updateAllCells(Const.DO_EVAL);
+		_tableModel.fireTableDataChanged();
 	}
 
 	public static boolean loadFiles (PhotoSpreadCell cell, ArrayList<File> files) {

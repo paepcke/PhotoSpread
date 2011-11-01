@@ -1,16 +1,8 @@
 To do:
 
-PhotoSpreadCellEditor-->createCellHandler()
+- Write file path matcher like with Adobe Premiere assets.
+- At end of xml sheet saving: warn that photos are separate issue.
+- Finish XML test cases
+- Cut new version.
 
-
-The only significant differences between:
-  dldev/src/PhotoSpread/trunk/PhotoSpread/src/ and 
-  dldev/EclipseWorkspaces/PhotoSpread/SpreadSheet/src/main/java/edu/stanford/
-
-Are in:
-/cygdrive/c/Users/Paepcke/dldev/src/PhotoSpread/trunk/PhotoSpread/src/photoSpreadParser/photoSpreadExpression/photoSpreadFunctions/Max.java /cygdrive/c/Users/Paepcke/dldev/EclipseWorkspaces/PhotoSpread/SpreadSheet/src/main/java/edu/stanford/photoSpreadParser/photoSpreadExpression/photoSpreadFunctions/Max.java
-
-/cygdrive/c/Users/Paepcke/dldev/src/PhotoSpread/trunk/PhotoSpread/src/photoSpreadUtilities/Misc.java /cygdrive/c/Users/Paepcke/dldev/EclipseWorkspaces/PhotoSpread/SpreadSheet/src/main/java/edu/stanford/photoSpreadUtilities/Misc.java
-
-/cygdrive/c/Users/Paepcke/dldev/src/PhotoSpread/trunk/PhotoSpread/src/photoSpreadUtilities/PhotoSpreadProperties.java /cygdrive/c/Users/Paepcke/dldev/EclipseWorkspaces/PhotoSpread/SpreadSheet/src/main/java/edu/stanford/photoSpreadUtilities/PhotoSpreadProperties.java
 

@@ -10,6 +10,7 @@ import edu.stanford.inputOutput.ExifWriter;
 import edu.stanford.inputOutput.InputOutput;
 
 import java.awt.Component;
+import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
@@ -30,6 +31,7 @@ import javax.swing.JPanel;
 
 //import org.apache.sanselan.formats.tiff.constants.TiffConstants;
 import edu.stanford.photoSpread.PhotoSpread;
+import edu.stanford.photoSpread.PhotoSpreadException;
 import edu.stanford.photoSpread.PhotoSpreadException.BadUUIDStringError;
 import edu.stanford.photoSpread.PhotoSpreadException.CannotLoadImage;
 import edu.stanford.photoSpread.PhotoSpreadException.FormulaError;
@@ -600,7 +602,7 @@ public class ObjectsPanel extends JPanel{
 	}
 
 	@SuppressWarnings("unused")
-	private void saveTable(){
+	private void saveTable() throws HeadlessException, PhotoSpreadException{
 		InputOutput.saveTable(this,  _displayedCell.getTableModel());
 
 	}
