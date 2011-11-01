@@ -9,6 +9,7 @@ package edu.stanford.inputOutput;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -22,14 +23,18 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpread.PhotoSpreadException;
 import edu.stanford.photoSpread.PhotoSpreadException.BadSheetFileContent;
 import edu.stanford.photoSpread.PhotoSpreadException.BadUUIDStringError;
 import edu.stanford.photoSpread.PhotoSpreadException.FileIOException;
+import edu.stanford.photoSpreadObjects.PhotoSpreadFileObject;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadTable.PhotoSpreadCell;
 import edu.stanford.photoSpreadTable.PhotoSpreadTableModel;
 import edu.stanford.photoSpreadUtilities.Const;
+import edu.stanford.photoSpreadUtilities.FilePathTransformer;
+import edu.stanford.photoSpreadUtilities.Misc;
 
 //import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 
@@ -54,6 +59,25 @@ public class XMLProcessor {
 	public static String TAG_ELEMENT = "tag";
 	public static String TAG_ATTRIBUTE_ELEMENT = "attribute";
 	public static String TAG_VALUE_ELEMENT = "value";
+
+	// Hash to quickly check whether an object being unmarshalled
+	// from the XML file has a stored representation, and therefore
+	// an associated file name that may have to be replaced if items
+	// have moved on the file system, or the XML file is unmarshalled
+	// on a machine other then where it was created:
+	@SuppressWarnings("serial")
+	private HashMap<String,Boolean> storedTypes = new HashMap<String,Boolean>() {
+		{
+			put("edu.stanford.photoSpreadObjects.PhotoSpreadImage", true);
+			put("edu.stanford.photoSpreadObjects.PhotoSpreadTextFile", true);
+		};
+	};
+	
+	// List of file path transformers used to try the directories
+	// of replacement files the user picked during unmarshalling of
+	// PhotoSpread objects that are stored on the disk, but that are
+	// not found on the current computer:
+	private ArrayList<FilePathTransformer> filePathTransformers = new ArrayList<FilePathTransformer>();
 	
 	
 	/**
@@ -94,6 +118,8 @@ public class XMLProcessor {
 		tableModel.fireTableDataChanged();
 	}
 
+	//=========================  Class DomTableUnmarshaller ========================	
+	
 	class DomTableUnmarshaller {
 
 		PhotoSpreadTableModel _tableModel;
@@ -108,6 +134,13 @@ public class XMLProcessor {
 		final String xpathGetTagAttrNameExpr = XMLProcessor.TAG_ATTRIBUTE_ELEMENT;
 		final String xpathGetTagAttrValExpr = XMLProcessor.TAG_VALUE_ELEMENT;
 
+		// Does user want the offer to find a replacement
+		// for files that are referenced in the XML file, but
+		// are not available? We assume yes by default. Each
+		// time user cancels out of such an offer we let them
+		// say whether they want to stop getting the offers:
+		boolean wantStoredFileReplacement = true;
+		
 		public DomTableUnmarshaller(PhotoSpreadTableModel _tableModel) {
 			this._tableModel = _tableModel;
 			xpathProcessor = XPathFactory.newInstance().newXPath();
@@ -319,6 +352,20 @@ public class XMLProcessor {
 
 				// Add any tags that may be present in the XML file for this object:
 				unmarshallTags(objNode, object);
+
+				// Check whether this object a stored type, and if so,
+				// whether it is stored actually on the disk. If
+				// not, offer user to change the object's path:
+				if (storedTypes.get(objType)) {
+					String oldPath =
+							object.getMetaData(Const.permanentMetadataAttributeNames[Const.FILENAME_METADATA_ATTR_NAME]);
+					if (!(new File(oldPath).canRead())) {
+						File newPath = correctPath(oldPath);
+						if (newPath != null) {
+							((PhotoSpreadFileObject)object).setFilePath(newPath.toString());
+						}
+					}
+				}
 				cell.addObject(object);
 			}
 		}
@@ -397,9 +444,49 @@ public class XMLProcessor {
 				object.setMetaData(attrName, attrValue);
 			}
 		}
+		
+		private File correctPath(String dysfunctionalOldPath) {
+			
+			// First, check whether any of the replacement
+			// directories that the user provided for previous
+			// PhotoSpread objects that were not found on the
+			// disk work for this path:
+			
+			String newPathStr;
+			for (FilePathTransformer xformer : filePathTransformers) {
+				newPathStr = xformer.getUpdatedFilePath(dysfunctionalOldPath);
+				if (newPathStr != null)
+					return new File(newPathStr);
+			}
+			
+			// If user opted out of replacement offers,
+			// just return null.
+			if (!wantStoredFileReplacement)
+				return null;
+			
+			// Offer replacement for the file
+			File newFilePath = Misc.getFileReplacementFromUser(dysfunctionalOldPath);
+			if (newFilePath != null) {
+				// Remember the path to the directory the user
+				// navigated to, so that we can check future problem
+				// objects against all those directories before asking
+				// the user again for help:
+				filePathTransformers.add(new FilePathTransformer(dysfunctionalOldPath, newFilePath.toString()));
+				return newFilePath;
+			}
+			
+			// User cancelled out of the offer to replace.
+			// Ask whether they want to opt out of these offers
+			// for this load operation:
+			
+			wantStoredFileReplacement = 
+					Misc.showConfirmMsg("Wish continuance of offers for file replacements?", 
+							PhotoSpread.getCurrentSheetWindow());
+			return null;
+		}
 	}
 
-
+	//=========================  Class XMLHandler ========================
 	public class XMLHandler extends DefaultHandler {
 
 		@Override

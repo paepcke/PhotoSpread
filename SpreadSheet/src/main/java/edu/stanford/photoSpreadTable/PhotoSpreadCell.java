@@ -22,7 +22,6 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 
 import edu.stanford.inputOutput.XMLProcessor;
-import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpread.PhotoSpreadException;
 import edu.stanford.photoSpread.PhotoSpreadException.BadUUIDStringError;
 import edu.stanford.photoSpread.PhotoSpreadException.FormulaError;
@@ -298,18 +297,6 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 	 * 			all callers to set these to true.
 	 */
 	public void setFormula(String value, Boolean reEvaluateCell, Boolean reDrawTable){
-		
-		// If this cell contains a collection of loaded
-		// objects, refuse to enter the purely informational
-		// "(Item Collection)" as a formula. Unless the formula
-		// is being set to the empty string, which happens when
-		// the user runs clearCell() from the context menu:
-		
-		if (getFormula().equals(Const.OBJECTS_COLLECTION_INTERNAL_TOKEN) && !value.equals("")) {
-			Misc.showInfoMsg("This cell contains a collection of items that was not computed. Please right-click->Clear Cell before changing the cell formula.",
-					PhotoSpread.getCurrentSheetWindow());
-			return;
-		}
 		
 		String savedFormula = _formula;
 		ArrayList<PhotoSpreadCell> savedDependencyParents = new ArrayList<PhotoSpreadCell>();

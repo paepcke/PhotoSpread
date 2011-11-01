@@ -308,9 +308,9 @@ public class WorkspaceObjectsPanel extends ObjectsPanel {
 			_workspace.setEnabledButtons(_page);
 			if ((this.getDisplayedCell().isFormulaCell() &&
 					!this.getDisplayedCell().getFormula().isEmpty()))
-				_workspace.setTitle("Workspace for " + this.getDisplayedCell().toString());
+				_workspace.setTitle("Workspace for " + this.getDisplayedCell().toString() + "(F1 for help)");
 			else
-				_workspace.setTitle("Workspace for Cell " + this.getDisplayedCell().getCellAddress());
+				_workspace.setTitle("Workspace for Cell " + this.getDisplayedCell().getCellAddress() + "(F1 for help)");
 		}
 		// ****************************
 		setPreferredSize(((PredictableEquiSizedGridLayout) getLayout()).preferredLayoutSize(this));

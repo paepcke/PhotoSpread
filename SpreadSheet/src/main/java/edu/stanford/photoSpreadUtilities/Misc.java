@@ -144,6 +144,7 @@ public final class Misc {
 		private JFrame _parentFrame = null;
 		private InputStream _helpFileStream = null;
 		private HelpString _helpText= null;
+		private String _helpFilePath = null;
 		
 		/**
 		 * Given a relative path, like "HelpFiles/foo.html",
@@ -180,6 +181,7 @@ public final class Misc {
 
 		public ShowHelpAction (String winTitle, String helpFilePath) {
 			_winTitle = winTitle;
+			_helpFilePath = helpFilePath;
 			try {
 				_helpFileStream = getResource(helpFilePath);
 			} catch (java.io.FileNotFoundException e) {
@@ -194,6 +196,7 @@ public final class Misc {
 
 		public ShowHelpAction (String winTitle, String helpFilePath, JFrame parentFrame) {
 			_winTitle = winTitle;
+			_helpFilePath = helpFilePath;
 			try {
 				_helpFileStream = getResource(helpFilePath);
 			} catch (java.io.FileNotFoundException e) {
@@ -211,8 +214,14 @@ public final class Misc {
 		public void makeHelpPaneVisible() {
 			if (_helpFileStream == null) 
 				new HelpPane(_winTitle, _helpText, _parentFrame);
-			else
+			else {
+				//********
+				try {
+					_helpFileStream.close();
+					_helpFileStream = getResource(_helpFilePath);
+				} catch (IOException e) {}
 				new HelpPane(_winTitle, _helpFileStream, _parentFrame);
+			}
 		}
 		
 		public void actionPerformed(ActionEvent e) {
@@ -857,44 +866,61 @@ public final class Misc {
 	public static File getCSVFileNameFromUser() {
 		return getFileNameFromUser(
 				new CSVFileFilter(),
-				JFileChooser.FILES_AND_DIRECTORIES);
+				JFileChooser.FILES_AND_DIRECTORIES,
+				null); // default text for dialog submit button
 	}
 	
 	public static File getFileNameFromUser() {
 		return getFileNameFromUser(
 				null, // no file filter
-				JFileChooser.FILES_AND_DIRECTORIES);
+				JFileChooser.FILES_AND_DIRECTORIES,
+				null); // default text for dialog submit button
 	}
 	
 	public static File getFileNameFromUser(int whatToShow) {
 		return getFileNameFromUser(
 				null, // no file filter
-				whatToShow);
+				whatToShow,
+				null); // default text for dialog submit button
 	}
+	
+	public static File getFileNameFromUser(String submitButtonText) {
+		return getFileNameFromUser(
+				null, // no file filter
+				JFileChooser.FILES_AND_DIRECTORIES,
+				submitButtonText);
+	}
+	
 	
 	/**
 	 * @return
 	 */
 	public static File getFileNameFromUser(
 			FileFilter browseFileTypeFilter,
-			int whatToShow) {
+			int whatToShow,
+			String submitButtonText) {
 		
 		File importFile = null;
 		String priorReadDir = PhotoSpread.photoSpreadPrefs.getProperty(PhotoSpread.lastDirReadKey);
 
 		fc.setCurrentDirectory(new File(priorReadDir));
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		// Should browser offer only files? Only directories? Both, etc.
+		// Value of null shows all files:
 		if ((whatToShow == JFileChooser.DIRECTORIES_ONLY) ||
 				(whatToShow == JFileChooser.FILES_ONLY) ||
 				(whatToShow == JFileChooser.FILES_AND_DIRECTORIES))
 			fc.setFileSelectionMode(whatToShow);
-		// Should browser offer only files? Only directories? Both, etc.
-		// Value of null shows all files:
 		fc.setFileFilter(browseFileTypeFilter);
 
 		fc.setMultiSelectionEnabled(false);
 		
-		int returnVal = fc.showOpenDialog(PhotoSpread.getCurrentSheetWindow());
+		int returnVal;
+		if (submitButtonText == null)
+			returnVal = fc.showOpenDialog(PhotoSpread.getCurrentSheetWindow());
+		else
+			returnVal = fc.showDialog(PhotoSpread.getCurrentSheetWindow(), submitButtonText);
+		
 		if (returnVal != JFileChooser.APPROVE_OPTION)
 			return null;
 
@@ -904,7 +930,56 @@ public final class Misc {
 		return importFile;
 	}
 
+	/**
+	 * @see Misc#getFileReplacementFromUser(File)
+	 * @param oldPath string with path to dysfunctional file.
+	 * @return full path to the new file, or null if user cancelled.
+	 */
+	public static File getFileReplacementFromUser(String oldPath) {
+		return getFileReplacementFromUser(new File(oldPath));
+	}
 	
+	/**
+	 * Given the path to a file that is not available (typically moved in the file system, 
+	 * or referencing the file on another person's machine), get the user to find a
+	 * replacement file. Typically this file with be the one that corresponds to the 
+	 * original, but that need not be the case.
+	 *  
+	 * @param oldPathFile File object for the dysfunctional file.
+	 * @return a File object for the new location, or null if the user cancelled.
+	 */
+	public static File getFileReplacementFromUser(File oldPathFile) {
+		
+		// If we are doing automated jUnit tests, we don't want
+		// to put up dialogs. In that case, pretend the user clicked
+		// the Cancel button:
+		if (PhotoSpread.getDebutLevel() == PhotoSpread.DebugLevel.AUTOMATIC_TESTING)
+			return null;
+	
+		String priorReadDir = PhotoSpread.photoSpreadPrefs.getProperty(PhotoSpread.lastDirReadKey);
+		JFileChooser replacementFc = new JFileChooser(priorReadDir);
+
+		replacementFc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		replacementFc.setMultiSelectionEnabled(false);
+		replacementFc.setDialogTitle("Find replacement for " + oldPathFile.toString());
+		int returnVal;
+		
+		// Text for the submit button:
+		String submitButtonText = "Found " + oldPathFile.getName();
+		returnVal = replacementFc.showDialog(PhotoSpread.getCurrentSheetWindow(), submitButtonText);
+		
+		if (returnVal != JFileChooser.APPROVE_OPTION)
+			return null;
+
+		File replacementFile = replacementFc.getSelectedFile();
+		
+		// Remember the last directory user navigated to:
+		PhotoSpread.photoSpreadPrefs.setProperty(PhotoSpread.lastDirReadKey, replacementFile.getParent());
+		
+		return replacementFile;
+	}
+
+
 	/**
 	 * Use for error message dialog boxes that just call for clicking OK.
 	 * @param msgs Array of messages to display in the dialog box as a 'vertical stack'
@@ -1060,6 +1135,10 @@ public final class Misc {
 			//String path = "HelpFiles/sheetHelp.html";
 			// File f = Misc.ShowHelpAction.getResource(path);
 			// System.out.println(f);
+			
+			File replacement =
+					getFileReplacementFromUser("C:\\Users\\paepcke\\dldev\\EclipseWorkspaces\\PhotoSpread\\SpreadSheet\\src\\test\\resources\\TestCases\\Photos\\conventionCenterTwoWomen.jpg");
+			System.out.println("Replacement is: " + replacement.toString());
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());

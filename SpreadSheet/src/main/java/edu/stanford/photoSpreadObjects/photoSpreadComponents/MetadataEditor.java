@@ -91,7 +91,7 @@ public class MetadataEditor extends JFrame {
 	public MetadataEditor() {
 
 		this.addWindowListener(new MetadataEditorWindowListener());
-		this.setTitle("PhotoSpread Metadata Editor");
+		this.setTitle("PhotoSpread Metadata Editor (F1 for help)");
 
 		_panel = new JPanel();
 		_panel.setBackground(Color.DARK_GRAY);

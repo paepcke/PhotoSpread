@@ -84,7 +84,7 @@ import edu.stanford.photoSpreadUtilities.PhotoSpreadProperties;
 public class PhotoSpread {
 
 	// NOTE: Change this for new versions:
-	public static String version = "0.8";
+	public static String version = "0.9";
 	
 	// The AUTOMATIC_TESTING debug level will suppress
 	// all popup messages for users. Those would required
@@ -579,7 +579,7 @@ public class PhotoSpread {
 		
 		// Number of columns on the command line or in the pref file
 		// are short by one, because the use Col0 for row numbers.
-		int colsWanted = photoSpreadPrefs.getInt(sheetNumColsKey);
+		//int colsWanted = photoSpreadPrefs.getInt(sheetNumColsKey);
 		//photoSpreadPrefs.put(sheetNumColsKey, ""+(colsWanted + 1));
 
 		// Adjust height of window such that it is no higher than 

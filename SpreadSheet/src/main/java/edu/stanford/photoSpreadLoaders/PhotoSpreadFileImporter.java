@@ -221,7 +221,8 @@ public class PhotoSpreadFileImporter {
 							File newDir = 
 								Misc.getFileNameFromUser(
 										null, // Let user see all files (no file filter) 
-										JFileChooser.DIRECTORIES_ONLY);
+										JFileChooser.DIRECTORIES_ONLY,
+										null); // use default text for dialog submit button.
 							if (newDir == null) // User canceled.
 								return numRecordsLoaded;
 							csvFileDirStr = newDir.getPath();

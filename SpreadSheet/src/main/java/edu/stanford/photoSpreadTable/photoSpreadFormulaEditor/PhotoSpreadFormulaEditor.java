@@ -14,6 +14,7 @@ import javax.swing.InputMap;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
+import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpreadTable.PhotoSpreadCell;
 import edu.stanford.photoSpreadTable.PhotoSpreadTable;
 import edu.stanford.photoSpreadUtilities.Const;
@@ -93,7 +94,19 @@ public class PhotoSpreadFormulaEditor extends JTextField {
     }
     
     private void submitToCell(){
-   
+    	
+		// If this cell contains a collection of loaded
+		// objects, refuse to enter the purely informational
+		// "(Item Collection)" as a formula. Unless the formula
+		// is being set to the empty string, which happens when
+		// the user runs clearCell() from the context menu:
+		
+		if (getText().equals(Const.OBJECTS_COLLECTION_PUBLIC_TOKEN)) {
+			Misc.showInfoMsg("This cell contains a collection of items that was not computed. Please right-click->Clear Cell before changing the cell formula.",
+					PhotoSpread.getCurrentSheetWindow());
+			return;
+		}
+		
         _parentTable.setSelectedCellFormula(this.getText());
         
         // Make the editor window lose focus

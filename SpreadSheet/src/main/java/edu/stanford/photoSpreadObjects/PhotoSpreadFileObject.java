@@ -33,6 +33,16 @@ abstract public class PhotoSpreadFileObject extends PhotoSpreadObject {
         		Const.permanentMetadataAttributeNames[Const.FILENAME_METADATA_ATTR_NAME], 
         		_filePath);
     }
+
+    /**
+     * Change the path where this object is stored on disk (or DB).
+     * @param newPath
+     */
+    public void setFilePath(String newPath) {
+    	_filePath = newPath;
+    	setMetaData(Const.permanentMetadataAttributeNames[Const.FILENAME_METADATA_ATTR_NAME],
+    				newPath);
+    }
     
     public String getFilePath() {
         return _filePath;

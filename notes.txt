@@ -5,4 +5,11 @@ To do:
 - Finish XML test cases
 - Cut new version.
 
+- Documentation:
+    * All function names are lower case.
+    * How to drag to trash (Upper left corner: grouch)
+    * cnt-=/cnt-- in Help windows to increase fonts.
+    * $HOME/.photoSpread/photoSpread.properties
+        or command line
+
 
