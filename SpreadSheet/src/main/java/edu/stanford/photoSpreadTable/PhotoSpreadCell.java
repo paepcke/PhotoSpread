@@ -706,6 +706,9 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 				   ROWNUM_ATTRIBUTE_NAME + "=\"" + getRow() + "\"" +
 				   ">" + System.getProperty("line.separator"));
 		
+		if (getSortKey() != null) {
+			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.CELL_SORT_KEY_ELEMENT, getSortKey()));
+		}
 		if (!_formula.isEmpty())
 			xml.append(PhotoSpreadHelpers.getXMLElement(XMLProcessor.CELL_FORMULA_ELEMENT, _formula));
 		

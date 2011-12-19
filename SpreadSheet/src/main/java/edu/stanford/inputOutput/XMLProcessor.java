@@ -53,6 +53,7 @@ public class XMLProcessor {
 	public static String COL_ELEMENT = "col";
 	public static String CELL_ELEMENT = "cell";
 	public static String CELL_FORMULA_ELEMENT = "cellFormula";
+	public static String CELL_SORT_KEY_ELEMENT = "sortKey";
 	public static String OBJECT_CONSTRUCTOR_ARGUMENTS_ELEMENT = "objectConstructorArguments";
 	public static String OBJECT_CONSTRUCTOR_ARGUMENT_ELEMENT = "objectConstructorArgument";
 	public static String OBJECT_TYPE_ELEMENT = "objectType";
@@ -122,6 +123,7 @@ public class XMLProcessor {
 		XPath xpathProcessor = null;
 		final String xpathGetCellsExpr   = "//" + XMLProcessor.CELL_ELEMENT;
 		final String xpathGetCellFormula = XMLProcessor.CELL_FORMULA_ELEMENT;
+		final String xpathGetCellSortKey= XMLProcessor.CELL_SORT_KEY_ELEMENT;
 		final String xpathGetObjsExpr    = XMLProcessor.OBJECTS_ELEMENT + "/" + XMLProcessor.OBJECT_ELEMENT;
 		final String xpathGetObjTypeAttr = "@" + XMLProcessor.OBJECT_TYPE_ELEMENT;
 		final String xpathGetObjConstructors = XMLProcessor.OBJECT_CONSTRUCTOR_ARGUMENTS_ELEMENT + "/" + XMLProcessor.OBJECT_CONSTRUCTOR_ARGUMENT_ELEMENT;
@@ -277,6 +279,7 @@ public class XMLProcessor {
 				throws BadSheetFileContent, IllegalArgumentException {
 
 			String formulaStr = "";
+			String theSortKey = null;
 
 			// Don't make a new cell, use the existing one:
 			// PhotoSpreadCell cell = new PhotoSpreadCell(_tableModel, row,
@@ -285,9 +288,20 @@ public class XMLProcessor {
 
 			try {
 				// Recover this cell's formula from the XML. 
+				theSortKey = xpathProcessor.evaluate(xpathGetCellSortKey, cellNode);
+			} catch (XPathExpressionException e) {
+				// If no sort key XML is present, that's fine.
+				// Sort key is initialized to be empty in the cell constructor.
+			}
+			
+			if (!theSortKey.isEmpty())
+				cell.setSortKey(theSortKey);
+			
+			try {
+				// Recover this cell's formula from the XML. 
 				formulaStr = xpathProcessor.evaluate(xpathGetCellFormula, cellNode);
 			} catch (XPathExpressionException e) {
-				// If no formula XML is in the formula, that's fine.
+				// If no formula XML is in file, that's fine.
 				// The formula strings in the on-screen are initialized to 
 				// be empty.
 			}
