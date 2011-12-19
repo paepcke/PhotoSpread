@@ -989,7 +989,7 @@ public class ObjectsPanel extends JPanel{
 				JOptionPane.QUESTION_MESSAGE,   // Type of msg (e.g. for the icon)
 				null, 			// icon
 				null,			// array of selection values
-				PhotoSpreadContextMenu.getCurrentMetadataSortKey ()   // initial value in text box
+				_displayedCell.getSortKey()   // initial value in text box
 		);
 		if (sortField == null) {
 			_displayedCell.setSortKey(null);
@@ -1004,7 +1004,6 @@ public class ObjectsPanel extends JPanel{
 			return;
 		}
 
-		PhotoSpreadContextMenu.setCurrentMetadataSortKey (sortField);
 		_displayedCell.setSortKey(sortField);
 		_displayedCell.sortObjects(sortField);
 	}

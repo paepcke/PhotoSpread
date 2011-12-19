@@ -808,6 +808,10 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 		}
 	}
 	
+	public String getSortKey() {
+		return _currentSortKey;
+	}
+	
 	public void setSortKey(String sortKey) {
 		_currentSortKey = sortKey;
 	}

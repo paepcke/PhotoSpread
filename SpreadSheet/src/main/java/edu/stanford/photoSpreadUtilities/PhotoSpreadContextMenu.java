@@ -31,8 +31,6 @@ public class PhotoSpreadContextMenu extends JPopupMenu {
 	private static final long serialVersionUID = 1L;
 	MouseListener _popupListener;
 	PhotoSpreadCell _displayedCell;
-	static String _currentMetadataSortKey = "";
-
 
 	/****************************************************
 	 * Constructor(s)
@@ -63,15 +61,12 @@ public class PhotoSpreadContextMenu extends JPopupMenu {
 		this.setLightWeightPopupEnabled(false);
 	}
 	
-	public static String getCurrentMetadataSortKey () {
-		return _currentMetadataSortKey;
+	public String getCurrentMetadataSortKey () {
+		return _displayedCell.getSortKey();
 	}
 
-	public static void setCurrentMetadataSortKey (String key) {
-		if (key == null)
-			_currentMetadataSortKey = "";
-		else
-			_currentMetadataSortKey = key;
+	public void setCurrentMetadataSortKey (String key) {
+		_displayedCell.setSortKey(key);
 	}
 
 	/****************************************************
@@ -191,8 +186,7 @@ public class PhotoSpreadContextMenu extends JPopupMenu {
 						new java.awt.event.ActionListener() {
 
 							public void actionPerformed(ActionEvent e) {
-								_currentMetadataSortKey = e.getActionCommand();
-								cell.setSortKey(_currentMetadataSortKey);
+								cell.setSortKey(e.getActionCommand());
 								cell.sortObjects();
 							}
 						});
