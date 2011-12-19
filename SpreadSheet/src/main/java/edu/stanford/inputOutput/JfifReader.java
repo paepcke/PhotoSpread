@@ -62,13 +62,20 @@ public class JfifReader {
 			byte b = bData[i];
 			if (b == RECONYX_SEPARATOR || b == BUCKEYE_SEPARATOR) {
 				if (b == BUCKEYE_SEPARATOR) {
-					value = makeWord(bData, sPos, length);
+					if (length > 0)
+						value = makeWord(bData, sPos, length);
 					isBuckeyePhoto = true; // ID's the photo according to the unique separator
 				} else {
-					value = makeWord(bData, sPos + 1, length - 1); // in order to skip over the extra space that reconyx adds
+					// ANDREAS: first time through (maybe when image is NOT Buckeye or Reconyx?):
+					//          the length-1 breaks in the makeWord() method, where the passed-in
+					//          length is used to create an array. ==> NegativeArraySizeException:
+					if (length > 0)
+						value = makeWord(bData, sPos + 1, length - 1); // in order to skip over the extra space that reconyx adds
 					isReconyxPhoto = true;
 				}
-				addWord(result, key, value);
+				// ANDREAS: see else clause above:
+				if (length > 0)
+					addWord(result, key, value);
 
 				// Resets variables
 				sPos = i + 1;

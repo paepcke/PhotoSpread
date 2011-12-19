@@ -8,6 +8,8 @@
 package edu.stanford.inputOutput;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,18 +25,19 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpread.PhotoSpreadException;
 import edu.stanford.photoSpread.PhotoSpreadException.BadSheetFileContent;
 import edu.stanford.photoSpread.PhotoSpreadException.BadUUIDStringError;
 import edu.stanford.photoSpread.PhotoSpreadException.FileIOException;
-import edu.stanford.photoSpreadObjects.PhotoSpreadFileObject;
+import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
+import edu.stanford.photoSpreadLoaders.PhotoSpreadFileImporter;
+import edu.stanford.photoSpreadObjects.PhotoSpreadImage;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadTable.PhotoSpreadCell;
 import edu.stanford.photoSpreadTable.PhotoSpreadTableModel;
 import edu.stanford.photoSpreadUtilities.Const;
-import edu.stanford.photoSpreadUtilities.FilePathTransformer;
-import edu.stanford.photoSpreadUtilities.Misc;
+import edu.stanford.photoSpreadUtilities.UUID;
+import edu.stanford.photoSpreadUtilities.UUID.FileHashMethod;
 
 //import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 
@@ -72,14 +75,7 @@ public class XMLProcessor {
 			put("edu.stanford.photoSpreadObjects.PhotoSpreadTextFile", true);
 		};
 	};
-	
-	// List of file path transformers used to try the directories
-	// of replacement files the user picked during unmarshalling of
-	// PhotoSpread objects that are stored on the disk, but that are
-	// not found on the current computer:
-	private ArrayList<FilePathTransformer> filePathTransformers = new ArrayList<FilePathTransformer>();
-	
-	
+
 	/**
 	 *Loads data from xml format into a tableModel
 	 * 
@@ -92,7 +88,7 @@ public class XMLProcessor {
 	String _xmlFilePath = "";
 
 	public void loadXMLFile(File f, PhotoSpreadTableModel tableModel)
-			throws FileIOException, BadSheetFileContent {
+			throws FileIOException, BadSheetFileContent, IllegalArgumentException {
 
 		_xmlFilePath = f.getPath();
 
@@ -111,15 +107,15 @@ public class XMLProcessor {
 		} catch (SAXException e) {
 			throw new PhotoSpreadException.BadSheetFileContent(
 					"Bad saved sheet file: '" + _xmlFilePath
-							+ "'. (SAXException: " + e.getMessage() + ").");
+					+ "'. (SAXException: " + e.getMessage() + ").");
 		}
-		
+
 		// Force evaluation of all cells:
 		tableModel.fireTableDataChanged();
 	}
 
 	//=========================  Class DomTableUnmarshaller ========================	
-	
+
 	class DomTableUnmarshaller {
 
 		PhotoSpreadTableModel _tableModel;
@@ -140,12 +136,12 @@ public class XMLProcessor {
 		// time user cancels out of such an offer we let them
 		// say whether they want to stop getting the offers:
 		boolean wantStoredFileReplacement = true;
-		
+
 		public DomTableUnmarshaller(PhotoSpreadTableModel _tableModel) {
 			this._tableModel = _tableModel;
 			xpathProcessor = XPathFactory.newInstance().newXPath();
 		}
-		
+
 		/**
 		 * Given an XML document node object that represents a PhotoSpread table
 		 * sheet, materialize that table into the current (on-screen) table. 
@@ -159,14 +155,14 @@ public class XMLProcessor {
 		 * @param rootNode  The document node below, and including the <table> element.
 		 * @throws BadSheetFileContent
 		 */
-		public void unmarshallTable(Node rootNode) throws BadSheetFileContent {
-			
+		public void unmarshallTable(Node rootNode) throws BadSheetFileContent, IllegalArgumentException {
+
 			NodeList cellNodeList = null;
 			int numRows = -1;
 			int numCols = -1;
 			String numRowsStr = "";
 			String numColsStr = "";
-			
+
 			try {
 				// Get table attributes numRows and numCols to have the
 				// dimensions of the table being unmarshalled. We'll use that
@@ -175,7 +171,7 @@ public class XMLProcessor {
 				numColsStr = xpathProcessor.evaluate("@numCols", rootNode);
 				numRows = Integer.parseInt(numRowsStr);
 				numCols = Integer.parseInt(numColsStr);
-				
+
 				// Get a set of Cell node objects:
 				cellNodeList = (NodeList) xpathProcessor.evaluate(xpathGetCellsExpr, rootNode, XPathConstants.NODESET);
 			} catch (XPathExpressionException e) {
@@ -184,7 +180,7 @@ public class XMLProcessor {
 				throw new BadSheetFileContent("Attribute numRows or numCols in the Table node are not integers:" +
 						"numRows is '" + numRowsStr + "', and numCols is '" + numColsStr + "'"); 
 			}
-			
+
 			// Does the dimension declaration in the XML file's
 			// Table element attributes match
 			// the row and col numbers of the current table?
@@ -213,7 +209,7 @@ public class XMLProcessor {
 						"cells. But the table being loaded has " +
 						numCells + " cells.");
 			}
-			
+
 			// Fill in all cells, with their formulas and possibly 
 			// contained objects:
 			unmarshallCellList(cellNodeList);
@@ -226,12 +222,13 @@ public class XMLProcessor {
 		 * 
 		 * @param cellNodeList XML nodes representing Cell objects
 		 * @throws BadSheetFileContent
+		 * @throws IllegalArgumentException 
 		 */
 		private void unmarshallCellList(NodeList cellNodeList)
-				throws BadSheetFileContent {
-			
+				throws BadSheetFileContent, IllegalArgumentException {
+
 			int numCells = cellNodeList.getLength();
-			
+
 			// Unmarshall each Cell node in turn:
 			int rowNum = -1;
 			int colNum = -1;
@@ -250,7 +247,7 @@ public class XMLProcessor {
 					unmarshallCell(cellNode, rowNum, colNum);
 				} catch (NumberFormatException e1) {
 					new BadSheetFileContent("PhotoSpread sheet XML defective. Expected row or column number; got rowNum: '" +
-											rowNumStr + "', and colNum: '" + colNumStr + "'");
+							rowNumStr + "', and colNum: '" + colNumStr + "'");
 				} catch (XPathExpressionException e2) {
 					new BadSheetFileContent("PhotoSpread sheet XML defective. " +
 							"Error while finding cell rowNum or colNum attribute:" +
@@ -258,8 +255,8 @@ public class XMLProcessor {
 				}
 			}
 		}
-			
-		
+
+
 		/**
 		 * Given one XML Cell node, and its destination row/column pair, get the cell's
 		 * formula from the XML and put it into the on-screen's corresponding cell. Then
@@ -274,17 +271,18 @@ public class XMLProcessor {
 		 * @return A PhotoSpreadCell object with its formula and any stored objects installed.
 		 * The cell object will be the already existing cell in the on-screen table.
 		 * @throws BadSheetFileContent
+		 * @throws IllegalArgumentException 
 		 */
 		private PhotoSpreadCell unmarshallCell(Node cellNode, int row, int col)
-				throws BadSheetFileContent {
+				throws BadSheetFileContent, IllegalArgumentException {
 
 			String formulaStr = "";
-			
+
 			// Don't make a new cell, use the existing one:
 			// PhotoSpreadCell cell = new PhotoSpreadCell(_tableModel, row,
 			// col);
 			PhotoSpreadCell cell = _tableModel.getCell(row, col);
-			
+
 			try {
 				// Recover this cell's formula from the XML. 
 				formulaStr = xpathProcessor.evaluate(xpathGetCellFormula, cellNode);
@@ -295,14 +293,14 @@ public class XMLProcessor {
 			}
 			if (!formulaStr.isEmpty())
 				cell.setFormula(formulaStr, Const.DONT_EVAL, Const.DONT_REDRAW);
-			
+
 			// If a cell contains one or more objects, rather than a
 			// formula, then the formula string will be the special
 			// constant OBJECTS_COLLECTION_INTERNAL_TOKEN:
 			if (formulaStr.equals(Const.OBJECTS_COLLECTION_INTERNAL_TOKEN))
 				// Materialize and add the objects to the cell:
 				unmarshallObjects(cellNode, cell);
-			
+
 			return cell;
 		}
 
@@ -316,7 +314,7 @@ public class XMLProcessor {
 		 */
 		private void unmarshallObjects(Node cellNode, PhotoSpreadCell cell)
 				throws BadSheetFileContent {
-			
+
 			NodeList objsNodeList = null;
 			try {
 				objsNodeList = (NodeList) xpathProcessor.evaluate(xpathGetObjsExpr, cellNode, XPathConstants.NODESET);
@@ -335,7 +333,7 @@ public class XMLProcessor {
 					throw new BadSheetFileContent("Could not retrieve type of cell object number " +
 							objIndex + "of cell " + cell);
 				}
-				
+
 				// Get the arguments we need to give the PhotoSpread object constructor
 				// to materialize it properly:
 				ArrayList<String> constrArgs = unmarshallConstructorArguments(objNode);
@@ -357,18 +355,62 @@ public class XMLProcessor {
 				// whether it is stored actually on the disk. If
 				// not, offer user to change the object's path:
 				if (storedTypes.get(objType)) {
+
 					String oldPath =
 							object.getMetaData(Const.permanentMetadataAttributeNames[Const.FILENAME_METADATA_ATTR_NAME]);
-					if (!(new File(oldPath).canRead())) {
-						File newPath = correctPath(oldPath);
-						if (newPath != null) {
-							((PhotoSpreadFileObject)object).setFilePath(newPath.toString());
+					String originalUUIDStr =
+							object.getMetaData(Const.permanentMetadataAttributeNames[Const.UUID_METADATA_ATTR_NAME]);
+
+					File localFile = new File(oldPath);
+					if (objType == "edu.stanford.photoSpreadObjects.PhotoSpreadImage") {
+						UUID originalUUID = null;
+
+						if (localFile.canRead()) {
+							// See whether the original UUID was recovered from the XML:
+							if ((originalUUIDStr != null) && ( ! originalUUIDStr.isEmpty())) {
+								try {
+									originalUUID = new UUID(localFile, FileHashMethod.USE_FILE_SAMPLING);
+								} catch (FileNotFoundException e) {
+									continue;
+								} catch (IOException e) {
+									continue;
+								} 
+							}
 						}
-					}
-				}
+						// Now ensure that the image file on the local machine, and the
+						// corresponding file on the original machine have the same content:
+						File finalPath;
+						try {
+							finalPath = PhotoSpreadFileImporter.resolveFile(new File(System.getProperty("user.dir")), 
+									localFile, 
+									originalUUID);
+						} catch (IOException e) {
+							continue;
+						}
+						// Replace the originally created image with this final one:
+						try {
+							object = new PhotoSpreadImage(cell, finalPath.getAbsolutePath());
+						} catch (FileNotFoundException e) {
+							continue;
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					} // end restore an image
+					else if (objType == "edu.stanford.photoSpreadObjects.PhotoSpreadTextFile") {
+						if (! localFile.canRead() ) {
+							File replacementFile = null;
+							replacementFile = PhotoSpreadFileImporter.correctPath(localFile.getAbsolutePath());
+							if (replacementFile == null) {
+								// If user punted, move on to the next object to import:
+								continue;
+							}
+						}
+					} // end restore a text file
+				} // end handle stored objects
 				cell.addObject(object);
-			}
-		}
+			} // next object to unmarshall and add to cell
+		} // end method unmarshallObjects
 
 		/**
 		 * Each XML cell element in an XML-saved sheet contains all arguments to be passed to
@@ -384,12 +426,12 @@ public class XMLProcessor {
 
 			ArrayList<String> constructorArgs = new ArrayList<String>();
 			NodeList constrArgsNodeList = null;
-			
+
 			// Get the XML node list of all the original cell's contained objects:
 			try {
 				constrArgsNodeList = (NodeList) xpathProcessor.evaluate(xpathGetObjConstructors, 
-																		objNode, 
-																		XPathConstants.NODESET);
+						objNode, 
+						XPathConstants.NODESET);
 			} catch (XPathExpressionException e) {
 				throw new BadSheetFileContent("Could not retrieve constructor args for cell." + e.getMessage());
 			}
@@ -407,7 +449,7 @@ public class XMLProcessor {
 			return constructorArgs;
 		}
 
-		
+
 		/**
 		 * For a given XML object node, recover the corresponding PhotoSpread object's 
 		 * attr/value tags. Those tags were stored in the XML file being unmarshalled when
@@ -444,75 +486,33 @@ public class XMLProcessor {
 				object.setMetaData(attrName, attrValue);
 			}
 		}
-		
-		private File correctPath(String dysfunctionalOldPath) {
-			
-			// First, check whether any of the replacement
-			// directories that the user provided for previous
-			// PhotoSpread objects that were not found on the
-			// disk work for this path:
-			
-			String newPathStr;
-			for (FilePathTransformer xformer : filePathTransformers) {
-				newPathStr = xformer.getUpdatedFilePath(dysfunctionalOldPath);
-				if (newPathStr != null)
-					return new File(newPathStr);
+
+		//=========================  Class XMLHandler ========================
+		public class XMLHandler extends DefaultHandler {
+
+			@Override
+			public void startElement(String arg0, String localName, String arg2,
+					org.xml.sax.Attributes arg3) throws SAXException {
+				System.out.println(arg3.getValue(0));
+
 			}
-			
-			// If user opted out of replacement offers,
-			// just return null.
-			if (!wantStoredFileReplacement)
-				return null;
-			
-			// Offer replacement for the file
-			File newFilePath = Misc.getFileReplacementFromUser(dysfunctionalOldPath);
-			if (newFilePath != null) {
-				// Remember the path to the directory the user
-				// navigated to, so that we can check future problem
-				// objects against all those directories before asking
-				// the user again for help:
-				filePathTransformers.add(new FilePathTransformer(dysfunctionalOldPath, newFilePath.toString()));
-				return newFilePath;
+
+			public void endElement(String namespaceURI, String localName,
+					String qualifiedName) throws SAXException {
+
+				// if (localName.equals("double")) inDouble = false;
+
 			}
-			
-			// User cancelled out of the offer to replace.
-			// Ask whether they want to opt out of these offers
-			// for this load operation:
-			
-			wantStoredFileReplacement = 
-					Misc.showConfirmMsg("Wish continuance of offers for file replacements?", 
-							PhotoSpread.getCurrentSheetWindow());
-			return null;
-		}
-	}
 
-	//=========================  Class XMLHandler ========================
-	public class XMLHandler extends DefaultHandler {
+			public void characters(char[] ch, int start, int length)
+					throws SAXException {
 
-		@Override
-		public void startElement(String arg0, String localName, String arg2,
-				org.xml.sax.Attributes arg3) throws SAXException {
-			System.out.println(arg3.getValue(0));
-
-		}
-
-		public void endElement(String namespaceURI, String localName,
-				String qualifiedName) throws SAXException {
-
-			// if (localName.equals("double")) inDouble = false;
-
-		}
-
-		public void characters(char[] ch, int start, int length)
-				throws SAXException {
-
-			if (true) {
-				for (int i = start; i < start + length; i++) {
-					// System.out.print(ch[i]);
+				if (true) {
+					for (int i = start; i < start + length; i++) {
+						// System.out.print(ch[i]);
+					}
 				}
 			}
-
-		}
-
-	}
-}
+		} // end class XMLHandler
+	} // end class DomTableUnmarshaller
+} 

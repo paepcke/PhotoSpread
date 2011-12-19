@@ -124,6 +124,11 @@ public final class Const {
 	// PredictableEquiSizedGridLayout: row count invalid:
 	public static final int INVALID = -1;
 
+	// Width vs Height:
+	public static enum DimensionSide {
+		WIDTH, HEIGHT
+	}
+	
 	// Convenient collection of alignment
 	// specifiers:
 	public static enum Alignment {

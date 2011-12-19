@@ -17,6 +17,7 @@ import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpread.PhotoSpreadException;
 import edu.stanford.photoSpread.PhotoSpreadException.FormulaError;
 import edu.stanford.photoSpread.PhotoSpreadException.FormulaSyntaxError;
+import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadObjects.PhotoSpreadStringObject;
 import edu.stanford.photoSpreadParser.ExpressionParser;
@@ -82,7 +83,10 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 			}
 		}
 		for (int row = 0; row < numRows; row++) {
-			PhotoSpreadCell col0Cell = getCell(row, 0);
+			PhotoSpreadCell col0Cell = null;
+			try {
+				col0Cell = getCell(row, 0);
+			} catch (IllegalArgumentException e) {};
 			col0Cell.addObject(new PhotoSpreadStringObject(col0Cell, ""+(row+1)));
 		}
 	}
@@ -95,7 +99,7 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 
 		for(int row = 0; row < this.getRowCount(); row++){
 			for(int col = 1; col < this.getColumnCount(); col++){
-				this.getCell(row, col).clear(Const.DONT_EVAL, Const.DONT_REDRAW);
+				this.getCellSafely(row, col).clear(Const.DONT_EVAL, Const.DONT_REDRAW);
 			}
 		}
 		// Now that everything is cleared, eval each cell, just
@@ -103,7 +107,7 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 		for(int row = 0; row < this.getRowCount(); row++){
 			for(int col = 1; col < this.getColumnCount(); col++){
 				try {
-					this.getCell(row, col).evaluate(Const.DONT_REDRAW);
+					this.getCellSafely(row, col).evaluate(Const.DONT_REDRAW);
 				} catch (FormulaError e) {
 					// Should be an empty table, and should there not throw an error!
 					e.printStackTrace();
@@ -259,15 +263,42 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 	}
 
 	/**
-	 * Return cell object at row/col, both with origin 0
+	 * Return cell object at row/col.
 	 * 
-	 * @param colIndex
-	 * @param rowIndex
+	 * @param colIndex origin 1. 	 
+	 * @param rowIndex origin 0.
 	 * @return Cell object at row/col. 
 	 */
-	public PhotoSpreadCell getCell(int rowIndex, int colIndex){
-		return data.get(colIndex).get(rowIndex);	
+	public PhotoSpreadCell getCell(int rowIndex, int colIndex)
+	throws PhotoSpreadException.IllegalArgumentException {
+		try {
+			return data.get(colIndex).get(rowIndex);
+		} catch (IndexOutOfBoundsException e) {
+			if (rowIndex > data.size() - 1) {
+				int uiRowNum = rowIndex + 1;
+				throw new PhotoSpreadException.IllegalArgumentException("Row " + 
+						uiRowNum + 
+						" (in " + Misc.getCellAddress(rowIndex, colIndex) +
+						") does not exist in this sheet.");
+			} else {
+				throw new PhotoSpreadException.IllegalArgumentException("Column in " + 
+						 Misc.getCellAddress(rowIndex, colIndex) + " does not exist.");
+			}
+		}
 	}
+	
+	/**
+	 * Return cell object at rowIndex/coloIndex. Use this method
+	 * when you are certain that there is no array-out-of-bounds
+	 * problem with your row and column index.
+	 * @param rowIndex
+	 * @param colIndex
+	 * @return
+	 */
+	public PhotoSpreadCell getCellSafely(int rowIndex, int colIndex) {
+		return data.get(colIndex).get(rowIndex);
+	}
+
 
 	/**
 	 * Return cell object at col/row. Row has origin 1; Col has origin 0
@@ -335,13 +366,13 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 	
 	public void moveSelectedObjects(
 			PhotoSpreadCell srcCell, 
-			PhotoSpreadCell destCell) {
+			PhotoSpreadCell destCell) throws IllegalArgumentException {
 		moveOrCopySelectedObjects(srcCell, destCell,ObjMovements.MOVE);
 	}
 
 	public void copySelectedObjects(
 			PhotoSpreadCell srcCell, 
-			PhotoSpreadCell destCell) {
+			PhotoSpreadCell destCell) throws IllegalArgumentException {
 		moveOrCopySelectedObjects(srcCell, destCell,ObjMovements.COPY);
 	}
 	
@@ -357,12 +388,13 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 	 * NOTE this method does not update the UI.
 	 * Caller must do that. 
 	 * @param objects
+	 * @throws IllegalArgumentException 
 	 */
 	
 	public void moveOrCopySelectedObjects(
 			PhotoSpreadCell srcCell, 
 			PhotoSpreadCell destCell,
-			ObjMovements moveOrCopy) {
+			ObjMovements moveOrCopy) throws IllegalArgumentException {
 		if ((srcCell == null) ||
 				(destCell == null))
 			throw new RuntimeException(
@@ -402,6 +434,10 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 
 		else if(destIsFormula){
 			forceObjects(destCell, objects, Const.DO_EVAL, Const.DONT_REDRAW);
+			// Must re-eval the origin cell, so that its dependents get
+			// updated. Else formula cells that were satisfied by the 
+			// pre-forced value are not updated:
+			forceObjects(srcCell, objects, Const.DO_EVAL, Const.DO_REDRAW);
 			return;
 		}
 		Misc.showErrorMsg("Cannot drag out of a formula cell.", PhotoSpread.getCurrentSheetWindow());
@@ -411,7 +447,7 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 			PhotoSpreadCell destCell,
 			ArrayList<PhotoSpreadObject> objects, 
 			Boolean reEvaluateCell, 
-			Boolean reDrawTable){
+			Boolean reDrawTable) throws IllegalArgumentException{
 
 		if (destCell == null)
 			throw new RuntimeException(
@@ -457,7 +493,7 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 			PhotoSpreadObject object, 
 			PhotoSpreadCell destCell,
 			Boolean reEvaluateCell, 
-			Boolean reDrawTable){
+			Boolean reDrawTable) throws IllegalArgumentException{
 		if (destCell == null)
 			throw new RuntimeException(
 					new PhotoSpreadException.DnDSourceOrDestNotSet(

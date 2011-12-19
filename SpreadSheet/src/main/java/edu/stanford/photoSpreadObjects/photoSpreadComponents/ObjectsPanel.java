@@ -5,10 +5,6 @@
 
 package edu.stanford.photoSpreadObjects.photoSpreadComponents;
 
-import edu.stanford.inputOutput.CsvWriter;
-import edu.stanford.inputOutput.ExifWriter;
-import edu.stanford.inputOutput.InputOutput;
-
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.Insets;
@@ -20,6 +16,7 @@ import java.io.File;
 import java.rmi.NotBoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
@@ -29,7 +26,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-//import org.apache.sanselan.formats.tiff.constants.TiffConstants;
+import edu.stanford.inputOutput.CsvWriter;
+import edu.stanford.inputOutput.ExifWriter;
+import edu.stanford.inputOutput.InputOutput;
 import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpread.PhotoSpreadException;
 import edu.stanford.photoSpread.PhotoSpreadException.BadUUIDStringError;
@@ -39,7 +38,7 @@ import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
 import edu.stanford.photoSpreadLoaders.CSVFileFilter;
 import edu.stanford.photoSpreadLoaders.ImageFileFilter;
 import edu.stanford.photoSpreadLoaders.PhotoSpreadFileImporter;
-import edu.stanford.photoSpreadObjects.PhotoSpreadFileObject;
+import edu.stanford.photoSpreadObjects.PhotoSpreadImage;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadObjects.PhotoSpreadTableObject;
 import edu.stanford.photoSpreadTable.DnDSupport;
@@ -50,10 +49,10 @@ import edu.stanford.photoSpreadUtilities.ComputableDimension;
 import edu.stanford.photoSpreadUtilities.Const;
 import edu.stanford.photoSpreadUtilities.Misc;
 import edu.stanford.photoSpreadUtilities.PhotoSpreadContextMenu;
-import edu.stanford.photoSpreadUtilities.ReconyxGroupingInteractor;
-import edu.stanford.photoSpreadUtilities.TreeSetRandomSubsetIterable;
 import edu.stanford.photoSpreadUtilities.PhotoSpreadContextMenu.PhotoSpreadRadioButtonSubMenu;
 import edu.stanford.photoSpreadUtilities.PhotoSpreadContextMenu.PhotoSpreadSubMenu;
+import edu.stanford.photoSpreadUtilities.ReconyxGroupingInteractor;
+import edu.stanford.photoSpreadUtilities.TreeSetRandomSubsetIterable;
 
 /**
  *
@@ -82,6 +81,7 @@ public class ObjectsPanel extends JPanel{
 	public static final int ALT_LEFT_CLICK = MouseEvent.ALT_DOWN_MASK;
 
 	private DraggableLabel _lastLabelClicked;
+	private boolean clipboardHasFormula = false;
 
 	protected int _objWidth;
 	protected int _objHeight;  // Currently always kept equal to _objWidth
@@ -477,13 +477,39 @@ public class ObjectsPanel extends JPanel{
 		} 
 		);	
 		
-		_contextMenu.addMenuItem("Save Metadata of this Cell's Objects to Exif",new java.awt.event.ActionListener() {
+		_contextMenu.addMenuItem("Save Metadata of this Cell's Photos to Exif",new java.awt.event.ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
 				writeToExif();
 			}
 		}
 		);
+		
+		_contextMenu.addMenuItem("Clear All Metadata in Exif of this Cell's Photos",new java.awt.event.ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				clearAllExifThisCell();
+			}
+		}
+		);
+		
+		
+		_contextMenu.addMenuItem("Lock All Metadata Writing to Exif of this Cell's Photos",new java.awt.event.ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				lockAllExifAccessInCell();
+			}
+		}
+		);
+		
+		_contextMenu.addMenuItem("Allow All Metadata Writing to Exif of this Cell's Photos",new java.awt.event.ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				unlockAllExifAccessInCell();
+			}
+		}
+		);
+		
 		
 /*		_contextMenu.addMenuItem("Refresh display",new java.awt.event.ActionListener() {
 
@@ -549,54 +575,96 @@ public class ObjectsPanel extends JPanel{
 		} 
 		);
 		
-		
-		
 		this.addMouseListener(_contextMenu.getPopupListener());
 	}
 
+	/**
+	 * Called by context menu on one cell's background area.
+	 * Copies the selected cell to the clipboard. If items
+	 * are selected in the cell, sets <code>clipboardHasFormula</code> to
+	 * <code>false</code>, which will cause subsequent pastes to insert the
+	 * selected objs into the destination cell. If no items are
+	 * present or selected, sets <code>clipboardHasFormula</code> 
+	 * to <code>true</code>.
+	 */
 	private void copy(){
+		ArrayList<PhotoSpreadObject> selectedSrcObjs = _displayedCell.getSelectedObjects();
+		if (selectedSrcObjs.isEmpty()) {
+			// Indicate that formula is being copied:
+			clipboardHasFormula = true;
+		} else
+			clipboardHasFormula = false;
 		this._displayedCell.getTableModel().copyToClipboard();
 	}
 
+	/**
+	 * Called by context menu on one cell's background area.
+	 * Pastes previously copied items or formulas into the 
+	 * destination cell. 
+	 * <p>
+	 * If destination cell is a formula cell, shows an error 
+	 * dialog, and takes no action.
+	 * <p>
+	 * If variable <code>clipboardHasFormula</code> is <code>true</code>, then
+	 * destination cell is cleared, its formula is set to the
+	 * formula of the origin cell, and the cell is re-computed.
+	 * <p>
+	 * If variable <code>clipboardHasFormula</code> is <code>false</code>, then
+	 * currently selected items in the source cell are copied
+	 * to the destination cell.
+	 */
 	private void paste(){
 		PhotoSpreadCell destCell = this._displayedCell;
 		PhotoSpreadCell sourceCell = null;
-		
+
 		// Cannot paste into a cell with a formula:
 		if (destCell.isFormulaCell()) {
 			Misc.showErrorMsg("Cannot paste into a formula cell");
 			return;
 		}
-		
-		destCell.setFormula(
-				Const.OBJECTS_COLLECTION_INTERNAL_TOKEN, 
-				Const.DONT_EVAL, Const.DONT_REDRAW);
-		
+
 		try {
 			sourceCell = (PhotoSpreadCell) destCell.getTableModel().getClipboard();
 		} catch (RuntimeException e) {
 			Misc.showErrorMsg(
 					"Items from cell " + 
-					sourceCell.getCellAddress() +
-					" cannot be copy/pasted into " +
-					destCell.getCellAddress() +
+							sourceCell.getCellAddress() +
+							" cannot be copy/pasted into " +
+							destCell.getCellAddress() +
 					".");
 			return;
 		}
+
+		if (clipboardHasFormula) {
+			destCell.clear();
+			destCell.setFormula(sourceCell.getFormula(), Const.DO_EVAL, Const.DO_REDRAW);
+			return;
+		}
+
+		destCell.setFormula(
+				Const.OBJECTS_COLLECTION_INTERNAL_TOKEN, 
+				Const.DONT_EVAL, Const.DONT_REDRAW);
+
 		// The following commented-out line properly creates an in-memory
 		// duplicate of these objects. This is a possible semantic for
 		// Copy/paste. But it seems too confusing to do this. Instead
 		// we have copy/paste just reference the original objects:
 		// destCell.assimilateObjects(sourceCell.getSelectedObjects());
-		destCell.addObjects(sourceCell.getSelectedObjects());
+		ArrayList<PhotoSpreadObject> selectedSrcObjs = sourceCell.getSelectedObjects();
+		if (selectedSrcObjs.isEmpty()) {
+			Misc.showErrorMsg("No items in clipboard.");
+			return;
+		}
+		destCell.addObjects(selectedSrcObjs);
+
 		try {
 			destCell.evaluate(Const.DO_REDRAW);
 		} catch (FormulaError e) {
 			Misc.showErrorMsg(
 					"Objects from cell " +
-					sourceCell.getCellAddress() +
-					" cause the formula of cell " +
-					destCell.getCellAddress() +
+							sourceCell.getCellAddress() +
+							" cause the formula of cell " +
+							destCell.getCellAddress() +
 					" to become invalid.");
 		}
 	}
@@ -608,7 +676,7 @@ public class ObjectsPanel extends JPanel{
 	}
 
 	@SuppressWarnings("unused")
-	private void loadTableFromXML(){
+	private void loadTableFromXML() throws HeadlessException, IllegalArgumentException{
 
 		InputOutput.loadTable(this, this._displayedCell.getTableModel());
 	}
@@ -637,18 +705,20 @@ public class ObjectsPanel extends JPanel{
 			this._displayedCell.setFormula(Const.OBJECTS_COLLECTION_INTERNAL_TOKEN, Const.DO_EVAL, Const.DO_REDRAW);
 
 		// fireTableCellUpdated();  (Done in setFormula();
-		if (importFile != null)
-			JOptionPane.showMessageDialog(
-					this.getParent(), 
-					"Done loading " + 
-					importFile.getName() + 
-					"' (" +
-					numImportedCSVRecords +
-					" CSV records, adding " +
-					(numObjsInCellAfterImport - numObjsInCellBeforeImport) +
-					" new objects to " +
-					_displayedCell.getCellAddress() +
-					").");
+		if (importFile != null) {
+			boolean wantsCSVWrite = Misc.showConfirmMsg(
+						"Done loading " + 
+						importFile.getName() + 
+						"' (" +
+						numImportedCSVRecords +
+						" CSV records, adding " +
+						(numObjsInCellAfterImport - numObjsInCellBeforeImport) +
+						" new objects to " +
+						_displayedCell.getCellAddress() +
+						"). \nDo you want to write all metadata into the images?");
+			if (wantsCSVWrite)
+				writeToExif();
+		}
 	}
 
 	/**
@@ -699,14 +769,96 @@ public class ObjectsPanel extends JPanel{
 		}
 	}
 	
+	private void writeToExif() {
+		writeToAllExifInCell(_displayedCell);
+	}
+	
 	/**
 	 * Writes the current metadata of all objects in the 
 	 * cell to their EXIF attr/val pairs in the field
 	 * "UserComment"
 	 */
-	private void writeToExif() {
+	private void writeToAllExifInCell(PhotoSpreadCell theCell) {
 		// Get set of PhotoSpreadObjects
-		TreeSetRandomSubsetIterable<PhotoSpreadObject> currCellObjs = _displayedCell.getObjects();
+		HashSet<PhotoSpreadImage> imgs = getCellImageObjects(theCell);
+		Iterator<PhotoSpreadImage> it = imgs.iterator();
+		PhotoSpreadImage img = null;
+		int numFilesWrittenTo = 0;
+		if (imgs.size() == 0) {
+			JOptionPane.showMessageDialog(this.getParent(), "There are no objects in this cell.");
+			return;
+		}
+		while (it.hasNext()) {
+			img = it.next();
+			// Get file path, metadata, and write
+			String filePath = img.getFilePath();
+				ArrayList< ArrayList<String> > metadata = img.getMetaDataSet();
+				ExifWriter.write(filePath, metadata);
+				// Confirm success
+				numFilesWrittenTo++;
+			}
+			JOptionPane.showMessageDialog(this.getParent(), "Done writing to " + numFilesWrittenTo + " files.");
+	}
+	
+	private void clearAllExifThisCell() {
+		clearAllExifInCell(_displayedCell);
+	}
+	
+	/**
+	 * Clears all PhotoSpread metadata from all photos in the current
+	 * cell.This method is public to allow access to unit testing: 
+	 */
+	public void clearAllExifInCell(PhotoSpreadCell theCell) {
+		// Get set of PhotoSpreadObjects
+		HashSet<PhotoSpreadImage> imgs = getCellImageObjects(theCell);
+		Iterator<PhotoSpreadImage> it = imgs.iterator();
+		PhotoSpreadImage img = null;
+		int numPhotosCleared = 0;
+		if (imgs.size() == 0) {
+			JOptionPane.showMessageDialog(this.getParent(), "There are no objects in this cell.");
+			return;
+		}
+		while (it.hasNext()) {
+			img = it.next();
+			// Get the photo's file path:
+			String filePath = img.getFilePath();
+			// If the Exif is not locked, clear it:
+			if (img.getWriteToExif()) {
+				ExifWriter.clearPhotoSpreadMetadata(filePath);
+			}
+			// one more cleared:
+			numPhotosCleared++;
+		}
+		JOptionPane.showMessageDialog(this.getParent(), 
+				"Done clearing PhotoSpread metadata from Exif of " + 
+						numPhotosCleared + " photos.");
+	}
+	
+	public void lockAllExifAccessInCell() {
+		// Don't allow access to any cells:
+		setAllExifAccessLocksInCell(_displayedCell, false);
+	}
+	
+	public void unlockAllExifAccessInCell() {
+		// Allow access to all cells:
+		setAllExifAccessLocksInCell(_displayedCell, true);
+	}
+	
+	public void setAllExifAccessLocksInCell(PhotoSpreadCell theCell, boolean doWrite) {
+		HashSet<PhotoSpreadImage> imgs = getCellImageObjects(theCell);
+		Iterator<PhotoSpreadImage> it = imgs.iterator();
+		PhotoSpreadImage img;
+		while (it.hasNext()) {
+			img = it.next();
+			img.setWriteToExif(doWrite);
+		}
+	}
+	
+	private HashSet<PhotoSpreadImage> getCellImageObjects(PhotoSpreadCell theCell) {
+		
+		HashSet<PhotoSpreadImage> res = new HashSet<PhotoSpreadImage>(); 
+		// Get set of all PhotoSpreadObjects (not just images):
+		TreeSetRandomSubsetIterable<PhotoSpreadObject> currCellObjs = theCell.getObjects();
 		int numCurrCellObjs = currCellObjs.size();
 		
 		if (numCurrCellObjs > 0) {
@@ -719,30 +871,21 @@ public class ObjectsPanel extends JPanel{
 				Misc.showErrorMsgAndStackTrace(e, "");
 			}
 			
-			int numFilesWrittenTo = 0;
 			while (cellObjIterator.hasNext()) {
 				// Initialize PhotoSpreadObject
-				PhotoSpreadFileObject photoObject = null;
+				PhotoSpreadImage photoObject = null;
 				try {
-					photoObject = (PhotoSpreadFileObject) cellObjIterator.next();
-				} catch (java.util.NoSuchElementException e) {
-					System.err.println(e.getMessage());
+					// Only images will succeed with this type coercion:
+					photoObject = (PhotoSpreadImage) cellObjIterator.next();
+				} catch (Exception e) {
+					continue;
 				}
-				
-				// Get file path, metadata, and write
-				String filePath = photoObject.getFilePath();
-				ArrayList< ArrayList<String> > metadata = photoObject.getMetaDataSet();
-				ExifWriter.write(filePath, metadata);
-				
-				// Confirm success
-				numFilesWrittenTo++;
+				res.add(photoObject);
 			}
-			JOptionPane.showMessageDialog(this.getParent(), "Done writing to " + numFilesWrittenTo + " files.");
-		} else {
-			JOptionPane.showMessageDialog(this.getParent(), "There are no objects in this cell.");
 		}
+		return res;
 	}
-
+	
 	@SuppressWarnings("unused")
 	private void loadTable(){
 		PhotoSpreadTableObject t = new PhotoSpreadTableObject(_displayedCell);
@@ -848,12 +991,21 @@ public class ObjectsPanel extends JPanel{
 				null,			// array of selection values
 				PhotoSpreadContextMenu.getCurrentMetadataSortKey ()   // initial value in text box
 		);
-		if (sortField == null)
+		if (sortField == null) {
+			_displayedCell.setSortKey(null);
 			return;
-		if (sortField.isEmpty())
+		}
+		if (sortField.isEmpty()) {
+			_displayedCell.setSortKey(null);
 			return;
+		}
+		if (sortField.equalsIgnoreCase("null")) {
+			_displayedCell.setSortKey(null);
+			return;
+		}
 
 		PhotoSpreadContextMenu.setCurrentMetadataSortKey (sortField);
+		_displayedCell.setSortKey(sortField);
 		_displayedCell.sortObjects(sortField);
 	}
 	

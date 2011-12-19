@@ -7,6 +7,7 @@ package edu.stanford.photoSpreadObjects;
 
 
 import edu.stanford.inputOutput.ExifReader;
+import edu.stanford.inputOutput.ExifWriter;
 import edu.stanford.inputOutput.JfifReader;
 
 import java.awt.Component;
@@ -30,7 +31,8 @@ import edu.stanford.photoSpreadUtilities.UUID.FileHashMethod;
 public class PhotoSpreadImage extends PhotoSpreadFileObject {
 
 	private PhotoSpreadImageLoader _pil;
-
+	// Should we write all metadata through into the Exif header?
+	private boolean writeToExif = true;
 
 	/****************************************************
 	 * Constructor(s)
@@ -104,9 +106,44 @@ public class PhotoSpreadImage extends PhotoSpreadFileObject {
 	
 	/****************************************************
 	 * Methods
-	 * @throws CannotLoadImage 
 	 *****************************************************/
 
+	/**
+	 * Set the write-through-to-Exif flag. If this flag is
+	 * true, then all metadata written to this image object
+	 * will also be written into the Exif header:
+	 * 
+	 * @param doWrite - whether to write through to Exif whenever Metadata is set, or not.
+	 */
+	public void setWriteToExif(boolean doWrite) {
+		writeToExif = doWrite;
+	}
+	
+	/**
+	 * Check whether adding or changing metadata on this image will write through
+	 * to the image's Exif header.
+	 * 
+	 * @return true if metadata added or changed for this image will be written
+	 * through to the image's Exif header.
+	 */
+	public boolean getWriteToExif() {
+		return writeToExif;
+	}
+	
+	/* (non-Javadoc)
+	 * @see edu.stanford.photoSpreadObjects.PhotoSpreadObject#setMetaData(java.lang.String, java.lang.String)
+	 * Override setMetaData() in PhotoSpreadObject super. We add write-through to Exif here.
+	 */
+	@Override
+	public void setMetaData(String attr, String newValue) {
+		// Do the normal memory-resident metadata setting:
+		super.setMetaData(attr, newValue);
+		// If appropriate, also write to Exif:
+		if (writeToExif) {
+			ExifWriter.write(new File(getFilePath()), attr, newValue);
+		}
+	}
+	
 	public Component getObjectComponent( int height, int width) throws CannotLoadImage{
 		return loadImageLabel(height, width);
 	}

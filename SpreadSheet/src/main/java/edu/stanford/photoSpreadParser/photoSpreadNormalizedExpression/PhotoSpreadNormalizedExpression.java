@@ -7,6 +7,8 @@ package edu.stanford.photoSpreadParser.photoSpreadNormalizedExpression;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadParser.photoSpreadExpression.PhotoSpreadCondition;
 import edu.stanford.photoSpreadTable.PhotoSpreadCell;
@@ -71,7 +73,8 @@ public class PhotoSpreadNormalizedExpression {
         }
     }
     
-    public PhotoSpreadCell forceObject(PhotoSpreadObject object, Boolean reEvaluateCell, Boolean reDrawTable){
+    public PhotoSpreadCell forceObject(PhotoSpreadObject object, Boolean reEvaluateCell, Boolean reDrawTable) 
+    		throws IllegalArgumentException{
         if(_containerExpressions.size() == 1){
             PhotoSpreadNormalizedContainerExpression ce = _containerExpressions.get(0);
             if(ce.canForceObject(object)){

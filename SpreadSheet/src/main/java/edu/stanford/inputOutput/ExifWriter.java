@@ -164,6 +164,21 @@ public class ExifWriter {
     	if (file != null) write(file, text);
     }
     
+    
+    /**
+     * Takes a single PhotoSpread attribute value pair, and writes it
+     * to an image's Exif:
+     * 
+     * @param imgFile - File object of the image
+     * @param metadataAttr - The metadata attribute name
+     * @param metadataValue - The metadata attribute value
+     */
+    public static void write(File imgFile, String metadataAttr, String metadataValue) {
+    	HashMap<String,String> hmap = new HashMap<String,String>();
+    	hmap.put(metadataAttr, metadataValue);
+    	write(imgFile, hmap);
+    }
+    
     /**
      * Writes the string derived by the ArrayList "tags" to the 
      * UserComment field of the file "file". Reformats the 

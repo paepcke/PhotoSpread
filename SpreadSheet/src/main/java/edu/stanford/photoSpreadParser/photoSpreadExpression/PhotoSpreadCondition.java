@@ -7,6 +7,7 @@ package edu.stanford.photoSpreadParser.photoSpreadExpression;
 
 import java.util.Iterator;
 
+import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadParser.photoSpreadExpression.PhotoSpreadSpecialConstants.PhotoSpreadNullConstant;
 import edu.stanford.photoSpreadUtilities.Const;
@@ -94,9 +95,10 @@ abstract public class PhotoSpreadCondition extends PhotoSpreadFormulaComponent {
 	 * @param object
 	 *            the object being tested for satisfaction
 	 * @return true if object satisfies this condition/false otherwise
+	 * @throws IllegalArgumentException 
 	 */
 
-	abstract public boolean satisfiesCondition(PhotoSpreadObject object);
+	abstract public boolean satisfiesCondition(PhotoSpreadObject object) throws IllegalArgumentException;
 
 	/**
 	 * determines whether object can be forced into a condition
@@ -104,9 +106,10 @@ abstract public class PhotoSpreadCondition extends PhotoSpreadFormulaComponent {
 	 * @param object
 	 *            the object being tested
 	 * @return true if object can be forced/false otherwise
+	 * @throws IllegalArgumentException 
 	 */
 
-	public boolean canForceObject(PhotoSpreadObject object) {
+	public boolean canForceObject(PhotoSpreadObject object) throws IllegalArgumentException {
 		return satisfiesCondition(object)
 				|| (_compOp instanceof EqualsOperator)
 				|| (_compOp instanceof NotEqualsOperator);
@@ -117,9 +120,10 @@ abstract public class PhotoSpreadCondition extends PhotoSpreadFormulaComponent {
 	 * 
 	 * @param object
 	 *            the object being forced
+	 * @throws IllegalArgumentException 
 	 */
 
-	abstract public void forceObject(PhotoSpreadObject object);
+	abstract public void forceObject(PhotoSpreadObject object) throws IllegalArgumentException;
 
 	/****************************************************
 	 * ComparisonOperator Abstract Class

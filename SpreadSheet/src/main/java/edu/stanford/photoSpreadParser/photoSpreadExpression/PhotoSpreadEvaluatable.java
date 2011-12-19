@@ -6,6 +6,7 @@
 package edu.stanford.photoSpreadParser.photoSpreadExpression;
 
 import edu.stanford.photoSpread.PhotoSpreadException;
+import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadTable.PhotoSpreadCell;
 import edu.stanford.photoSpreadUtilities.TreeSetRandomSubsetIterable;
@@ -25,5 +26,5 @@ import edu.stanford.photoSpreadUtilities.TreeSetRandomSubsetIterable;
  */
 public interface PhotoSpreadEvaluatable {
     TreeSetRandomSubsetIterable<PhotoSpreadObject> evaluate(PhotoSpreadCell cell)
-    throws PhotoSpreadException.FormulaError;
+    throws PhotoSpreadException.FormulaError, IllegalArgumentException;
 }

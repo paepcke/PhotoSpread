@@ -498,10 +498,25 @@ public final class Misc {
 		return(new CellCoordinates(--rowInt, excelColToInt(colName)));
 	}
 
+	/**
+	 * Given a CellCoordinate instance, return a string with the name
+	 * of the corresponding Excel cell address: 0,1 => "A1"
+	 * @param row 0-based
+	 * @param col 1-based
+	 * @return String with Excel-like cell address
+	 */
 	public static String getCellAddress(CellCoordinates coords) {
 		return getCellAddress(coords.row(), coords.column());
 	}
-
+	
+	
+	/**
+	 * Given two integers, return a string with the name
+	 * of the corresponding Excel cell address: 0,1 => "A1"
+	 * @param row 0-based
+	 * @param col 1-based
+	 * @return String with Excel-like cell address
+	 */
 	public static String getCellAddress(int row, int col) {
 		if (col == 0) return "";
 		return intToExcelCol(col) + (++row);
@@ -741,12 +756,56 @@ public final class Misc {
         Graphics2D g2 = resizedImg.createGraphics();
         g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2.drawImage(srcImg, 0, 0, w, scaledHeight, null);
-        g2.dispose();
-        
+        g2.dispose();    
         
         return resizedImg;
     }
 
+    /**
+     * Given an ImageIcon and either an absolute target width, or an absolute 
+     * target height, return a new BufferedImage containing a scaled version
+     * of the original image. The unconstrained side will be scaled to preserve
+     * aspect ratio.
+     * 
+     * @param srcImgIcon the original image
+     * @param widthOrHeight indicator of which side's new measure is provided as constraint:
+     * Const.DimensionSide.WIDTH, or Const.DimensionSide.HEIGHT. 
+     * @param constrainedSide the target measure of the constrained image side.
+     * @return the scaled image.
+     */
+    public static Image getProportiallyScaledImage(ImageIcon srcImgIcon,
+    											   Const.DimensionSide widthOrHeight,
+    											   int constrainedSide) {
+        Image srcImg   = srcImgIcon.getImage();
+        int widthOrig  = srcImgIcon.getIconWidth();
+        int heightOrig = srcImgIcon.getIconHeight();
+        int widthNew   = 0;
+        int heightNew  = 0;
+        Double scaleFraction = null;
+        BufferedImage resizedImg = null;
+                
+        // Get the fraction by which the constrained side needs to be scaled:
+        if (widthOrHeight == Const.DimensionSide.WIDTH) {
+        	scaleFraction = new Double((double) constrainedSide / (double) widthOrig);
+        	widthNew  = constrainedSide;
+        	heightNew = (int) (heightOrig * scaleFraction);
+         	resizedImg = new BufferedImage(constrainedSide, heightNew, BufferedImage.TYPE_INT_RGB);
+        	
+        } else {
+        	scaleFraction = new Double(constrainedSide / heightOrig);
+        	heightNew = constrainedSide;
+        	widthNew = (int) (widthOrig * scaleFraction);
+        	resizedImg = new BufferedImage(widthNew, constrainedSide, BufferedImage.TYPE_INT_RGB);        	
+        }
+        Graphics2D g2 = resizedImg.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2.drawImage(srcImg, 0, 0, widthNew, heightNew, null);
+        g2.dispose();
+        
+        return resizedImg;
+    }
+    		
+    
 	  public static final Component getVisibleChildAt(Container container, Point p) {
 	    for (int i = 0; i < container.getComponentCount(); i++) {
 	      Component c = container.getComponent(i);

@@ -26,6 +26,7 @@ import edu.stanford.photoSpread.PhotoSpreadException;
 import edu.stanford.photoSpread.PhotoSpreadException.BadUUIDStringError;
 import edu.stanford.photoSpread.PhotoSpreadException.FormulaError;
 import edu.stanford.photoSpread.PhotoSpreadException.FormulaSyntaxError;
+import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
 import edu.stanford.photoSpreadLoaders.PhotoSpreadFileImporter;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadObjects.PhotoSpreadStringObject;
@@ -67,6 +68,7 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 	private PhotoSpreadNormalizedExpression _normalizedExpression;
 	private int _row;
 	private int _col;
+	private String _currentSortKey = null;
 	private HashMap<PhotoSpreadObject, PhotoSpreadObject> _selectedObjects;
 	
 	private MetadataIndexer _metadataIndexer = null;
@@ -98,6 +100,7 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 		_dependents = new ArrayList<PhotoSpreadCell>();
 		_references = new ArrayList<PhotoSpreadCell>();
 		_normalizedExpression = null;
+		_currentSortKey = null;
 		// PhotoSpread.trace("New cell: " + this);
 	}
 
@@ -440,9 +443,10 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 		try {
 			
 			setObjects(expression.evaluate(this));
+			sortObjects();
 			
 		} catch (PhotoSpreadException.IllegalArgumentException e) {
-			throw new RuntimeException(e.getMessage());
+			throw new PhotoSpreadException.FormulaError(e.getMessage());
 		}
 		this._normalizedExpression = expression.normalize(this);
 
@@ -615,7 +619,8 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 		return _formula == Const.OBJECTS_COLLECTION_INTERNAL_TOKEN; 	
 	}
 	
-	public PhotoSpreadCell forceObject(PhotoSpreadObject object, Boolean reEvaluateCell, Boolean reDrawTable){
+	public PhotoSpreadCell forceObject(PhotoSpreadObject object, Boolean reEvaluateCell, Boolean reDrawTable) 
+			throws IllegalArgumentException{
 		return _normalizedExpression.forceObject(object, reEvaluateCell, reDrawTable);
 	}
 	
@@ -795,6 +800,16 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 
 	public void sortObjects (String metadataField) {
 		sortObjects(PhotoSpreadComparatorFactory.createPSMetadataComparator(), metadataField);
+	}
+	
+	public void sortObjects() {
+		if (_currentSortKey != null) {
+			sortObjects(_currentSortKey);
+		}
+	}
+	
+	public void setSortKey(String sortKey) {
+		_currentSortKey = sortKey;
 	}
 	
 	public TreeSet<String> getAllMetadataKeys () {

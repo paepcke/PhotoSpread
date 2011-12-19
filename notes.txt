@@ -1,15 +1,57 @@
 To do:
 
-- Write file path matcher like with Adobe Premiere assets.
 - At end of xml sheet saving: warn that photos are separate issue.
-- Finish XML test cases
 - Cut new version.
+
 
 - Documentation:
     * All function names are lower case.
     * How to drag to trash (Upper left corner: grouch)
     * cnt-=/cnt-- in Help windows to increase fonts.
-    * $HOME/.photoSpread/photoSpread.properties
-        or command line
+    * Controlling the number of rows and columns: 
 
+       - Method 0: just start PhotoSpread, and a spreadsheet with a
+           default number of 10 rows and 9 columns is created.
 
+       - Method 1: use command line options
+           Options are -r or --sheetNumRows for the number of
+           rows. Use -c or --sheetNumCols for 
+	   the number of columns. Example:
+               java -jar spreadsheet-....jar -c 8
+           will create a spreadsheet with 8 colums
+               java -jar spreadsheet-....jar --sheetNumCols 8
+           is equivalent to the first example, and will create 8
+	   columns. 
+	       java -jar spreadsheet-....jar -r 20
+	       java -jar spreadsheet-....jar --sheetNumRows 20
+           are similarly equivalent, and will create 20 rows.
+	   Both, row and column specifications may be provided:
+               java -jar spreadsheet-....jar -r 20 -c 5
+           creates a sheet with 20 rows and 3 columns.
+
+        - Method 2: Use a configuration file:
+           A file $HOME/.photoSpread/photoSpread.properties
+           can contain properties that are in effect when command line
+           options are given. Example content for this file:
+
+	      sheetNumCols = 3
+	      sheetNumRows = 20
+
+           Command line options will override the properties set in
+           this file.
+
+- New release 0.91
+    * Importing .csv now offers to write to Exif at end of import.
+    * New cell context menu item: Clear Exif data from all photos in current cell.
+    * New cell context menu items: Can lock and unlock Exif in all photos of one cell.
+    * Reworked UUID checking for both csv import and XML loading of entire sheet.
+    * Added file re-navigation for case when importing photos to a new
+      machine fails, because the photos are in a different place than on
+      the original machine. 
+    * Command line option -r or --sheetNumRows takes a number of desired rows.
+      Command line option -c or --sheetNumCols takes a number of desired rows.
+    * Fixed bug of formula cells not being updated upon drag of
+      objects into another
+      formula. (http://code.google.com/p/photospread/issues/detail?id=21) 
+    * Added command line and property file control over the number of
+      rows and columns.

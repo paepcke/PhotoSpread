@@ -17,6 +17,7 @@ import javax.swing.JMenuItem;
 import edu.stanford.inputOutput.InputOutput;
 import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpread.PhotoSpreadException;
+import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
 import edu.stanford.photoSpreadObjects.PhotoSpreadTableObject;
 import edu.stanford.photoSpreadObjects.photoSpreadComponents.KeyBindEditor;
 import edu.stanford.photoSpreadUtilities.Const;
@@ -62,7 +63,9 @@ public class PhotoSpreadTableMenu extends JMenuBar{
 		
 		addMenuItem(fileMenu, "New Sheet", 'N', new ActionListener(){
 			public void actionPerformed(ActionEvent event) {
-				PhotoSpreadTableMenu.getTableObject().clear();
+				PhotoSpreadTableObject tbl = PhotoSpreadTableMenu.getTableObject();
+				tbl.clear();
+				//PhotoSpreadTableMenu.getTableObject().clear();
 				PhotoSpreadTableMenu.getTableModel().updateAllCells(Const.DONT_EVAL);
 				PhotoSpreadTableMenu.getTable().getWorkspace().redraw();
 				// PhotoSpreadTableMenu.getTable().getWorkspace().pack();
@@ -71,10 +74,14 @@ public class PhotoSpreadTableMenu extends JMenuBar{
 
 		addMenuItem(fileMenu, "Open Sheet", 'O', new ActionListener(){
 			public void actionPerformed(ActionEvent event) {
-				Boolean clearTableOK = PhotoSpreadTableMenu.getTableObject().clear();
+				PhotoSpreadTableObject tbl = PhotoSpreadTableMenu.getTableObject(); 
+				Boolean clearTableOK = tbl.clear();
 				if (clearTableOK) {
-					InputOutput.loadTable(PhotoSpreadTableMenu.this, 
-							PhotoSpreadTableMenu.getTableModel());
+					try {
+						InputOutput.loadTable(PhotoSpreadTableMenu.this, 
+								PhotoSpreadTableMenu.getTableModel());
+					} catch (HeadlessException e) { }
+					  catch (IllegalArgumentException e) { }
 				} else {
 					Misc.showInfoMsg("Open sheet canceled. Sheet loading only possible if OK to clear current table.");
 				}
@@ -96,7 +103,8 @@ public class PhotoSpreadTableMenu extends JMenuBar{
 
 		addMenuItem(fileMenu, "Clear Sheet", 'C', new ActionListener(){
 			public void actionPerformed(ActionEvent event) {
-				PhotoSpreadTableMenu.getTableObject().clear();  	   
+				PhotoSpreadTableObject tbl = PhotoSpreadTableMenu.getTableObject();
+				tbl.clear();  	   
 			}
 		});
 

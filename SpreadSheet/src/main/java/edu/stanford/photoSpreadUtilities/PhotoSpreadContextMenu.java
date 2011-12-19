@@ -192,7 +192,8 @@ public class PhotoSpreadContextMenu extends JPopupMenu {
 
 							public void actionPerformed(ActionEvent e) {
 								_currentMetadataSortKey = e.getActionCommand();
-								cell.sortObjects(e.getActionCommand());
+								cell.setSortKey(_currentMetadataSortKey);
+								cell.sortObjects();
 							}
 						});
 			};

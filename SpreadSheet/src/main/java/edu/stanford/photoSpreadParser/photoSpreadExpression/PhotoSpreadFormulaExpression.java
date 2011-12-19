@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpread.PhotoSpreadException;
+import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadObjects.PhotoSpreadStringObject;
 import edu.stanford.photoSpreadParser.photoSpreadExpression.photoSpreadFunctions.PhotoSpreadFunction;
@@ -104,7 +105,7 @@ abstract public class PhotoSpreadFormulaExpression extends
 			PhotoSpreadCell cell);
 
 	abstract public TreeSetRandomSubsetIterable<PhotoSpreadObject> evaluate(
-			PhotoSpreadCell cell) throws PhotoSpreadException.FormulaError;
+			PhotoSpreadCell cell) throws PhotoSpreadException.FormulaError, IllegalArgumentException;
 
 	/**
 	 * Add a dot expression selection to the expression: A1.age
@@ -171,7 +172,7 @@ abstract public class PhotoSpreadFormulaExpression extends
 	}
 
 	protected TreeSetRandomSubsetIterable<PhotoSpreadObject> applyConditionsAndSelection(
-			TreeSetRandomSubsetIterable<PhotoSpreadObject> objects) {
+			TreeSetRandomSubsetIterable<PhotoSpreadObject> objects) throws IllegalArgumentException {
 
 		// For remembering whether a condition is ORed, ANDed, etc.:
 		ConditionBoolConnector booleanConnector = null;

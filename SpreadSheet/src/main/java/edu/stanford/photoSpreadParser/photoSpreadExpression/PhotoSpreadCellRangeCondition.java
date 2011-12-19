@@ -5,6 +5,7 @@
 
 package edu.stanford.photoSpreadParser.photoSpreadExpression;
 
+import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadParser.photoSpreadNormalizedExpression.PhotoSpreadNormalizedExpression;
 import edu.stanford.photoSpreadTable.PhotoSpreadCell;
@@ -44,19 +45,19 @@ public class PhotoSpreadCellRangeCondition extends PhotoSpreadCondition {
         return _lhs + " " + this._comparisionAsString + " " + _rhs.copyCellRange(rowOffset, colOffset);
     }
         
-    public boolean satisfiesCondition(PhotoSpreadObject object){
+    public boolean satisfiesCondition(PhotoSpreadObject object) throws IllegalArgumentException{
         
         String value = object.getMetaData(_lhs);
         return _compOp.satisfiesOperator(value, _rhs.evaluate(object.getCell()));
     }
 
     @Override
-    public boolean canForceObject(PhotoSpreadObject object) {
+    public boolean canForceObject(PhotoSpreadObject object) throws IllegalArgumentException {
         return super.canForceObject(object) && _rhs.evaluate(object.getCell()).size() <= 1;
     }
 
     @Override
-    public void forceObject(PhotoSpreadObject object) {
+    public void forceObject(PhotoSpreadObject object) throws IllegalArgumentException {
         _compOp.forceObject(object, _lhs, _rhs.evaluate(object.getCell()));
     }
 

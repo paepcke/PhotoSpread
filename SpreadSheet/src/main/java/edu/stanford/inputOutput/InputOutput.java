@@ -20,6 +20,7 @@ import edu.stanford.photoSpread.PhotoSpreadException;
 import edu.stanford.photoSpread.PhotoSpreadException.BadSheetFileContent;
 import edu.stanford.photoSpread.PhotoSpreadException.FileIOException;
 import edu.stanford.photoSpread.PhotoSpreadException.FormulaError;
+import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
 import edu.stanford.photoSpreadLoaders.XMLFileFilter;
 import edu.stanford.photoSpreadTable.PhotoSpreadCell;
 import edu.stanford.photoSpreadTable.PhotoSpreadTableModel;
@@ -115,10 +116,12 @@ public class InputOutput {
 	 * Loads the table represented by table model to a file in xml format.  
 	 * @param  guiComponent  the component over which the load dialague should display.
 	 * @param  tableModel the tableModel that will be loaded with data
+	 * @throws IllegalArgumentException 
 
 	 */
 
-	static public void loadTable(Component guiComponent, PhotoSpreadTableModel tableModel) throws HeadlessException {	
+	static public void loadTable(Component guiComponent, PhotoSpreadTableModel tableModel) 
+			throws HeadlessException, IllegalArgumentException {	
 		
 		File importFile;
 		String priorReadDir = PhotoSpread.photoSpreadPrefs.getProperty(PhotoSpread.lastDirReadKey);
@@ -143,9 +146,11 @@ public class InputOutput {
 	 * Workhorse for loading the table represented by table model to a file in xml format.  
 	 * @param  importFile is the XML file that contains the XMLified table of a former session.
 	 * @param  tableModel the existing tableModel that will be loaded with data.
+	 * @throws IllegalArgumentException 
 	 */
 	
-	static public boolean loadTable(File importFile, PhotoSpreadTableModel tableModel) throws HeadlessException {
+	static public boolean loadTable(File importFile, PhotoSpreadTableModel tableModel) 
+			throws HeadlessException, IllegalArgumentException {
 		
 		XMLProcessor xmlProc = new XMLProcessor();
 
@@ -168,7 +173,7 @@ public class InputOutput {
 		// existing formulas again...I know...
 		for (int col=1; col < tableModel.getColumnCount(); col++) {
 			for (int row=0; row < tableModel.getRowCount(); row++) {
-				PhotoSpreadCell cell = tableModel.getCell(row, col);
+				PhotoSpreadCell cell = tableModel.getCellSafely(row, col);
 				try {
 					cell.evaluate(Const.DO_REDRAW);
 				} catch (FormulaError e) {

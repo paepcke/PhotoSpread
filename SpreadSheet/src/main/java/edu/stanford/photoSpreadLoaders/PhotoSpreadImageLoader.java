@@ -11,6 +11,7 @@ import edu.stanford.photoSpread.PhotoSpreadException.BadUUIDStringError;
 import edu.stanford.photoSpread.PhotoSpreadException.CannotLoadImage;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadObjects.photoSpreadComponents.DraggableLabel;
+import edu.stanford.photoSpreadUtilities.Const;
 import edu.stanford.photoSpreadUtilities.Misc;
 
 /**
@@ -45,7 +46,8 @@ public class PhotoSpreadImageLoader {
         DraggableLabel imageLabel = new DraggableLabel(parentObject, height, width);       
         if(icon != null){
                     
-            ImageIcon thumbnailIcon = new ImageIcon(Misc.getScaledImage(icon, height, width));  
+            //****ImageIcon thumbnailIcon = new ImageIcon(Misc.getScaledImage(icon, height, width));  
+            ImageIcon thumbnailIcon =  new ImageIcon(Misc.getProportiallyScaledImage(icon, Const.DimensionSide.WIDTH, width));  
             imageLabel.setIcon(thumbnailIcon);
             
         }
@@ -53,13 +55,13 @@ public class PhotoSpreadImageLoader {
      }
     
      /**
- *Creates a draggable image label containing image with source from a given url, using dimensions of original image  
- * @param  parentObject the object that the label represents
- * @param  url  the source of the image
-     * @return the draggable label created
-     * @throws CannotLoadImage 
- 
- */
+      *Creates a draggable image label containing image with source from a given url, using dimensions of original image  
+      * @param  parentObject the object that the label represents
+      * @param  url  the source of the image
+      * @return the draggable label created
+      * @throws CannotLoadImage 
+
+      */
     
      public DraggableLabel getImageComponent(PhotoSpreadObject parentObject, String url) throws CannotLoadImage{
         ImageIcon icon;

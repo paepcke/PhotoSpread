@@ -5,6 +5,7 @@ package edu.stanford.photoSpreadParser.photoSpreadExpression;
 
 import junit.framework.TestCase;
 import edu.stanford.photoSpread.PhotoSpread;
+import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 //import edu.stanford.photoSpreadObjects.*;
 import edu.stanford.photoSpreadObjects.PhotoSpreadStringObject;
@@ -90,6 +91,7 @@ public class PhotoSpreadConditionTest extends TestCase {
 
 	public void testSatisfiesOperator () {
 		
+		try {
 		assertEquals("Left lower case, right lower case", true, _condLeftLowerCase.satisfiesCondition(
 		 new edu.stanford.photoSpreadObjects.PhotoSpreadStringObject(_cell_flower, "flower")));
 //new PhotoSpreadStringObject(_cell_flower, "flower")));
@@ -100,6 +102,6 @@ public class PhotoSpreadConditionTest extends TestCase {
                  new edu.stanford.photoSpreadObjects.PhotoSpreadStringObject(_cell_Animal, "Animal")));	      //new PhotoSpreadStringObject(_cell_Animal, "Animal")));						      
 		assertEquals("Left Upper case, right lower case", true, _condLeftUpperCase.satisfiesCondition(
                  new edu.stanford.photoSpreadObjects.PhotoSpreadStringObject(_cell_Animal, "animal")));	      //new PhotoSpreadStringObject(_cell_flower, "animal")));
-
+		} catch (IllegalArgumentException e) {};
 	}
 }

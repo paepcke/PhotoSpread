@@ -7,6 +7,7 @@ package edu.stanford.photoSpreadParser.photoSpreadExpression;
 
 import java.util.ArrayList;
 
+import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadParser.photoSpreadNormalizedExpression.PhotoSpreadNormalizedExpression;
 import edu.stanford.photoSpreadTable.PhotoSpreadCell;
@@ -143,7 +144,7 @@ public class PhotoSpreadCellRange implements PhotoSpreadNormalizable {
 
 		for(int col = this._startColIndex; col <= this._endColIndex; col++){
 			for(int row = this._startRowIndex; row <= this._endRowIndex; row++){
-				cells.add(table.getCellMixedOrigin(col, row));
+				cells.add(table.getCellSafely(col, row-1));
 
 			}
 		}
@@ -160,7 +161,7 @@ public class PhotoSpreadCellRange implements PhotoSpreadNormalizable {
 
 		for(int col = this._startColIndex; col <= this._endColIndex; col++){
 			for(int row = this._startRowIndex; row <= this._endRowIndex; row++){
-				PhotoSpreadCell nextCell = table.getCellMixedOrigin(col, row);
+				PhotoSpreadCell nextCell = table.getCellSafely(col, row-1);
 				PhotoSpreadNormalizedExpression ne = nextCell.getNormalizedExpression();
 				try{
 					normalizedExpression.union( (PhotoSpreadNormalizedExpression) ne.clone());
@@ -208,7 +209,7 @@ public class PhotoSpreadCellRange implements PhotoSpreadNormalizable {
 		return cellRange;
 	}
 
-	public TreeSetRandomSubsetIterable<PhotoSpreadObject> evaluate(PhotoSpreadCell cell) {
+	public TreeSetRandomSubsetIterable<PhotoSpreadObject> evaluate(PhotoSpreadCell cell) throws IllegalArgumentException {
 
 		TreeSetRandomSubsetIterable<PhotoSpreadObject> objects = 
 			new TreeSetRandomSubsetIterable<PhotoSpreadObject>(
@@ -226,7 +227,7 @@ public class PhotoSpreadCellRange implements PhotoSpreadNormalizable {
 		for(int col = this._startColIndex; col <= this._endColIndex; col++){
 			for(int row = this._startRowIndex; row <= this._endRowIndex; row++){
 
-				c = table.getCellMixedOrigin(col, row);
+				c = table.getCell(row-1, col);
 				c.addDependent(cell);
 				cell.addReference(c);
 				objects.addAll(c.getObjects());

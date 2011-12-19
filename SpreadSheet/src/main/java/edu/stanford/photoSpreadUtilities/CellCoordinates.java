@@ -13,13 +13,12 @@ import edu.stanford.photoSpreadUtilities.Misc.Pair;
 public class CellCoordinates extends Pair<Integer, Integer> {
 
 /**
-	 * @param misc
-	 * @param obj1
-	 * @param obj2
+	 * @param rowNum: zero-based
+	 * @param colNum: 1-based
 	 */
-	public CellCoordinates(Integer obj1, Integer obj2) {
+	public CellCoordinates(Integer rowNum, Integer colNum) {
 		
-		new Misc().super(obj1, obj2);
+		new Misc().super(rowNum, colNum);
 	}
 
 	public int row() {
@@ -50,6 +49,6 @@ public class CellCoordinates extends Pair<Integer, Integer> {
 	}
 	
 	public String toString () {
-		return Misc.getCellAddress(this);
+		return "CellCoordinates<" + Misc.getCellAddress(this) + ">";
 	}
 }

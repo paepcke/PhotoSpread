@@ -6,6 +6,7 @@
 package edu.stanford.photoSpreadTable;
 
 import edu.stanford.photoSpread.PhotoSpreadException;
+import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
 
 /**
  *
@@ -58,7 +59,10 @@ public class PhotoSpreadDragDropManager {
 					new PhotoSpreadException.DnDSourceOrDestNotSet(
 							"Must set both source and destination cell before drag/drop execution."));
 
-		_destCell.getTableModel().moveSelectedObjects(_sourceCell, _destCell);
+			try {
+				_destCell.getTableModel().moveSelectedObjects(_sourceCell, _destCell);
+			} catch (IllegalArgumentException e) { }
+			
 		// The following table cell update call appears to be unnecessary,
 		// because the moveObjects() call immediately above triggers
 		// UI updates where needed.

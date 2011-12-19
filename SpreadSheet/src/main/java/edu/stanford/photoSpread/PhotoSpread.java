@@ -84,7 +84,7 @@ import edu.stanford.photoSpreadUtilities.PhotoSpreadProperties;
 public class PhotoSpread {
 
 	// NOTE: Change this for new versions:
-	public static String version = "0.9";
+	public static String version = "0.91";
 	
 	// The AUTOMATIC_TESTING debug level will suppress
 	// all popup messages for users. Those would required
@@ -769,6 +769,9 @@ public class PhotoSpread {
 
 			public void run() {
 
+				// Process command line args, which may 
+				// override some or all properties from the
+				// properties file:
 				try {
         			if (!processCommandLineArgs(args))
         				System.exit(-1);
@@ -781,7 +784,7 @@ public class PhotoSpread {
         			System.exit(0);
         		}
 				
-				// Set up properties file:
+				// Read and process properties file:
 				try {
 					initPreferences();
 				} catch (InvalidNameException e) {
