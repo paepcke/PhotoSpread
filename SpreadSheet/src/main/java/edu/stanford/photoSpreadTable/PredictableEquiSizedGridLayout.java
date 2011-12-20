@@ -17,8 +17,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.plaf.basic.BasicGraphicsUtils;
 
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
-
 import edu.stanford.photoSpreadObjects.photoSpreadComponents.DraggableLabel;
 import edu.stanford.photoSpreadUtilities.ComputableDimension;
 import edu.stanford.photoSpreadUtilities.Const;
