@@ -401,7 +401,6 @@ public class Workspace extends JFrame {
 			
 			try {
 				_disabledColNumSliderService = true;
-				System.out.println(sliderVal);
 				getWorkspacePanel().setObjectsPerRow(sliderVal);
 				_workspacePanel.redrawPanel();
 			} finally {

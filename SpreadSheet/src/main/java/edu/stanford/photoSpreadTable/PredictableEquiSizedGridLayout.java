@@ -17,6 +17,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.plaf.basic.BasicGraphicsUtils;
 
+import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
+
+import edu.stanford.photoSpreadObjects.photoSpreadComponents.DraggableLabel;
 import edu.stanford.photoSpreadUtilities.ComputableDimension;
 import edu.stanford.photoSpreadUtilities.Const;
 import edu.stanford.photoSpreadUtilities.Const.Alignment;
@@ -236,7 +239,8 @@ public class PredictableEquiSizedGridLayout implements LayoutManager2 {
 		if (_numCols == Const.INVALID)
 			_numCols = _defaultNumCols;
 
-		_numRows = (int) Math.ceil(componentsToLayout / _numCols);
+		//_numRows = (int) Math.ceil(componentsToLayout / _numCols);
+		_numRows = (int) Math.ceil(((double)componentsToLayout) / ((double)_numCols));
 	}
 
 	/**
@@ -340,7 +344,7 @@ public class PredictableEquiSizedGridLayout implements LayoutManager2 {
 
 	/**
 	 * Compute total width/height of the current layout for the given
-	 * container's components. Rows and columns may have differering widths and
+	 * container's components. Rows and columns may have differing widths and
 	 * heights. Each column is as wide as the widest component in that column.
 	 * Each row is as high as the highest component in that row.
 	 * 
@@ -366,7 +370,7 @@ public class PredictableEquiSizedGridLayout implements LayoutManager2 {
 		Insets insets = surroundingContainer.getInsets();
 		ComputableDimension compDim = new ComputableDimension();
 		Component comp;
-
+		
 		// Make sure that the _numRows variable is up to date:
 		// validateNumRows(surroundingContainer);
 
@@ -400,7 +404,11 @@ public class PredictableEquiSizedGridLayout implements LayoutManager2 {
 				if (!components.hasNext())
 					continue;
 				comp = components.next();
-
+				
+				// We only want to consider images:
+				if (!(comp instanceof DraggableLabel))
+					continue;
+				
 				switch (sizeType) {
 				case PREFERRED_SIZE:
 					compDim = new ComputableDimension(comp.getPreferredSize());

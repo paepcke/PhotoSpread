@@ -766,16 +766,6 @@ public class WorkspaceObjectsPanel extends ObjectsPanel {
 
 
 	/**
-	 * Set window size of this WorkspacePanel just large
-	 * enough to accommodate whatever is in there right
-	 * now.
-	 */
-
-	public void makeWindowFit () {
-		makeWindowFit(new ComputableDimension(_workspace.getMinimumSize()));
-	}
-
-	/**
 	 * Enlarges or shrinks the enclosing window to 
 	 * fit the size of this panel. Units are pixels.
 	 * 
@@ -1024,7 +1014,7 @@ public class WorkspaceObjectsPanel extends ObjectsPanel {
 		JMenuItem menuItem;
 		
 		_contextMenu = new PhotoSpreadContextMenu();
-		
+
 		_contextMenu.addMenuItem("Select All",new java.awt.event.ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -1074,6 +1064,14 @@ public class WorkspaceObjectsPanel extends ObjectsPanel {
 			}
 		} 
 		);
+		_contextMenu.addMenuItem("Reset to single image size",new java.awt.event.ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				_workspace.reset(true);
+			}
+		} 
+		);
+		
 		menuItem.setEnabled(false);
 		
 		this.addMouseListener(_contextMenu.getPopupListener());
