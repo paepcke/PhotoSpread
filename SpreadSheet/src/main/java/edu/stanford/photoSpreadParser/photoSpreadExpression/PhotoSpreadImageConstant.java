@@ -35,4 +35,8 @@ implements FunctionResultable {
 	public Object valueOf() {
 		return _imgObj;
 	}
+	
+	public String toFormula() {
+		return ("<image>");
+	}
 }

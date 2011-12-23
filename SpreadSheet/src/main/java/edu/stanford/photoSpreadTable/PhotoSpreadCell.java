@@ -11,6 +11,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -19,6 +20,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
+import javax.management.RuntimeErrorException;
 import javax.swing.JOptionPane;
 
 import edu.stanford.inputOutput.XMLProcessor;
@@ -61,14 +63,17 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 	private TreeSetRandomSubsetIterable<PhotoSpreadObject> _objects;
 	private Comparator<PhotoSpreadObject> _currentComparator = null;
 	// private PhotoSpreadComparatorFactory.MetadataComparator _metadataComparator = null;
+	
 	private String _formula;
+	// Place to hold the source cell of a formula copy/paste:
+	
 	private PhotoSpreadTableModel _tableModel;
 	private ArrayList<PhotoSpreadCell> _dependents;
 	private ArrayList<PhotoSpreadCell> _references;
 	private PhotoSpreadNormalizedExpression _normalizedExpression;
 	private int _row;
 	private int _col;
-	private String _currentSortKey = null;
+	private String _currentSortKey = Const.DEFAULT_SORT_KEY;
 	private HashMap<PhotoSpreadObject, PhotoSpreadObject> _selectedObjects;
 	
 	private MetadataIndexer _metadataIndexer = null;
@@ -79,7 +84,7 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 	
 	
 	public PhotoSpreadCell(PhotoSpreadTableModel tableModel, int row, int col, String formula){
-		this(tableModel, row, col);
+		this(tableModel, row, col); 
 		setFormula(formula, Const.DO_EVAL, Const.DO_REDRAW);
 		tableModel.fireTableCellUpdated(row, col);
 	}
@@ -100,7 +105,7 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 		_dependents = new ArrayList<PhotoSpreadCell>();
 		_references = new ArrayList<PhotoSpreadCell>();
 		_normalizedExpression = null;
-		_currentSortKey = null;
+		_currentSortKey = Const.DEFAULT_SORT_KEY;
 		// PhotoSpread.trace("New cell: " + this);
 	}
 
@@ -381,16 +386,24 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 		return true;
 	}
 	
-	public void pasteFormula(PhotoSpreadCell copiedCell){
+	public void pasteFormula(){
+		PhotoSpreadCell copiedCell = getTable().getTableModel().getFormulaClipboard();
+		if (copiedCell == null) 
+			throw new RuntimeErrorException(new Error("pasteFormula was called when _copiedFormulaCell was null."));
 		int rowOffset = this.getRowOriginOne() - copiedCell.getRowOriginOne();
 		int colOffset = this._col - copiedCell._col;
 		String equals = "";
 		if(copiedCell.isFormulaCell()){
 			equals = "=";
 		}
-		this.setFormula(equals + copiedCell.getExpression().copyExpression(rowOffset, colOffset), 
-				Const.DO_EVAL, 
-				Const.DO_REDRAW);
+		try {
+			this.setFormula(equals + copiedCell.getExpression().copyExpression(rowOffset, colOffset), 
+					Const.DO_EVAL, 
+					Const.DO_REDRAW);
+		} catch (InvalidParameterException e) {
+			Misc.showErrorMsg(e.getMessage());
+			return;
+		}
 
 	}
 	

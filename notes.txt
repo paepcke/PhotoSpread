@@ -40,6 +40,14 @@ To do:
            Command line options will override the properties set in
            this file.
 
+- New release 0.93
+    * Enabled, and then fixed dragging from one formula cell
+      to another.
+    * Filename is now the default sort order for all cells.
+
+- New release 0.92
+    * Formula copying
+
 - New release 0.91
     * Importing .csv now offers to write to Exif at end of import.
     * New cell context menu item: Clear Exif data from all photos in current cell.
@@ -55,3 +63,23 @@ To do:
       formula. (http://code.google.com/p/photospread/issues/detail?id=21) 
     * Added command line and property file control over the number of
       rows and columns.
+
+- Semantics formula pasting:
+
+      1. If destination cell is a non-formula cell:
+           a. All images that are already in the cell will be forced
+              to conform to the formula (i.e. the attributes will be
+              change as if the photos had been dragged into a cell
+              with the formula that is being copied already attached.
+              
+           or:
+
+           b. Any images existing in the cell that do not conform to
+              the formula being copied will disappear from the cell
+              (i.e. no forcing).
+              
+      2. If the destination cell already contains a formula, that
+              formula is replaced. Semantics options as per above:
+
+           a. Images currently in the cell are forced
+           b. Images are not forced and appear/disappear as applicable

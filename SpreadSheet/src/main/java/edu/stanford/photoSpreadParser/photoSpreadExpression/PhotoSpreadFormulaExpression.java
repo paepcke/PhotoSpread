@@ -78,6 +78,22 @@ abstract public class PhotoSpreadFormulaExpression extends
 			res += "." + _selection;
 		return res;
 	}
+	
+	public String toFormula() {
+		String res = _func.toFormula();
+		if (_conditions.size() > 0) {
+			res += "[";
+			for (PhotoSpreadCondition cond : _conditions) {
+				if (cond != _conditions.get(0))
+					res += " & ";
+				res += cond;
+			}
+			res += "]";
+		}
+		if (_selection.length() > 0)
+			res += "." + _selection;
+		return res;
+	}
 
 	protected String conditionsAndSelectionToString(int rowOffset, int colOffset) {
 		String str = "";

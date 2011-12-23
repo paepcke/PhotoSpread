@@ -36,6 +36,10 @@ implements FunctionResultable,
 	public String toString () {
 		return "<PhotoSpreadDoubleConstant (" + _number + ")>";
 	}
+	
+	public String toFormula() {
+		return _number.toString();
+	}
 
 	public PhotoSpreadObject getObject () {
 		return new PhotoSpreadDoubleObject (_cell, _number);

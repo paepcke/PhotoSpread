@@ -5,6 +5,10 @@
 
 package edu.stanford.photoSpreadParser.photoSpreadExpression;
 
+import java.util.Iterator;
+
+import sun.org.mozilla.javascript.internal.regexp.SubString;
+
 import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadParser.photoSpreadNormalizedExpression.PhotoSpreadNormalizedExpression;
@@ -57,6 +61,19 @@ public class PhotoSpreadConstantExpression extends PhotoSpreadFormulaExpression 
     public String toString() {
         // return _constants.toString();
     	return "<PhotoSpreadConstantExpression '" + _constants + "'>";
+    }
+    
+    public String toFormula() {
+    	
+    	String res = "";
+    	Iterator<PhotoSpreadConstant> iter = _constants.iterator();
+    	if (!iter.hasNext())
+    		return res;
+    	
+    	while (iter.hasNext()) {
+    		res += " " + iter.next().toFormula();
+    	}
+    	return res.substring(1);
     }
 
     public void addConstant(PhotoSpreadConstant object){

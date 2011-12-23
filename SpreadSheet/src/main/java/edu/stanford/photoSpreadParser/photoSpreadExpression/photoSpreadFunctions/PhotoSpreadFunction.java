@@ -135,6 +135,31 @@ implements PhotoSpreadComputable {
 		return "<PhotoSpreadFunction " + _functionName + "(" + argsStr + ")>";
 	}
 
+	public String toFormula() {
+		String argsStr = "";
+
+		for (PhotoSpreadFormulaExpression arg : _arguments) {
+			if (arg != _arguments.get(0))
+				argsStr += ", ";
+			argsStr += arg.toFormula();
+		}
+
+		return _functionName + "(" + argsStr + ")";
+	}
+
+	public String copyExpression(int rowOffset, int colOffset) {
+		
+		String res = _functionName + "(";
+		String argsStr = "";
+		
+		for (PhotoSpreadFormulaExpression arg : _arguments) {
+			if (arg != _arguments.get(0))
+				argsStr += ", ";
+			argsStr += arg.copyExpression(rowOffset, colOffset);
+		}
+		return res + argsStr + ")";
+	}
+	
 	/**
 	 * Create a function object from the function name
 	 * @param _functionName the name of the function to be created

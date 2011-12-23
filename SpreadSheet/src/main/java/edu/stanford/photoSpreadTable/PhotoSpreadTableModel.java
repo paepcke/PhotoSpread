@@ -23,8 +23,8 @@ import edu.stanford.photoSpreadObjects.PhotoSpreadStringObject;
 import edu.stanford.photoSpreadParser.ExpressionParser;
 import edu.stanford.photoSpreadParser.photoSpreadExpression.PhotoSpreadExpression;
 import edu.stanford.photoSpreadUtilities.Const;
-import edu.stanford.photoSpreadUtilities.Misc;
 import edu.stanford.photoSpreadUtilities.Const.ObjMovements;
+import edu.stanford.photoSpreadUtilities.Misc;
 /**
  *
  * @author skandel
@@ -40,7 +40,8 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 	static private String COLNUM_ATTRIBUTE_NAME = "colNum";
 	private ArrayList<String> columnNames;
 
-	private Object _clipboard = null;
+	private Object _itemsClipboard = null;
+	private PhotoSpreadCell _formulaClipboard = null;
 	@SuppressWarnings("unused")
 	private java.io.Reader _reader;
 	private java.io.StringReader _stringReader;
@@ -221,14 +222,31 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 		}
 	}
 
+	public void setFormulaClipboard(PhotoSpreadCell sourceCell) {
+		_formulaClipboard = sourceCell;
+	}
+	
+	public PhotoSpreadCell getFormulaClipboard() {
+		return _formulaClipboard;
+	}
+	
+	public boolean formulaClipboardEmpty() {
+		return (_formulaClipboard == null);
+	}
+	
 	public Object getClipboard() {
-		return _clipboard;
+		return _itemsClipboard;
 	}
+	
 	public void setClipboard(Object _clipboard) {
-
-		this._clipboard = _clipboard;
+		this._itemsClipboard = _clipboard;
 	}
 
+	public boolean itemsClipboardEmpty() {
+		return (_itemsClipboard == null);
+	}
+	
+	
 	public int getColumnCount() {
 		return numCols;
 		//return columnNames.size();
@@ -350,17 +368,13 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 	}
 
 
+	public void copyToFormulaClipboard() {
+		_formulaClipboard = this.getTable().getSelectedCell();
+	}
+	
 	public void copyToClipboard(){
-		/*
-		for(int i = 0; i < this._table.getSelectedColumnCount(); i ++){
-			System.out.println(this._table.getSelectedColumns()[i]);
-		}
-		for(int i = 0; i < this._table.getSelectedRowCount(); i ++){
-			System.out.println(this._table.getSelectedRows()[i]);
-		}
-		*/
-		PhotoSpreadCell cell = data.get(this.getTable().getSelectedRow()).get(this.getTable().getSelectedColumn());
-		_clipboard = cell;
+		_itemsClipboard = this.getTable().getSelectedCell();
+;
 
 	}
 	
@@ -432,7 +446,26 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 			return;
 		}
 
-		else if(destIsFormula){
+		else if (sourceIsFormula && !destIsFormula) {
+			// Don't move, just copy:
+			destCell.addObjects(objects);
+			//try {
+			//	srcCell.evaluate(Const.DONT_REDRAW);
+			//} catch (Exception e) {
+			//	Misc.showErrorMsgAndStackTrace(e, "");
+				//e.printStackTrace();
+			//}
+			
+			destCell.setFormula(Const.OBJECTS_COLLECTION_INTERNAL_TOKEN, 
+					Const.DO_EVAL, 
+					Const.DONT_REDRAW);
+			return;
+			
+		}
+		else if(!sourceIsFormula && destIsFormula){
+			
+			// Don't move, just copy:
+			destCell.addObjects(objects);
 			forceObjects(destCell, objects, Const.DO_EVAL, Const.DONT_REDRAW);
 			// Must re-eval the origin cell, so that its dependents get
 			// updated. Else formula cells that were satisfied by the 
@@ -440,7 +473,22 @@ public class PhotoSpreadTableModel extends AbstractTableModel {
 			forceObjects(srcCell, objects, Const.DO_EVAL, Const.DO_REDRAW);
 			return;
 		}
-		Misc.showErrorMsg("Cannot drag out of a formula cell.", PhotoSpread.getCurrentSheetWindow());
+		
+		else if(sourceIsFormula && destIsFormula){
+			
+			// Don't move, just copy:
+			destCell.addObjects(objects);
+			srcCell.removeObjects(objects);
+
+			// Must re-eval the origin cell, so that its dependents get
+			// updated. Else formula cells that were satisfied by the 
+			// pre-forced value are not updated:
+			
+			forceObjects(srcCell, objects,  Const.DO_EVAL, Const.DO_REDRAW);
+
+			forceObjects(destCell, objects, Const.DO_EVAL, Const.DONT_REDRAW);
+			return;
+		}
 	}
 	
 	private static void forceObjects(

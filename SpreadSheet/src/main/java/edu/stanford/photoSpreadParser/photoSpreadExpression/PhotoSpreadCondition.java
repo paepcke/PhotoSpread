@@ -85,8 +85,13 @@ abstract public class PhotoSpreadCondition extends PhotoSpreadFormulaComponent {
 				+ _comparisionAsString + ">";
 	}
 
+	public String toFormula() {
+		String lhs = (_lhs.equals(Const.NULL_VALUE_STRING)) ? "null" : _lhs;
+		return lhs + _comparisionAsString;
+	}
+	
 	public String copyCondition(int rowOffset, int colOffset) {
-		return toString();
+		return toFormula();
 	}
 
 	/**

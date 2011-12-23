@@ -3,8 +3,11 @@
  * and open the template in the editor.
  */
 
+//
+
 package edu.stanford.photoSpreadParser.photoSpreadExpression;
 
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
 import edu.stanford.photoSpread.PhotoSpreadException.IllegalArgumentException;
@@ -17,7 +20,10 @@ import edu.stanford.photoSpreadUtilities.PhotoSpreadObjIndexerFinder;
 import edu.stanford.photoSpreadUtilities.TreeSetRandomSubsetIterable;
 
 /**
- *
+ * Dec 22, 2011: Fixed incorrect parameter order in calls to 
+ *                PhotoSpreadTableModel.getCellSafely(row, col).
+ *                These calls affected getCells() and normalize();
+ *                Andreas Paepcke
  * @author skandel
  */
 public class PhotoSpreadCellRange implements PhotoSpreadNormalizable {
@@ -105,7 +111,6 @@ public class PhotoSpreadCellRange implements PhotoSpreadNormalizable {
 	}
 
 	public PhotoSpreadCellRange(String cellRange) {
-		System.out.println(cellRange.substring(1, 2));
 		this._startRowIndex = Integer.parseInt(cellRange.substring(1,2));
 		this._startColIndex = PhotoSpreadTableModel.getColumnFromName(cellRange.substring(0,1));
 
@@ -138,13 +143,33 @@ public class PhotoSpreadCellRange implements PhotoSpreadNormalizable {
 				">";
 	}
 
+	public String toFormula() {
+		
+		String res = _startColFixed ? "$" : "";
+		res += Misc.intToExcelCol(_startColIndex);
+		res += _startRowFixed ? "$" : "";
+		res += _startRowIndex;
+		
+		if ((_endRowIndex == _startRowIndex) &&
+			(_endColIndex == _startColIndex))
+			return res;
+		
+		res += ":";
+		res += _endColFixed ? "$" : "";
+		res += Misc.intToExcelCol(_endColIndex);
+		res += _endRowFixed ? "$" : "";
+		res += _endRowIndex;
+		
+		return res;
+	}
+	
 	public ArrayList<PhotoSpreadCell> getCells(PhotoSpreadCell cell){
 		ArrayList<PhotoSpreadCell> cells = new ArrayList<PhotoSpreadCell>();
 		PhotoSpreadTableModel table = cell.getTableModel();
 
 		for(int col = this._startColIndex; col <= this._endColIndex; col++){
 			for(int row = this._startRowIndex; row <= this._endRowIndex; row++){
-				cells.add(table.getCellSafely(col, row-1));
+				cells.add(table.getCellSafely(row-1, col));
 
 			}
 		}
@@ -161,7 +186,7 @@ public class PhotoSpreadCellRange implements PhotoSpreadNormalizable {
 
 		for(int col = this._startColIndex; col <= this._endColIndex; col++){
 			for(int row = this._startRowIndex; row <= this._endRowIndex; row++){
-				PhotoSpreadCell nextCell = table.getCellSafely(col, row-1);
+				PhotoSpreadCell nextCell = table.getCellSafely(row-1, col);
 				PhotoSpreadNormalizedExpression ne = nextCell.getNormalizedExpression();
 				try{
 					normalizedExpression.union( (PhotoSpreadNormalizedExpression) ne.clone());
@@ -182,13 +207,20 @@ public class PhotoSpreadCellRange implements PhotoSpreadNormalizable {
 			cellRange += PhotoSpreadCellRange.DOLLAR + PhotoSpreadTableModel.getColumnAsString(this._startColIndex);
 
 		}else{
-
+			int newCol = this._startColIndex+colOffset;
+			if (newCol < 1) {
+				throw new InvalidParameterException("Cell column offset improperly places cell 'to the left of' column 'A'.");
+			}
 			cellRange += PhotoSpreadTableModel.getColumnAsString(this._startColIndex+colOffset);
 		}
 		if(_startRowFixed){
 			cellRange += PhotoSpreadCellRange.DOLLAR + this._startRowIndex;
 		}
 		else{
+			int newRow = this._startRowIndex + rowOffset;
+			if (newRow < 1) {
+				throw new InvalidParameterException("Cell row offset improperly places cell below row zero.");
+			}
 			cellRange += this._startRowIndex + rowOffset;
 		}
 		if(_cellRange.contains(":")){

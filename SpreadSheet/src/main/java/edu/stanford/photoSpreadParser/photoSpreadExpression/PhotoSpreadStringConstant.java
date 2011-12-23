@@ -20,6 +20,10 @@ public class PhotoSpreadStringConstant extends PhotoSpreadConstant
 		return "<PhotoSpreadStringConstant '" + _str + "'>";
 	}
 	
+	public String toFormula() {
+		return _str;
+	}
+	
 	public PhotoSpreadObject getObject () {
 		return new PhotoSpreadStringObject (_cell, _str);
 	}

@@ -5,6 +5,8 @@
 
 package edu.stanford.photoSpreadParser.photoSpreadExpression;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 /**
  *
  * @author skandel
@@ -23,6 +25,10 @@ abstract public class PhotoSpreadExpression implements PhotoSpreadEvaluatable, P
    
     public String toString () {
     	return "<PhotoSpreadExpression '" + _expression + ">";
+    }
+    
+    public String toFormula() {
+    	throw new NotImplementedException();
     }
     
       /**

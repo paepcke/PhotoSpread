@@ -551,8 +551,15 @@ public class DnDSupport {
 				
 			PhotoSpreadCell targetCell = _table.getCell(targetRow, targetCol);
 			
+			/* *******************
 			if (targetCell.equals(_sourceCell) || 
 					_sourceCell.isFormulaCell()) {
+				updateDropTargetViz(new CellCoordinates(targetRow, targetCol));
+				dragEvent.rejectDrag();
+				return;
+			}
+			*/
+			if (targetCell.equals(_sourceCell)) { 
 				updateDropTargetViz(new CellCoordinates(targetRow, targetCol));
 				dragEvent.rejectDrag();
 				return;

@@ -76,6 +76,10 @@ abstract public class PhotoSpreadSpecialConstants extends PhotoSpreadConstant {
 			return "null";
 		}
 		
+		public String toFormula() {
+			return "null";
+		}
+		
 		/**
 		 * We use polymorphism for the implementation.
 		 * @param arg

@@ -211,6 +211,7 @@ public final class Const {
 	public static short FILENAME_METADATA_ATTR_NAME = 1;
 	public static String[] permanentMetadataAttributeNames = new String[] {
 			"@ID", "@filename" };
+	public static String DEFAULT_SORT_KEY = permanentMetadataAttributeNames[FILENAME_METADATA_ATTR_NAME];
 
 	/****************************************************
 	 * Fonts

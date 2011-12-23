@@ -72,5 +72,27 @@ public class PhotoSpreadContainerExpression extends PhotoSpreadFormulaExpression
 		}
 
 		return ce + ">";
+	}
+	
+	public String toFormula() {
+
+		String ce = "";
+		if (_cellRange != null)
+			ce += _cellRange.toFormula();
+		if (_conditions != null) 
+			if (_conditions.size() > 0) {
+				ce += "[";
+				ce += _conditions.get(0).toFormula();
+				for(int i = 1; i < _conditions.size(); i++){
+					ce += " & " + _conditions.get(i).toFormula();
+				}
+				ce += "]";
+			}
+		if (_selection != null){
+			ce += "." + _selection;
+		}
+
+		return ce;
 	}    
+	
 }

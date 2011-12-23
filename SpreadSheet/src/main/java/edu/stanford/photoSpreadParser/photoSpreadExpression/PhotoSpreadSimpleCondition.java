@@ -9,6 +9,7 @@ import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadParser.photoSpreadExpression.PhotoSpreadSpecialConstants.PhotoSpreadNullConstant;
 import edu.stanford.photoSpreadParser.photoSpreadNormalizedExpression.PhotoSpreadNormalizedExpression;
 import edu.stanford.photoSpreadTable.PhotoSpreadCell;
+import edu.stanford.photoSpreadUtilities.Const;
 import edu.stanford.photoSpreadUtilities.Misc;
 import edu.stanford.photoSpreadUtilities.TreeSetRandomSubsetIterable;
 /**
@@ -56,6 +57,18 @@ public class PhotoSpreadSimpleCondition extends PhotoSpreadCondition {
         return _compOp.satisfiesOperator(value, _rhs);
     }
 
+    public String toFormula() {
+    	String lhs = _lhs;
+    	String rhs = _rhs;
+    	
+    	if (_lhs.equals(Const.NULL_VALUE_STRING))
+    		lhs = "null";
+    	if (_rhs.equals(Const.NULL_VALUE_STRING))
+    		rhs = "null";
+    	
+    	return lhs + this._comparisionAsString + rhs; 
+    }
+    
     @Override
     public void forceObject(PhotoSpreadObject object) {
         _compOp.forceObject(object, _lhs, _rhs);

@@ -81,7 +81,6 @@ public class ObjectsPanel extends JPanel{
 	public static final int ALT_LEFT_CLICK = MouseEvent.ALT_DOWN_MASK;
 
 	private DraggableLabel _lastLabelClicked;
-	private boolean clipboardHasFormula = false;
 
 	protected int _objWidth;
 	protected int _objHeight;  // Currently always kept equal to _objWidth
@@ -510,6 +509,7 @@ public class ObjectsPanel extends JPanel{
 		}
 		);
 		
+		_contextMenu.addMenuItemSeparator();
 		
 /*		_contextMenu.addMenuItem("Refresh display",new java.awt.event.ActionListener() {
 
@@ -541,6 +541,8 @@ public class ObjectsPanel extends JPanel{
 		} 
 		);
 
+		_contextMenu.addMenuItemSeparator();
+		
 /*		_contextMenu.addMenuItem("Insert Table",new java.awt.event.ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -549,7 +551,7 @@ public class ObjectsPanel extends JPanel{
 		} 
 		);
 */
-		_contextMenu.addMenuItem("Copy",new java.awt.event.ActionListener() {
+		_contextMenu.addMenuItem("Copy Selected Cell Content",new java.awt.event.ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				copy();
@@ -557,10 +559,26 @@ public class ObjectsPanel extends JPanel{
 		} 
 		);
 
-		_contextMenu.addMenuItem("Paste",new java.awt.event.ActionListener() {
+		_contextMenu.addMenuItem("Paste Cell Content",new java.awt.event.ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
 				paste();
+			}
+		} 
+		);
+
+		_contextMenu.addMenuItem("Copy Formula",new java.awt.event.ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				copyFormula();
+			}
+		} 
+		);
+
+		_contextMenu.addMenuItem("Paste Formula",new java.awt.event.ActionListener() {
+
+			public void actionPerformed(ActionEvent e) {
+				pasteFormula();
 			}
 		} 
 		);
@@ -583,45 +601,44 @@ public class ObjectsPanel extends JPanel{
 	 * Copies the selected cell to the clipboard. If items
 	 * are selected in the cell, sets <code>clipboardHasFormula</code> to
 	 * <code>false</code>, which will cause subsequent pastes to insert the
-	 * selected objs into the destination cell. If no items are
-	 * present or selected, sets <code>clipboardHasFormula</code> 
-	 * to <code>true</code>.
+	 * selected objs into the destination cell. 
+	 * 
+	 * If no items are present or selected, does nothing.
 	 */
-	private void copy(){
-		ArrayList<PhotoSpreadObject> selectedSrcObjs = _displayedCell.getSelectedObjects();
-		if (selectedSrcObjs.isEmpty()) {
-			// Indicate that formula is being copied:
-			clipboardHasFormula = true;
-		} else
-			clipboardHasFormula = false;
+	private void copy() {
 		this._displayedCell.getTableModel().copyToClipboard();
 	}
+	
+	private void copyFormula() {
 
+		if (!_displayedCell.isFormulaCell()){
+			Misc.showInfoMsg("Cell " + _displayedCell.getCellAddress() + " is not a formula cell.");
+			return;
+		}
+		// Indicate that formula is being copied:
+		this._displayedCell.getTableModel().copyToFormulaClipboard();
+	}
+
+	private void pasteFormula() {
+		
+		if (this._displayedCell.getTableModel().formulaClipboardEmpty()) {
+			Misc.showInfoMsg("Clipboard does not contain a formula. Use Right-Click Copy Formula in some formula cell first.");
+		}
+		PhotoSpreadCell destCell   = this._displayedCell;
+		destCell.clear();
+		destCell.pasteFormula();
+		return;
+		
+	}
+	
 	/**
 	 * Called by context menu on one cell's background area.
-	 * Pastes previously copied items or formulas into the 
+	 * Pastes previously copied cell content items into the 
 	 * destination cell. 
-	 * <p>
-	 * If destination cell is a formula cell, shows an error 
-	 * dialog, and takes no action.
-	 * <p>
-	 * If variable <code>clipboardHasFormula</code> is <code>true</code>, then
-	 * destination cell is cleared, its formula is set to the
-	 * formula of the origin cell, and the cell is re-computed.
-	 * <p>
-	 * If variable <code>clipboardHasFormula</code> is <code>false</code>, then
-	 * currently selected items in the source cell are copied
-	 * to the destination cell.
 	 */
 	private void paste(){
 		PhotoSpreadCell destCell = this._displayedCell;
 		PhotoSpreadCell sourceCell = null;
-
-		// Cannot paste into a cell with a formula:
-		if (destCell.isFormulaCell()) {
-			Misc.showErrorMsg("Cannot paste into a formula cell");
-			return;
-		}
 
 		try {
 			sourceCell = (PhotoSpreadCell) destCell.getTableModel().getClipboard();
@@ -635,12 +652,6 @@ public class ObjectsPanel extends JPanel{
 			return;
 		}
 
-		if (clipboardHasFormula) {
-			destCell.clear();
-			destCell.setFormula(sourceCell.getFormula(), Const.DO_EVAL, Const.DO_REDRAW);
-			return;
-		}
-
 		destCell.setFormula(
 				Const.OBJECTS_COLLECTION_INTERNAL_TOKEN, 
 				Const.DONT_EVAL, Const.DONT_REDRAW);
@@ -649,10 +660,12 @@ public class ObjectsPanel extends JPanel{
 		// duplicate of these objects. This is a possible semantic for
 		// Copy/paste. But it seems too confusing to do this. Instead
 		// we have copy/paste just reference the original objects:
+		
 		// destCell.assimilateObjects(sourceCell.getSelectedObjects());
+		
 		ArrayList<PhotoSpreadObject> selectedSrcObjs = sourceCell.getSelectedObjects();
 		if (selectedSrcObjs.isEmpty()) {
-			Misc.showErrorMsg("No items in clipboard.");
+			Misc.showErrorMsg("No cell content items in clipboard.");
 			return;
 		}
 		destCell.addObjects(selectedSrcObjs);
@@ -992,15 +1005,15 @@ public class ObjectsPanel extends JPanel{
 				_displayedCell.getSortKey()   // initial value in text box
 		);
 		if (sortField == null) {
-			_displayedCell.setSortKey(null);
+			_displayedCell.setSortKey(Const.DEFAULT_SORT_KEY);
 			return;
 		}
 		if (sortField.isEmpty()) {
-			_displayedCell.setSortKey(null);
+			_displayedCell.setSortKey(Const.DEFAULT_SORT_KEY);
 			return;
 		}
 		if (sortField.equalsIgnoreCase("null")) {
-			_displayedCell.setSortKey(null);
+			_displayedCell.setSortKey(Const.DEFAULT_SORT_KEY);
 			return;
 		}
 

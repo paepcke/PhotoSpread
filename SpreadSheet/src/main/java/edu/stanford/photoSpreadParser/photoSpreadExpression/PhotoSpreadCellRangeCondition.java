@@ -35,9 +35,11 @@ public class PhotoSpreadCellRangeCondition extends PhotoSpreadCondition {
     
     @Override
     public String toString() {
-        
         return _lhs + " " + this._comparisionAsString + " " + _rhs.toString();
-        
+    }
+    
+    public String toFormula() {
+    	return _lhs + " " + this._comparisionAsString + " " + _rhs.toFormula();
     }
 
     @Override
