@@ -84,7 +84,7 @@ import edu.stanford.photoSpreadUtilities.PhotoSpreadProperties;
 public class PhotoSpread {
 
 	// NOTE: Change this for new versions:
-	public static String version = "0.91";
+	public static String version = "0.93";
 	
 	// The AUTOMATIC_TESTING debug level will suppress
 	// all popup messages for users. Those would required
