@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -68,6 +69,8 @@ public class ObjectsPanel extends JPanel{
 	PhotoSpreadContextMenu _contextMenu = null;
 	PhotoSpreadSubMenu _sortSubmenu = null;
 	PhotoSpreadRadioButtonSubMenu _showSortKeySubmenu = null;
+	JMenuItem lockExifContextMenuItem = null;
+	JMenuItem unlockExifContextMenuItem = null;
 
 
 	public ComputableDimension _maxDisplayedItemDim;
@@ -493,21 +496,28 @@ public class ObjectsPanel extends JPanel{
 		);
 		
 		
-		_contextMenu.addMenuItem("Lock All Metadata Writing to Exif of this Cell's Photos",new java.awt.event.ActionListener() {
+		lockExifContextMenuItem = 
+				_contextMenu.addMenuItem("Lock All Metadata Writing to Exif of this Cell's Photos",new java.awt.event.ActionListener() {
 			
-			public void actionPerformed(ActionEvent e) {
-				lockAllExifAccessInCell();
-			}
-		}
-		);
+					public void actionPerformed(ActionEvent e) {
+						lockAllExifAccessInCell();
+					}
+				}
+			    );
 		
-		_contextMenu.addMenuItem("Allow All Metadata Writing to Exif of this Cell's Photos",new java.awt.event.ActionListener() {
+    	unlockExifContextMenuItem = 
+    			_contextMenu.addMenuItem("Allow All Metadata Writing to Exif of this Cell's Photos",new java.awt.event.ActionListener() {
 			
-			public void actionPerformed(ActionEvent e) {
-				unlockAllExifAccessInCell();
-			}
-		}
-		);
+    				public void actionPerformed(ActionEvent e) {
+    					unlockAllExifAccessInCell();
+    				}
+    			}
+    			);
+		if (Const.WRITE_THROUGH_TO_EXIF_DEFAULT)
+			unlockExifContextMenuItem.setEnabled(false);
+		else
+			lockExifContextMenuItem.setEnabled(false);
+
 		
 		_contextMenu.addMenuItemSeparator();
 		
@@ -819,9 +829,19 @@ public class ObjectsPanel extends JPanel{
 	
 	/**
 	 * Clears all PhotoSpread metadata from all photos in the current
-	 * cell.This method is public to allow access to unit testing: 
+	 * cell.This method is public to allow access to unit testing.
+	 * If exif writing is locked, message to user, and no action. 
 	 */
 	public void clearAllExifInCell(PhotoSpreadCell theCell) {
+		
+		// If exif writing is locked, the 'unlock' entry in the 
+		// context menu will be active:
+		
+		if (unlockExifContextMenuItem.isEnabled()) {
+			JOptionPane.showMessageDialog(this.getParent(), "Writing to EXIF is locked for this cell. Use context menu to unlock.");
+			return;
+		}
+		
 		// Get set of PhotoSpreadObjects
 		HashSet<PhotoSpreadImage> imgs = getCellImageObjects(theCell);
 		Iterator<PhotoSpreadImage> it = imgs.iterator();
@@ -850,11 +870,15 @@ public class ObjectsPanel extends JPanel{
 	public void lockAllExifAccessInCell() {
 		// Don't allow access to any cells:
 		setAllExifAccessLocksInCell(_displayedCell, false);
+		unlockExifContextMenuItem.setEnabled(true);
+		lockExifContextMenuItem.setEnabled(false);
 	}
 	
 	public void unlockAllExifAccessInCell() {
 		// Allow access to all cells:
 		setAllExifAccessLocksInCell(_displayedCell, true);
+		lockExifContextMenuItem.setEnabled(true);
+		unlockExifContextMenuItem.setEnabled(false);
 	}
 	
 	public void setAllExifAccessLocksInCell(PhotoSpreadCell theCell, boolean doWrite) {

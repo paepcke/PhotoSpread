@@ -32,6 +32,8 @@ public final class Const {
 	 * Boolean/Numeric/String Constants Named for Readability
 	 *****************************************************/
 
+	public static final Boolean WRITE_THROUGH_TO_EXIF_DEFAULT = true;
+	
 	public static final Boolean DO_EVAL = true;
 	public static final Boolean DONT_EVAL = false;
 	public static final Boolean DO_REDRAW = true;

@@ -6,21 +6,21 @@
 package edu.stanford.photoSpreadObjects;
 
 
-import edu.stanford.inputOutput.ExifReader;
-import edu.stanford.inputOutput.ExifWriter;
-import edu.stanford.inputOutput.JfifReader;
-
 import java.awt.Component;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import edu.stanford.inputOutput.ExifReader;
+import edu.stanford.inputOutput.ExifWriter;
+import edu.stanford.inputOutput.JfifReader;
 import edu.stanford.photoSpread.PhotoSpreadException.BadUUIDStringError;
 import edu.stanford.photoSpread.PhotoSpreadException.CannotLoadImage;
 import edu.stanford.photoSpreadLoaders.PhotoSpreadImageLoader;
 import edu.stanford.photoSpreadObjects.photoSpreadComponents.DraggableLabel;
 import edu.stanford.photoSpreadTable.PhotoSpreadCell;
+import edu.stanford.photoSpreadUtilities.Const;
 import edu.stanford.photoSpreadUtilities.UUID;
 import edu.stanford.photoSpreadUtilities.UUID.FileHashMethod;
 
@@ -32,7 +32,7 @@ public class PhotoSpreadImage extends PhotoSpreadFileObject {
 
 	private PhotoSpreadImageLoader _pil;
 	// Should we write all metadata through into the Exif header?
-	private boolean writeToExif = true;
+	private boolean writeToExif = Const.WRITE_THROUGH_TO_EXIF_DEFAULT;
 
 	/****************************************************
 	 * Constructor(s)
