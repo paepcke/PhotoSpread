@@ -133,19 +133,19 @@ public class XMLSheetSaveLoadTest {
 		PhotoSpreadImage photo1 = (PhotoSpreadImage) _cell_A1_photoSetIt.next();
 		
 		assertEquals("Cell A1's first photo ID number.", 
-				"-4971708435189753829", photo1.getObjectID().toString());
+				"-1854442517828450558", photo1.getObjectID().toString());
 		assertEquals("First photo's @ID attribute.",
-					 "-4971708435189753829",
+					 "-1854442517828450558",
 					 photo1.getMetaData("@ID"));
 		assertEquals("Cell A1's first photo file path.", 
-				"C:\\Users\\paepcke\\dldev\\EclipseWorkspaces\\PhotoSpread\\SpreadSheet\\src\\test\\resources\\TestCases\\Photos\\crowdOneFaceClear.jpg",
+				"C:\\Users\\paepcke\\dldev\\EclipseWorkspaces\\PhotoSpread\\SpreadSheet\\src\\test\\resources\\TestCases\\Photos\\conventionCenterTwoWomen.jpg",
 				photo1.getFilePath());
 		
 		PhotoSpreadImage photo2 = (PhotoSpreadImage) _cell_A1_photoSetIt.next();
 		assertEquals("Cell A1's second photo ID number.", 
-				"-1854442517828450558", photo2.getObjectID().toString());
+				"-4971708435189753829", photo2.getObjectID().toString());
 		assertEquals("Cell A1's second photo file path.", 
-				"C:\\Users\\paepcke\\dldev\\EclipseWorkspaces\\PhotoSpread\\SpreadSheet\\src\\test\\resources\\TestCases\\Photos\\conventionCenterTwoWomen.jpg",
+				"C:\\Users\\paepcke\\dldev\\EclipseWorkspaces\\PhotoSpread\\SpreadSheet\\src\\test\\resources\\TestCases\\Photos\\crowdOneFaceClear.jpg",
 				photo2.getFilePath());
 		
 		assertEquals("Cell B1 formula.",

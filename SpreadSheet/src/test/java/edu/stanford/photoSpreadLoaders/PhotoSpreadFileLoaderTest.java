@@ -105,8 +105,9 @@ public class PhotoSpreadFileLoaderTest {
 		// its UUID different:
 		ExifWriter.write(catFileTmp, "Species", "cat");
 		
-		// Pretend the user rejects the tmp file:
-		PhotoSpreadFileImporter.secretKeepLooking = false;
+		// Pretend the user rejects the tmp file. This will be modified
+		// by the code under test, because debuglevel is set to testing:
+		PhotoSpreadFileImporter.secretKeepLooking = UuidMismatchDecision.KEEP_LOOKING;
 		// Pretend the user navigated to the (modified) tmp file:
 		PhotoSpreadFileImporter.secretCandidatePath = catFileTmp;
 		
@@ -125,7 +126,7 @@ public class PhotoSpreadFileLoaderTest {
 		// Now pretend the user navigated to the 'correct' file
 		// after the mismatch was disovered:
 		PhotoSpreadFileImporter.secretCandidatePath = catFile;
-		PhotoSpreadFileImporter.secretKeepLooking = true;
+		PhotoSpreadFileImporter.secretKeepLooking = UuidMismatchDecision.ACCEPT_LOCAL_FILE;
 		// Now that file should get accepted:
 		try {
 			finalFile = PhotoSpreadFileImporter.resolveFile(pathToTestPhotosFile, 
@@ -134,7 +135,7 @@ public class PhotoSpreadFileLoaderTest {
 		} catch (IOException e) {
 			fail("Test point 3: " + e.getMessage());
 		}
-		assertTrue("Failed to accept a corrected path whose UUID matched.", finalFile.equals(catFile));
+		assertTrue("Failed to accept a corrected path.", finalFile.equals(catFileTmp));
 	}
 	
 	@Test
@@ -161,7 +162,7 @@ public class PhotoSpreadFileLoaderTest {
 		
 		File nonExistingFile = new File("/foo/bar/fum.txt");
 		PhotoSpreadFileImporter.secretCandidatePath = catFile;
-		PhotoSpreadFileImporter.secretKeepLooking = true;
+		PhotoSpreadFileImporter.secretKeepLooking = UuidMismatchDecision.KEEP_LOOKING;
 		try {
 			finalFile = PhotoSpreadFileImporter.resolveFile(pathToTestPhotosFile, 
 															nonExistingFile, 

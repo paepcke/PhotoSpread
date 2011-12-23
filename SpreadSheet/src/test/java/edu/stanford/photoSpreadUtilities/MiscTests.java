@@ -59,4 +59,19 @@ public class MiscTests {
 		}
 		fail("Int to column name did not throw an InvalidParameterException for input 0.");
 	}
+	
+	@Test
+	public void testWrapFileName() {
+		String res = Misc.wrapFileName("foo.txt", 10);
+		assertEquals("Smaller name than max.", "foo.txt", res);
+		
+		res = Misc.wrapFileName("foo.txt", 7);
+		assertEquals("Exactly max length name.", "foo.txt", res);
+		
+		res = Misc.wrapFileName("/Users/doe/foo.txt", 7);
+		assertEquals("Length name greater than one line.", "/Users/\ndoe/foo\n.txt", res);
+		
+		res = Misc.wrapFileName("/Users/doe/foo.txt", 9);
+		assertEquals("Length name even multiple of one line.", "/Users/do\ne/foo.txt", res);
+	}
 }

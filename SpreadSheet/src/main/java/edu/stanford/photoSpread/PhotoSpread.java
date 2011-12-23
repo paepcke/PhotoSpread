@@ -39,6 +39,7 @@ import edu.stanford.photoSpread.PhotoSpreadException.NotImplementedException;
 import edu.stanford.photoSpreadObjects.PhotoSpreadTableObject;
 import edu.stanford.photoSpreadObjects.photoSpreadComponents.Workspace;
 import edu.stanford.photoSpreadTable.PhotoSpreadTableMenu;
+import edu.stanford.photoSpreadUtilities.Const;
 import edu.stanford.photoSpreadUtilities.Misc;
 import edu.stanford.photoSpreadUtilities.PhotoSpreadProperties;
 
@@ -131,6 +132,7 @@ public class PhotoSpread {
 		sheetSize,
 		sheetNumCols,
 		sheetNumRows,
+		cellSortKey,
 		sheetRowHeightMin,
 		sheetColWidthMin,
 		sheetObjsInCell,
@@ -176,6 +178,7 @@ public class PhotoSpread {
 
 	public static final String sheetNumColsKey = "sheetNumCols";
 	public static final String sheetNumRowsKey = "sheetNumRows";
+	public static final String cellSortKeyKey = "cellSortKey";
 	public static final String workspaceNumColsKey = "workspaceNumCols";
 	public static final String workspaceHGapKey = "workspaceHGap";
 	public static final String workspaceVGapKey = "workspaceVGap";
@@ -267,7 +270,7 @@ public class PhotoSpread {
 		photoSpreadDefaults.setProperty(sheetNumColsKey, "9");  // Note: one col will be added to this number
 																//       to account for col0 being used for row numbers.
 																//       Thus this is the user-accessible # of cols.
-		photoSpreadDefaults.setProperty(sheetNumRowsKey, "10"); //
+		photoSpreadDefaults.setProperty(sheetNumRowsKey, "10");
 		photoSpreadDefaults.setProperty(workspaceNumColsKey, "1");
 		photoSpreadDefaults.setProperty(workspaceHGapKey, "2");
 		photoSpreadDefaults.setProperty(workspaceVGapKey, "2");
@@ -279,6 +282,8 @@ public class PhotoSpread {
 		photoSpreadDefaults.setProperty(workspaceMaxObjWidthKey, "600");
 		photoSpreadDefaults.setProperty(workspaceMaxObjHeightKey, "600");
 		photoSpreadDefaults.setProperty(workspaceSizeKey, "600 600");
+		
+		photoSpreadDefaults.setProperty(cellSortKeyKey, Const.DEFAULT_SORT_KEY);
 	}
 
 	/****************************************************
@@ -337,6 +342,14 @@ public class PhotoSpread {
 				.withType(Integer.class)
 				.hasArgs(1)
 				.create("r")); // create option w/ these above parameters
+		
+		cmdLineOptions.addOption(OptionBuilder
+				.withArgName("sortKey")
+				.withLongOpt("cellSortKey")
+				.withDescription("Default metadata key by which to sort all cells.")
+				.withType(String.class)
+				.hasArgs(1)
+				.create("s")); // create option w/ these above parameters
 		
 		// Automatically generate a help string from the Options instance:
 		HelpFormatter formatter = new HelpFormatter();
@@ -576,6 +589,13 @@ public class PhotoSpread {
 				photoSpreadPrefs.put(sheetNumColsKey, parsedOptions.getOptionValue(sheetNumColsKey));
 		}
 		} catch (Exception e) {}
+
+		try {
+			if (parsedOptions.hasOption(cellSortKeyKey)) {
+				photoSpreadPrefs.put(cellSortKeyKey, parsedOptions.getOptionValue(cellSortKeyKey));
+		}
+		} catch (Exception e) {}
+		
 		
 		// Number of columns on the command line or in the pref file
 		// are short by one, because the use Col0 for row numbers.

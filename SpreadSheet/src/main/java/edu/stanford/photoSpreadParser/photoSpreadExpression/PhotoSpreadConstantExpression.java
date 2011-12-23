@@ -7,8 +7,6 @@ package edu.stanford.photoSpreadParser.photoSpreadExpression;
 
 import java.util.Iterator;
 
-import sun.org.mozilla.javascript.internal.regexp.SubString;
-
 import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpreadObjects.PhotoSpreadObject;
 import edu.stanford.photoSpreadParser.photoSpreadNormalizedExpression.PhotoSpreadNormalizedExpression;

@@ -923,10 +923,14 @@ public final class Misc {
 	}
 	
 	public static File getCSVFileNameFromUser() {
-		return getFileNameFromUser(
-				new CSVFileFilter(),
-				JFileChooser.FILES_AND_DIRECTORIES,
-				null); // default text for dialog submit button
+		File res = getFileNameFromUser(
+					new CSVFileFilter(),
+					JFileChooser.FILES_AND_DIRECTORIES,
+					null); // default text for dialog submit button
+		if (! res.toString().endsWith(".csv")) {
+			return new File(res.toString() + ".csv");
+		} else
+			return res;
 	}
 	
 	public static File getFileNameFromUser() {
@@ -997,6 +1001,22 @@ public final class Misc {
 	public static File getFileReplacementFromUser(String oldPath) {
 		return getFileReplacementFromUser(new File(oldPath));
 	}
+	
+	public static String wrapFileName(String fileName, int maxLen) {
+		if (fileName.length() <= maxLen)
+			return fileName;
+		String res = "";
+		int startPos = 0;
+		int numLines = (int) Math.ceil(((double)fileName.length()) / ((double)maxLen));
+		for (int i=0; i<numLines; i++) {
+			int nextChunkEnd = Math.min(fileName.length(), startPos + maxLen);
+			res += "\n" + fileName.substring(startPos, nextChunkEnd);
+			startPos += maxLen;
+		}
+
+		return res.substring(1);
+	}
+	
 	
 	/**
 	 * Given the path to a file that is not available (typically moved in the file system, 

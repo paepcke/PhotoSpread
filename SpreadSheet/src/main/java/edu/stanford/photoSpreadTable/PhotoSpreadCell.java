@@ -24,6 +24,7 @@ import javax.management.RuntimeErrorException;
 import javax.swing.JOptionPane;
 
 import edu.stanford.inputOutput.XMLProcessor;
+import edu.stanford.photoSpread.PhotoSpread;
 import edu.stanford.photoSpread.PhotoSpreadException;
 import edu.stanford.photoSpread.PhotoSpreadException.BadUUIDStringError;
 import edu.stanford.photoSpread.PhotoSpreadException.FormulaError;
@@ -105,7 +106,8 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 		_dependents = new ArrayList<PhotoSpreadCell>();
 		_references = new ArrayList<PhotoSpreadCell>();
 		_normalizedExpression = null;
-		_currentSortKey = Const.DEFAULT_SORT_KEY;
+		_currentSortKey = PhotoSpread.photoSpreadPrefs.getProperty(PhotoSpread.cellSortKeyKey);
+				//Const.DEFAULT_SORT_KEY;
 		// PhotoSpread.trace("New cell: " + this);
 	}
 
@@ -815,6 +817,12 @@ implements Transferable, ObjectUniquenessReference<PhotoSpreadObject> {
 	}
 
 	public void sortObjects (String metadataField) {
+		// Only sort if there is a sort key:
+		if ((metadataField == null) ||
+			(metadataField.isEmpty()) ||
+			(metadataField.equalsIgnoreCase("null"))) {
+			return;
+		}
 		sortObjects(PhotoSpreadComparatorFactory.createPSMetadataComparator(), metadataField);
 	}
 	

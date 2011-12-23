@@ -10,10 +10,10 @@ To do:
     * cnt-=/cnt-- in Help windows to increase fonts.
     * Controlling the number of rows and columns: 
 
-       - Method 0: just start PhotoSpread, and a spreadsheet with a
+       - Method 1: just start PhotoSpread, and a spreadsheet with a
            default number of 10 rows and 9 columns is created.
 
-       - Method 1: use command line options
+       - Method 2: use command line options
            Options are -r or --sheetNumRows for the number of
            rows. Use -c or --sheetNumCols for 
 	   the number of columns. Example:
@@ -29,7 +29,7 @@ To do:
                java -jar spreadsheet-....jar -r 20 -c 5
            creates a sheet with 20 rows and 3 columns.
 
-        - Method 2: Use a configuration file:
+        - Method 3: Use a configuration file:
            A file $HOME/.photoSpread/photoSpread.properties
            can contain properties that are in effect when command line
            options are given. Example content for this file:
@@ -40,10 +40,107 @@ To do:
            Command line options will override the properties set in
            this file.
 
+    * Controlling default cell sort key:
+
+       - Note1: PhotoSpread has two default metadata fields that are
+         included in each item: @ID, and @filename. 
+       - Note1: A sort key of null, or an empty sort key: "" will
+                disable sorting by default. Individual cells can still
+              	be sorted by right-clicking in them and setting the
+              	sort key for just this cell.
+	      	Disabling sorting might be useful for highly populated
+              	cells in which sorting is not needed. Avoiding the
+              	unnecessary sort can speed up operation, if performance
+              	is a problem.
+
+       - Method 1: just start PhotoSpread, and @filename will be the
+              default sort key.
+
+       - Method 2: use command line options
+           Options are -s or --cellSortKey.
+ 	   Example:
+               java -jar spreadsheet-....jar -s Species
+           will have every cell sorted by the Species field.
+               java -jar spreadsheet-....jar --cellSortKey Species
+           is equivalent to the first example.
+
+        - Method 3: Use a configuration file:
+           A file $HOME/.photoSpread/photoSpread.properties
+           can contain properties that are in effect when command line
+           options are given. Example content for this file:
+
+	      cellSortKey = Species
+
+           Command line options will override the properties set in
+           this file.
+
+   * Semantics of importing csv files:
+       	  /**
+      	   * Given a File instance containing the assumed path to an image,
+      	   * return a new File instance wrapping a (possibly corrected) path.
+      	   * The scenario for this method is this: In the past, an image was 
+      	   * tagged on a different machine <i>A</i>. The image information, including
+      	   * the original file path, and the file's UUID (content fingerprint),
+      	   * were exported to a <code>.csv</code> file. Now, on this machine <i>B</i>, 
+      	   * the <code>.csv</code> file is imported. A candidate file <i>f1</i>
+      	   * matching the full file path of an entry in the <code>.csv</code> file
+      	   * might exist on this machine (<i>B</i>) at the same file system place as the 
+      	   * original file <i>f0</i> on machine <i>A</i>. But <i>f1</i> might
+      	   * have a different fingerprint than <i>f0</i>, in which case the user
+      	   * must be involved in either deciding to accept <i>f1</i>, look for
+      	   * an alternative, skip the file, or abort the import.
+      	   * <p>
+      	   * Alternatively, no <i>f1</i> might be found on <i>B</i>'s file system
+      	   * at <i>f0</i>'s path. In that case the user must be asked to navigate
+      	   * to an alternate place, or to give up.
+      	   * <p>
+      	   * The final path is determined as follows:
+      	   * <ul>
+      	   * <li> If the given file <i>f1</i> exists, and the original 
+      	   *      file's UUID is unknown, then <i>f1</i> is returned.
+      	   * </li>
+      	   * <li> If the given file <i>f1</i> exists, and the original file 
+      	   *      <i>f0</i>'s UUID is  known, then a UUID is computed 
+      	   * 		using <i>f1</i>'s content. If the UUID of <i>f0</i> matches 
+      	   * 		the computed UUID, then <i>f1</i> is returned.
+      	   * 		<p>
+      	   * 		If the UUIDs do not match, then the user is asked to either:
+      	   * 		<ul>
+      	   * 			<li>accept <i>f1</i>
+      	   * 	   			Accept the local file <i>f1</i> as the correct one. 
+      	   * 			   	Keep browsing on the local machine to find an alternative
+      	   * 	   			Skip import of <i>f1</i>
+      	   * 	   	  	 	Accept this and any files with discrepancies in this <code>.csv</code> import 
+      	   * 	   	  	 	Skip any remaining import files that have content discrepancies.
+      	   * 		</ul>
+      	   * </li>
+      	   * <li> If the given file <i>f1</i> does not exist, the instance variable
+      	   * 		<code>wantStoredFileReplacement</code> is checked, to determine
+      	   * 		whether the user wants an interactive replacement file search.
+      	   * 		If no such search is wanted, the method returns <code>null</code>
+      	   * 	    <p>
+      	   * 	    If <code>wantStoredFileReplacement</code> is <code>true</code>,
+      	   * 	    the user is asked to identify a replacement file on the user's
+      	   * 		machine. If that search yields a new file, the process in the 
+      	   * 		items above is performed. If the user skips a file, she is asked
+      	   * 		whether she wishes to be asked about non-existing files in future.
+      	   * 		If not, then the variable <code>wantStoredFileReplacement</code>
+      	   * 		is set to false;
+      	   * </li>
+           * </ul>
+
+
 - New release 0.93
     * Enabled, and then fixed dragging from one formula cell
       to another.
     * Filename is now the default sort order for all cells.
+    * Sort key default is now settable via command line or the
+      property file.
+    * Added more options to .csv import: User can now skip import for
+      individual files, accept individual files, even if their UUIDs
+      disagree with the originally saved file's UUID, and more. The
+      options appear as needed in a pull-down menu during the import
+      process. 
 
 - New release 0.92
     * Formula copying

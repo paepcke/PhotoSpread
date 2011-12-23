@@ -32,6 +32,15 @@ import edu.stanford.photoSpreadUtilities.UUID.FileHashMethod;
  * 
  * @author skandel
  */
+
+enum UuidMismatchDecision {
+	ACCEPT_LOCAL_FILE,
+	KEEP_LOOKING,
+	SKIP_FILE,
+	ACCEPT_ALL,
+	SKIP_ALL
+}
+
 public class PhotoSpreadFileImporter {
 
 	// For unit testing: a path to use instead
@@ -40,14 +49,18 @@ public class PhotoSpreadFileImporter {
 	// Again, for unit testing: the answer a user
 	// would have given when asked to continue looking
 	// for a file:
-	public static boolean secretKeepLooking = true; 
+	public static UuidMismatchDecision secretKeepLooking = UuidMismatchDecision.KEEP_LOOKING; 
 	
 	final static short SKIP_OPTION = 0;
 	final static short NEW_FOLDER_OPTION = 1;
 	final static short ABORT_OPTION = 2;
 
+	// Options for resolving UUID discrepancies:
 	final static short ACCEPT_FILE_OPTION = 0;
 	final static short KEEP_LOOKING_OPTION = 1;
+	final static short SKIP_FILE_OPTION = 2;
+	final static short ACCEPT_ALL_OPTION = 3;
+	final static short SKIP_ALL_OPTION = 4;
 	
 	
 	
@@ -69,11 +82,29 @@ public class PhotoSpreadFileImporter {
 	private static ArrayList<FilePathTransformer> filePathTransformers = new ArrayList<FilePathTransformer>();
 	
 	// Does user want the offer to find a replacement
-	// for files that are referenced in the XML file, but
+	// for files that are referenced in the XML or CSV file, but
 	// are not available? We assume yes by default. Each
 	// time user cancels out of such an offer we let them
 	// say whether they want to stop getting the offers:
 	static boolean wantStoredFileReplacement = true;
+		
+	// Does user want the offer to find a replacement
+	// for files that are referenced in the XML or CSV file, exist
+	// on the local machine, but differ in content from the
+	// file originally referenced in the .csv file when it
+	// was saved. We assume yes by default. Each
+	// time user cancels out of such an offer we let them
+	// say whether they want to stop getting the offers:
+	static boolean wantContentDiscrepancyFileReplacement = true;
+	
+	// Set to true if user indicated they wanted all content-mismatched
+	// files to be accepted without question:
+	static boolean wantAcceptAllContentDiscrepancyFiles = false;
+
+	// Set to true if user indicated they wanted all content-mismatched
+	// files to be skipped without question:
+	static boolean wantSkipAllContentDiscrepancyFiles = false;
+	
 		
 	public static PhotoSpreadObject importFile(File f, PhotoSpreadCell cell)
 			throws BadUUIDStringError, FileNotFoundException, IOException {
@@ -307,31 +338,39 @@ public class PhotoSpreadFileImporter {
 	 * tagged on a different machine <i>A</i>. The image information, including
 	 * the original file path, and the file's UUID (content fingerprint),
 	 * were exported to a <code>.csv</code> file. Now, on this machine <i>B</i>, 
-	 * the <code>.csv</code> file is imported. A candidate file <i>C</i>
+	 * the <code>.csv</code> file is imported. A candidate file <i>f1</i>
+	 * matching the full file path of an entry in the <code>.csv</code> file
 	 * might exist on this machine (<i>B</i>) at the same file system place as the 
-	 * original file <i>O</i> on machine <i>A</i>. But <i>C</i> might
-	 * have a different fingerprint than <i>O</i>, in which case the user
-	 * must be involved in either deciding to accept <i>C</i>, or looking for
-	 * an alternative.
+	 * original file <i>f0</i> on machine <i>A</i>. But <i>f1</i> might
+	 * have a different fingerprint than <i>f0</i>, in which case the user
+	 * must be involved in either deciding to accept <i>f1</i>, look for
+	 * an alternative, skip the file, or abort the import.
 	 * <p>
-	 * Alternatively, no <i>C</i> might be found on <i>B</i>'s file system
-	 * at <i>O</i>'s path. In that case the user must be asked to navigate
+	 * Alternatively, no <i>f1</i> might be found on <i>B</i>'s file system
+	 * at <i>f0</i>'s path. In that case the user must be asked to navigate
 	 * to an alternate place, or to give up.
 	 * <p>
 	 * The final path is determined as follows:
 	 * <ul>
-	 * <li> If the given file <i>C</i> exists, and the original 
-	 *      file's UUID is unknown, then <i>C</i> is returned.
+	 * <li> If the given file <i>f1</i> exists, and the original 
+	 *      file's UUID is unknown, then <i>f1</i> is returned.
 	 * </li>
-	 * <li> If the given file <i>C</i> exists, and the original file 
-	 *      <i>O</i>'s UUID is  known, then a UUID is computed 
-	 * 		using <i>C</i>'s content. If the UUID of <i>O</i> matches 
-	 * 		the computed UUID, then <i>C</i> is returned.
+	 * <li> If the given file <i>f1</i> exists, and the original file 
+	 *      <i>f0</i>'s UUID is  known, then a UUID is computed 
+	 * 		using <i>f1</i>'s content. If the UUID of <i>f0</i> matches 
+	 * 		the computed UUID, then <i>f1</i> is returned.
 	 * 		<p>
-	 * 		If the UUIDs do not match, then the user is asked to either
-	 * 		accept <i>C</i>, or to navigate to a new file, <i>C'</i>
+	 * 		If the UUIDs do not match, then the user is asked to either:
+	 * 		<ul>
+	 * 			<li>accept <i>f1</i>
+	 * 	   			Accept the local file <i>f1</i> as the correct one. 
+	 * 			   	Keep browsing on the local machine to find an alternative
+	 * 	   			Skip import of <i>f1</i>
+	 * 	   	  	 	Accept this and any files with discrepancies in this <code>.csv</code> import 
+	 * 	   	  	 	Skip any remaining import files that have content discrepancies.
+	 * 		</ul>
 	 * </li>
-	 * <li> If the given file <i>C</i> does not exist, the instance variable
+	 * <li> If the given file <i>f1</i> does not exist, the instance variable
 	 * 		<code>wantStoredFileReplacement</code> is checked, to determine
 	 * 		whether the user wants an interactive replacement file search.
 	 * 		If no such search is wanted, the method returns <code>null</code>
@@ -339,7 +378,12 @@ public class PhotoSpreadFileImporter {
 	 * 	    If <code>wantStoredFileReplacement</code> is <code>true</code>,
 	 * 	    the user is asked to identify a replacement file on the user's
 	 * 		machine. If that search yields a new file, the process in the 
-	 * 		items above is performed.
+	 * 		items above is performed. If the user skips a file, she is asked
+	 * 		whether she wishes to be asked about non-existing files in future.
+	 * 		If not, then the variable <code>wantStoredFileReplacement</code>
+	 * 		is set to false;
+	 * </li>
+	 * </ul>
 	 *   
 	 * @param searchStartDir Directory where guided search should start. If <code>null</code>,
 	 * 		  guided search starts at current working directory.
@@ -382,15 +426,24 @@ public class PhotoSpreadFileImporter {
 					
 		// At this point we have a new file path to an
 		// image, and we know the UUID of the original file 
-		// Compare UUIDs of original file and found file.
+		// Now compare UUIDs of original file and the found file.
 		// In loop, offer search for new file, if UUIDs disagree:
 		while (true) {
 			// Do UUIDs match?
 			if( ! uuidOriginalFile.equals(candidateUUID)){
+				
 				// Nope, different UUIDs, therefore different file contents:
-				// If user wants to keep looking, do that:
-				if(getMismatchedUUIDProblemAdvice(originalFile.getPath(), candidate.getPath())) {
-					// User wants to keep looking. Interact via dialogs:
+				if (wantSkipAllContentDiscrepancyFiles) {
+					return null;
+				}
+				
+				if (wantAcceptAllContentDiscrepancyFiles) {
+					return candidate;
+				}
+				
+				UuidMismatchDecision action = getMismatchedUUIDProblemAdvice(originalFile.getPath(), candidate.getPath());
+				
+				if (action == UuidMismatchDecision.KEEP_LOOKING) {
 					candidate = correctPath(originalFile.getAbsolutePath());
 					if (candidate == null) {
 						// User gave up after all:
@@ -398,42 +451,30 @@ public class PhotoSpreadFileImporter {
 					}
 					// Got a new file that might work. Compute its UUID:
 					candidateUUID = new UUID(candidate, FileHashMethod.USE_FILE_SAMPLING);
-				} else
-					// User does not want to keep looking:
+					
+					// For automatic testing: Pretend that second time around user
+					// asked to skip the file:
+					if (PhotoSpread.getDebutLevel() == DebugLevel.AUTOMATIC_TESTING) {
+						PhotoSpreadFileImporter.secretKeepLooking = UuidMismatchDecision.SKIP_FILE;
+					}
+					continue;
+				} else if (action == UuidMismatchDecision.ACCEPT_LOCAL_FILE) {
+					return candidate;
+				} else if (action == UuidMismatchDecision.SKIP_FILE) {
 					return null;
+				} else if (action == UuidMismatchDecision.ACCEPT_ALL) {
+					wantAcceptAllContentDiscrepancyFiles = true;
+					return candidate;
+				} else if (action == UuidMismatchDecision.SKIP_ALL) {
+					wantSkipAllContentDiscrepancyFiles = true;
+					return null;
+				}
+				
 			} else
 				// UUIDs matched:
 				return candidate;
 		}
 	}
-	
-/*	protected static File resolveFileOLD(String startPath, File originalFile, UUID uuid) throws IOException{
-		
-		if(originalFile.exists()) return originalFile;
-		String path = originalFile.getPath();
-		String[] parents = path.split(File.separator);
-		StringBuffer relativePath = new StringBuffer("");
-		for(int i = parents.length-1; i > 0; --i){
-			relativePath.insert(0, File.separator + parents[i]);
-			File candidate = new File(startPath + relativePath.toString());
-			if(candidate.exists()){
-				if(uuid==null){
-					int decision = getMissingUUIDProblemAdvice(originalFile.getPath(), candidate.getPath());
-					if(decision == KEEP_LOOKING_OPTION) continue;
-				}
-				else{
-					UUID candidateUUID = new UUID(candidate, FileHashMethod.USE_FILE_SAMPLING);
-					if(!uuid.equals(candidateUUID)){
-						int decision = getMissingUUIDProblemAdvice(originalFile.getPath(), candidate.getPath());
-						if(decision == KEEP_LOOKING_OPTION) continue;
-					}
-				}
-				return candidate;
-			}
-		}
-		throw new java.io.IOException("Could not resolve file path");
-	}
-*/	
 	
 	
 	/**
@@ -447,48 +488,61 @@ public class PhotoSpreadFileImporter {
 	 * @param originalFilePath Path to the image file that generated the authoritative UUID 
 	 * @param candidateFilePath Path to a new image file whose UUID differs from the file
 	 * at <code>originalFilePath</code>.
-	 * @return Boolean to indicate whether user wants to accept the candidate file, or not.
-	 */
-	protected static boolean getMismatchedUUIDProblemAdvice(String originalFilePath, String candidateFilePath) {
+	 * @return - member of UuidMismatchDecision to indicate user's choice of resolution:
+	 * 	   	ACCEPT_LOCAL_FILE,
+	 * 	   	KEEP_LOOKING,
+	 * 	   	SKIP_FILE,
+	 * 	   	ACCEPT_ALL,
+	 * 	   	SKIP_ALL
+	 * or null, if user canceled.
+	 */		
+
+	protected static UuidMismatchDecision getMismatchedUUIDProblemAdvice(String originalFilePath, String candidateFilePath) {
 
 		// For unit testing:
 		if (PhotoSpread.getDebutLevel() == DebugLevel.AUTOMATIC_TESTING)
 			// The unit test suite can set this
 			// response ahead of testing:
 			return secretKeepLooking;
+
+		int msgBoxWidth = 60; 
 		
 		String[] incorrectUUIDRemedyOptions = 
 			new String[] {
-				"Accept File",
-				"Keep Looking", };
-		
-		int decision = JOptionPane.showOptionDialog(
+				"Accept local file as new master",
+				"Keep looking", 
+				"Skip importing this file",
+				"Accept this and all future local files",
+				"Skip this and all future local files"};
+
+		Object decision = JOptionPane.showInputDialog(
 				PhotoSpread.getCurrentSheetWindow(),  // Component to show dialog with
-				"Image content discrepancy:\n" +
-				"The original file '" + originalFilePath + "',\nand the file '" + candidateFilePath + 
-				"'\n on this machine seem to have different contents (they have different content fingerprints).\n" +
-				"Option '" +
-				incorrectUUIDRemedyOptions[ACCEPT_FILE_OPTION] +
-				"' accepts this candidate file\n" +
-				"If this is not the right file, select option '" +
-				incorrectUUIDRemedyOptions[KEEP_LOOKING_OPTION] +
-				"' and we will keep loooking", 
-				"Mismatched UUID", // title in top of window frame.
-				JOptionPane.DEFAULT_OPTION,
-				JOptionPane.QUESTION_MESSAGE, 
-				null, incorrectUUIDRemedyOptions,
-				KEEP_LOOKING_OPTION); // Default
-		
-		// Even though there are only two options now,
-		// check for either, in case we add more options
-		// later:
-		if (decision == ACCEPT_FILE_OPTION)
-			return true;
-		else if (decision == KEEP_LOOKING_OPTION)
-			return false;
-		else
-			return false;
-	}
+				"Image content discrepancy: the original file \n" +
+					Misc.wrapFileName(originalFilePath, msgBoxWidth) + 
+					"\nand the local file\n" + 
+					Misc.wrapFileName(candidateFilePath, msgBoxWidth) + 
+					"'\nseem to have different contents (they have different content fingerprints).\n" +
+					"Options:",
+				"Choose file content discrepancy resolution",  // msg box title
+				JOptionPane.WARNING_MESSAGE,
+				null, // icon
+				incorrectUUIDRemedyOptions, // Strings to select among
+				incorrectUUIDRemedyOptions[ACCEPT_FILE_OPTION]); // Initially selected value
+
+		if (decision.equals(incorrectUUIDRemedyOptions[ACCEPT_FILE_OPTION]))
+			return UuidMismatchDecision.ACCEPT_LOCAL_FILE;
+		else if (decision.equals(incorrectUUIDRemedyOptions[KEEP_LOOKING_OPTION]))
+			return UuidMismatchDecision.KEEP_LOOKING;
+		else if (decision.equals(incorrectUUIDRemedyOptions[SKIP_FILE_OPTION]))
+			return UuidMismatchDecision.SKIP_FILE;
+		else if (decision.equals(incorrectUUIDRemedyOptions[ACCEPT_ALL_OPTION]))
+			return UuidMismatchDecision.ACCEPT_ALL;
+		else if (decision.equals(incorrectUUIDRemedyOptions[SKIP_ALL_OPTION]))
+			return UuidMismatchDecision.SKIP_ALL;
+		else 
+			return null;
+	
+		}
 	
 	public static File correctPath(String dysfunctionalOldPath) {
 
@@ -497,6 +551,11 @@ public class PhotoSpreadFileImporter {
 			// ahead of testing:
 			return secretCandidatePath;
 		
+		// If user opted out of replacement offers,
+		// just return null.
+		if (!wantStoredFileReplacement)
+			return null;
+
 		// First, check whether any of the replacement
 		// directories that the user provided for previous
 		// PhotoSpread objects that were not found on the
@@ -508,11 +567,6 @@ public class PhotoSpreadFileImporter {
 			if (newPathStr != null)
 				return new File(newPathStr);
 		}
-
-		// If user opted out of replacement offers,
-		// just return null.
-		if (!wantStoredFileReplacement)
-			return null;
 
 		// Offer replacement for the file
 		File newFilePath = Misc.getFileReplacementFromUser(dysfunctionalOldPath);

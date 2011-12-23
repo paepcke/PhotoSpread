@@ -1028,16 +1028,10 @@ public class ObjectsPanel extends JPanel{
 				null,			// array of selection values
 				_displayedCell.getSortKey()   // initial value in text box
 		);
-		if (sortField == null) {
-			_displayedCell.setSortKey(Const.DEFAULT_SORT_KEY);
-			return;
-		}
-		if (sortField.isEmpty()) {
-			_displayedCell.setSortKey(Const.DEFAULT_SORT_KEY);
-			return;
-		}
-		if (sortField.equalsIgnoreCase("null")) {
-			_displayedCell.setSortKey(Const.DEFAULT_SORT_KEY);
+		
+		if ((sortField == null) ||
+			(sortField.isEmpty())) {
+			_displayedCell.setSortKey(null);
 			return;
 		}
 
